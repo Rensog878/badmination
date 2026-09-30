@@ -6,7 +6,8 @@ Premium, cinematic site for a professional badminton coach. The feel is Olympic 
 - Next.js 15 (App Router, no `src/`), React 19, TypeScript (strict, no `any`)
 - Tailwind v4: tokens live in `app/globals.css` under `@theme`. There is no `tailwind.config.ts`.
 - three, @react-three/fiber v9, @react-three/drei v10, lucide-react
-- Later: GSAP + ScrollTrigger (Phase 3), Framer Motion, React Hook Form + Zod
+- gsap + ScrollTrigger + @gsap/react (Phase 3)
+- Later: Framer Motion, React Hook Form + Zod
 
 ## Commands
 - `npm run dev` / `npm run build` / `npm run start` / `npm run lint`
@@ -15,12 +16,17 @@ Premium, cinematic site for a professional badminton coach. The feel is Olympic 
 ## Structure
 ```
 app/            layout (fonts, metadata), page (hero + Phase 3 scroll space), globals.css (tokens)
-components/hero HeroSection (client: text/CTAs, WebGL check, boundary, loader), HeroFallback (static SVG)
-components/3d   HeroScene (the ONE persistent Canvas), CameraRig, ArenaEnvironment,
-                RacketModel (GLTF-or-procedural switch, idle motion), ProceduralRacket, SceneErrorBoundary
+components/stage CinematicStage (owns the ONE persistent Canvas, WebGL check, error fallback, loader),
+                StageContext (mode: pending | 3d | fallback, reducedMotion)
+components/hero HeroSection (text/CTAs), HeroFallback (static SVG)
+components/smash SmashSection (scroll space + GSAP timeline + DOM beats), SmashFallback (static SVG)
+components/3d   HeroScene (the Canvas contents), CameraRig (hero framing + cinematic override blend),
+                ArenaEnvironment, SmashScene (athlete, shuttle, trail, lights, camera path),
+                RacketModel (GLTF-or-procedural, idle motion, flight into the hand), ProceduralRacket, SceneErrorBoundary
 components/ui   LoadingScreen, CourtLines (shared court SVG)
 lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneState (mutable, GSAP-drivable),
-                performance (tiers, reduced motion, WebGL/visibility hooks), racketGeometry (procedural racket)
+                performance (tiers, reduced motion, WebGL/visibility hooks), racketGeometry (procedural racket),
+                athleteRig (faceless procedural athlete + smash poses), smashTimeline (all sequence marks/keys)
 ```
 
 ## Design tokens
@@ -31,7 +37,10 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
 ## 3D conventions
 - One `<Canvas>` (fixed, behind the content). Never mount a Canvas per section.
 - Per-frame motion only in `useFrame`, delta-based. No React state per frame.
-- `sceneState` holds the camera position/target and the racket position/rotation/scale/idle. Set `camera.mode = "external"` when GSAP owns the camera.
+- `sceneState` is the bridge between DOM and 3D. GSAP only scrubs `smash.progress` (0..1); `SmashScene` derives everything else from it (pose, racket `attach`, shuttle, trail, lights, `camera.override`), so scrubbing works both ways.
+- Timing of every beat lives in `lib/smashTimeline.ts` (`SMASH_MARKS`, `POSE_KEYS`, `CAMERA_KEYS`); DOM beats in `SmashSection` use the same marks.
+- Racket shoulder angles in `SMASH_POSES` are unwrapped (> π) so blends swing over the top.
+- QA: `?tier=high|medium|low` locks the tier and disables auto step-down (headless/software GL otherwise falls back to static).
 - Racket units: metres, butt at y=0, long axis +Y, pivot at the balance point (305 mm), world scale ×4.
 - To swap in a real racket, set `RACKET_MODEL_URL` in `lib/assets.ts`. It is auto-normalised to the same scale and pivot.
 - Tiers high/medium/low (`lib/performance.ts`), stepped down at runtime by `PerformanceMonitor`. If the low tier is still too slow, the static fallback shows.
@@ -39,11 +48,12 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
 
 ## Scroll story
 1. ENTER THE ARENA: floating racket under a spotlight (Phase 2, done)
-2. THE SMASH: the camera pulls back and rises, the racket flies into a faceless athlete's hand, scroll scrubs the jump smash, a green shuttle trail, an impact flash, then **COMPETE** (Phase 3)
+2. THE SMASH: the camera pulls back and rises, the racket flies into a faceless athlete's hand, scroll scrubs the jump smash, a green shuttle trail, an impact flash, then **COMPETE** (Phase 3, done)
 3. MEET THE COACH → TRAIN → COMPETE → REGISTER → PLAY → WIN
 
 ## Phases
 - [x] 1 Foundation · [x] 2 Cinematic 3D hero
-- [ ] 3 Scroll smash sequence (GSAP) · 4 Navigation · 5 Coach profile · 6 Programs · 7 Tournament discovery · 8 Tournament details · 9 Registration (RHF + Zod) · 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
+- [x] 3 Scroll smash sequence (GSAP)
+- [ ] 4 Navigation · 5 Coach profile · 6 Programs · 7 Tournament discovery · 8 Tournament details · 9 Registration (RHF + Zod) · 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
 
 Build only the current phase, then stop for approval.

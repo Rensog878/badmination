@@ -1,75 +1,17 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { ArrowRight } from "lucide-react";
 import HeroFallback from "@/components/hero/HeroFallback";
-import SceneErrorBoundary from "@/components/3d/SceneErrorBoundary";
-import LoadingScreen from "@/components/ui/LoadingScreen";
+import { useStage } from "@/components/stage/StageContext";
 import { COACH_NAME, HERO } from "@/lib/content";
-import { usePageVisible, usePrefersReducedMotion, useWebGLSupport } from "@/lib/performance";
 
-const HeroScene = dynamic(() => import("@/components/3d/HeroScene"), { ssr: false });
-
-/** Never trap the page behind the loader, even if the scene stalls. */
-const LOADER_TIMEOUT_MS = 10_000;
-
+/** Hero content. The 3D scene behind it lives in CinematicStage's persistent Canvas. */
 export default function HeroSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const webgl = useWebGLSupport();
-  const reducedMotion = usePrefersReducedMotion();
-  const pageVisible = usePageVisible();
-  const [sceneFailed, setSceneFailed] = useState(false);
-  const [sceneReady, setSceneReady] = useState(false);
-  const [inView, setInView] = useState(true);
-
-  const show3D = webgl === true && !sceneFailed;
-  const showFallback = webgl === false || sceneFailed;
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
-      threshold: 0,
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!show3D) return;
-    const timer = window.setTimeout(() => setSceneReady(true), LOADER_TIMEOUT_MS);
-    return () => window.clearTimeout(timer);
-  }, [show3D]);
-
-  const handleReady = useCallback(() => setSceneReady(true), []);
-  const handleFailure = useCallback(() => setSceneFailed(true), []);
+  const { mode } = useStage();
 
   return (
-    <section
-      ref={sectionRef}
-      aria-labelledby="hero-heading"
-      className="relative isolate flex min-h-[600px] h-svh flex-col"
-    >
-      {showFallback && <HeroFallback />}
-
-      {show3D && (
-        <div
-          className="fixed inset-0 -z-10 transition-opacity duration-700 motion-reduce:duration-0"
-          style={{ opacity: inView ? 1 : 0 }}
-        >
-          <SceneErrorBoundary fallback={null} onError={handleFailure}>
-            <Suspense fallback={null}>
-              <HeroScene
-                active={inView && pageVisible}
-                reducedMotion={reducedMotion}
-                onReady={handleReady}
-                onTooSlow={handleFailure}
-              />
-            </Suspense>
-          </SceneErrorBoundary>
-        </div>
-      )}
+    <section aria-labelledby="hero-heading" className="relative isolate flex min-h-[600px] h-svh flex-col">
+      {mode === "fallback" && <HeroFallback />}
 
       {/* Legibility scrims: left on desktop, bottom on mobile/tablet. */}
       <div
@@ -127,8 +69,6 @@ export default function HeroSection() {
         <span className="font-display text-[0.65rem] tracking-[0.4em] text-muted uppercase">Scroll</span>
         <span className="h-10 w-px bg-linear-to-b from-court-green to-transparent" />
       </div>
-
-      {show3D && <LoadingScreen sceneReady={sceneReady} reducedMotion={reducedMotion} />}
     </section>
   );
 }

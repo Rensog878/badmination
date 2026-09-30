@@ -22,3 +22,13 @@ export const HERO = {
   primaryCta: { label: "View Tournaments", href: "#tournaments" }, // TODO: copy
   secondaryCta: { label: "Train With Me", href: "#programs" }, // TODO: copy
 } as const;
+
+export const SMASH = {
+  chapter: "02 — The Smash", // TODO: copy
+  headline: "Compete",
+  // TODO: copy
+  subline: "Every rally is a test. Step onto the court and prove it.",
+  // Screen-reader summary of the visual sequence.
+  description:
+    "An anonymous athlete catches the racket mid-air, leaps and unleashes a jump smash; the shuttle streaks crosscourt, leaving a green trail.",
+} as const;

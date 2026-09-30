@@ -67,12 +67,22 @@ export function detectTier(): PerformanceTier {
   return "medium";
 }
 
+const TIERS: readonly PerformanceTier[] = ["high", "medium", "low"];
+
+/** QA override: `?tier=high|medium|low` locks the tier and disables runtime step-down. */
+export function forcedTier(): PerformanceTier | null {
+  if (typeof window === "undefined") return null;
+  const value = new URLSearchParams(window.location.search).get("tier");
+  return TIERS.find((t) => t === value) ?? null;
+}
+
 export function usePerformanceTier() {
-  const [tier, setTier] = useState<PerformanceTier>(detectTier);
+  const [forced] = useState(forcedTier);
+  const [tier, setTier] = useState<PerformanceTier>(() => forced ?? detectTier());
   const stepDown = useCallback(() => {
     setTier((current) => (current === "high" ? "medium" : "low"));
   }, []);
-  return { tier, config: TIER_CONFIG[tier], stepDown };
+  return { tier, config: TIER_CONFIG[tier], stepDown, locked: forced !== null };
 }
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";

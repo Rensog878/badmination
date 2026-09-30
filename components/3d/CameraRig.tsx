@@ -15,6 +15,7 @@ const PARALLAX_MAX = 0.05; // rad (~3°)
 const DRIFT_AMPLITUDE = 0.025; // rad
 const DRIFT_SPEED = 0.18; // rad/s
 const FOLLOW_RATE = 3.5; // higher = snappier camera easing
+const SEQUENCE_FOLLOW_RATE = 10;
 
 type LayoutKey = "desktop" | "tablet" | "mobile";
 
@@ -114,10 +115,10 @@ export default function CameraRig({ reducedMotion }: CameraRigProps) {
   const finePointer = useRef(false);
   const lookTarget = useRef(new Vector3());
   const desired = useRef(new Vector3());
+  const desiredTarget = useRef(new Vector3());
   const initialised = useRef(false);
 
   useEffect(() => {
-    if (sceneState.camera.mode !== "hero") return;
     computeHeroFraming(width, height);
     if (!initialised.current) {
       camera.position.copy(sceneState.camera.position);
@@ -142,7 +143,8 @@ export default function CameraRig({ reducedMotion }: CameraRigProps) {
     const cam = sceneState.camera;
     let yaw = 0;
     let pitch = 0;
-    if (cam.mode === "hero" && !reducedMotion) {
+    const w = cam.override.weight;
+    if (w < 1 && !reducedMotion) {
       if (finePointer.current) {
         yaw = Math.max(-1, Math.min(1, pointer.current.x)) * PARALLAX_MAX;
         pitch = Math.max(-1, Math.min(1, pointer.current.y)) * PARALLAX_MAX * 0.6;
@@ -153,14 +155,19 @@ export default function CameraRig({ reducedMotion }: CameraRigProps) {
       }
     }
 
+    const settle = 1 - w; // parallax/drift only in the hero shot
     desired.current
       .copy(cam.position)
-      .addScaledVector(cam.right, yaw * cam.distance)
-      .addScaledVector(cam.up, pitch * cam.distance);
+      .addScaledVector(cam.right, yaw * settle * cam.distance)
+      .addScaledVector(cam.up, pitch * settle * cam.distance)
+      .lerp(cam.override.position, w);
+    desiredTarget.current.copy(cam.target).lerp(cam.override.target, w);
 
-    const k = reducedMotion ? 1 : 1 - Math.exp(-FOLLOW_RATE * Math.min(delta, 0.1));
+    // GSAP scrub already smooths the sequence, so follow it more tightly.
+    const rate = FOLLOW_RATE + (SEQUENCE_FOLLOW_RATE - FOLLOW_RATE) * w;
+    const k = reducedMotion ? 1 : 1 - Math.exp(-rate * Math.min(delta, 0.1));
     camera.position.lerp(desired.current, k);
-    lookTarget.current.lerp(cam.target, k);
+    lookTarget.current.lerp(desiredTarget.current, k);
     camera.lookAt(lookTarget.current);
   });
 
