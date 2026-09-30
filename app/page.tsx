@@ -1,3 +1,4 @@
+import CoachSection from "@/components/coach/CoachSection";
 import HeroSection from "@/components/hero/HeroSection";
 import SmashSection from "@/components/smash/SmashSection";
 import CinematicStage from "@/components/stage/CinematicStage";
@@ -9,8 +10,8 @@ export default function Home() {
         <HeroSection />
         <SmashSection />
       </CinematicStage>
-      {/* Placeholder anchors for the hero CTAs (built in later phases). */}
-      <div id="coach" className="sr-only scroll-mt-20">Coach profile coming soon</div>
+      <CoachSection />
+      {/* Placeholder anchors for sections built in later phases. */}
       <div id="programs" className="sr-only scroll-mt-20">Programs coming soon</div>
       <div id="tournaments" className="sr-only scroll-mt-20">Tournaments coming soon</div>
     </main>

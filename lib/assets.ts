@@ -19,3 +19,6 @@ export const ATHLETE_ASSETS = {
     extension: "webp",
   },
 } as const;
+
+/** Coach portrait (e.g. "/images/coach.jpg"). `null` shows the designed placeholder. */
+export const COACH_PORTRAIT_URL: string | null = null;
