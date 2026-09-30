@@ -44,7 +44,7 @@ export default function LoadingScreen({ sceneReady, reducedMotion }: LoadingScre
       role="status"
       aria-live="polite"
       aria-busy={!sceneReady}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-8 bg-black px-4 transition-opacity ease-out"
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-8 bg-black px-4 transition-opacity ease-out"
       style={{ opacity: hidden ? 0 : 1, transitionDuration: `${fadeMs}ms`, pointerEvents: hidden ? "none" : "auto" }}
     >
       <div className="relative w-[min(22rem,80vw)]">

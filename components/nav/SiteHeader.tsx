@@ -1,0 +1,81 @@
+"use client";
+
+import { useCallback, useState } from "react";
+import { Menu, X } from "lucide-react";
+import MobileMenu from "@/components/nav/MobileMenu";
+import { useActiveSection, useHeaderState } from "@/components/nav/useHeaderState";
+import { COACH_NAME, NAV_CTA, NAV_LINKS } from "@/lib/content";
+
+const MENU_ID = "mobile-menu";
+const NAV_HREFS = NAV_LINKS.map((l) => l.href);
+
+/**
+ * Fixed site header. Transparent over the hero, gains a backing once the page
+ * scrolls, and slides away while scrolling down so the cinematic sequence stays clear.
+ */
+export default function SiteHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { solid, hidden } = useHeaderState(menuOpen);
+  const active = useActiveSection(NAV_HREFS);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  return (
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
+          hidden ? "-translate-y-full" : "translate-y-0"
+        } ${solid && !menuOpen ? "border-b border-off-white/10 bg-charcoal/85 backdrop-blur-sm" : "border-b border-transparent"}`}
+      >
+        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-8 lg:h-20 lg:px-16">
+          <a href="#top" className="font-display text-sm font-bold tracking-[0.25em] uppercase" onClick={closeMenu}>
+            {COACH_NAME}
+            <span aria-hidden="true" className="text-court-green">.</span>
+          </a>
+
+          <nav aria-label="Primary" className="hidden lg:block">
+            <ul className="flex items-center gap-10">
+              {NAV_LINKS.map((link) => {
+                const current = active === link.href;
+                return (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      aria-current={current ? "true" : undefined}
+                      className={`relative py-2 font-display text-xs font-medium tracking-[0.25em] uppercase transition-colors hover:text-off-white ${
+                        current ? "text-off-white" : "text-muted"
+                      } after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:bg-court-green after:transition-transform after:duration-300 hover:after:scale-x-100 ${
+                        current ? "after:scale-x-100" : "after:scale-x-0"
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <a
+              href={NAV_CTA.href}
+              className="hidden border border-court-green px-5 py-2.5 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase transition-colors hover:bg-court-green hover:text-black sm:inline-flex"
+            >
+              {NAV_CTA.label}
+            </a>
+            <button
+              type="button"
+              aria-expanded={menuOpen}
+              aria-controls={MENU_ID}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMenuOpen((o) => !o)}
+              className="-mr-2 inline-flex size-11 items-center justify-center text-off-white lg:hidden"
+            >
+              {menuOpen ? <X aria-hidden="true" className="size-6" /> : <Menu aria-hidden="true" className="size-6" />}
+            </button>
+          </div>
+        </div>
+      </header>
+      <MobileMenu id={MENU_ID} open={menuOpen} onClose={closeMenu} />
+    </>
+  );
+}

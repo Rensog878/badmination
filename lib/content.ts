@@ -32,3 +32,17 @@ export const SMASH = {
   description:
     "An anonymous athlete catches the racket mid-air, leaps and unleashes a jump smash; the shuttle streaks crosscourt, leaving a green trail.",
 } as const;
+
+export interface NavLink {
+  label: string;
+  href: `#${string}`;
+}
+
+// Anchors point at sections built in later phases (placeholders exist in app/page.tsx).
+export const NAV_LINKS: readonly NavLink[] = [
+  { label: "Coach", href: "#coach" },
+  { label: "Programs", href: "#programs" },
+  { label: "Tournaments", href: "#tournaments" },
+] as const;
+
+export const NAV_CTA: NavLink = { label: "Register", href: "#tournaments" }; // TODO: copy

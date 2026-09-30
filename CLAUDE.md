@@ -23,6 +23,8 @@ components/smash SmashSection (scroll space + GSAP timeline + DOM beats), SmashF
 components/3d   HeroScene (the Canvas contents), CameraRig (hero framing + cinematic override blend),
                 ArenaEnvironment, SmashScene (athlete, shuttle, trail, lights, camera path),
                 RacketModel (GLTF-or-procedural, idle motion, flight into the hand), ProceduralRacket, SceneErrorBoundary
+components/nav  SiteHeader (fixed; solid after scroll, hides on scroll-down), MobileMenu (dialog, focus trap, Esc, scroll lock),
+                useHeaderState (scroll + active-section hooks)
 components/ui   LoadingScreen, CourtLines (shared court SVG)
 lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneState (mutable, GSAP-drivable),
                 performance (tiers, reduced motion, WebGL/visibility hooks), racketGeometry (procedural racket),
@@ -33,6 +35,9 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
 - Colours (only these; use opacity for glow): `charcoal #0A0A0A` (page bg), `black #000`, `off-white #F3F4F6` (text), `muted #9CA3AF`, `court-green #10B981` (accent)
 - Fonts: Inter → `font-sans`, Space Grotesk → `font-display`
 - Big uppercase display type, used sparingly. No SaaS gradients, heavy glass, excess neon or random motion.
+
+## Layering (z-index)
+Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-10 inside the stage)
 
 ## 3D conventions
 - One `<Canvas>` (fixed, behind the content). Never mount a Canvas per section.
@@ -53,7 +58,7 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
 
 ## Phases
 - [x] 1 Foundation · [x] 2 Cinematic 3D hero
-- [x] 3 Scroll smash sequence (GSAP)
-- [ ] 4 Navigation · 5 Coach profile · 6 Programs · 7 Tournament discovery · 8 Tournament details · 9 Registration (RHF + Zod) · 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
+- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation
+- [ ] 5 Coach profile · 6 Programs · 7 Tournament discovery · 8 Tournament details · 9 Registration (RHF + Zod) · 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
 
 Build only the current phase, then stop for approval.
