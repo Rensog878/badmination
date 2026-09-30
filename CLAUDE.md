@@ -27,6 +27,8 @@ components/nav  SiteHeader (fixed; solid after scroll, hides on scroll-down), Mo
                 useHeaderState (scroll + active-section hooks)
 components/coach CoachSection (server; portrait, bio, stats, pillars, career), CoachPortrait (next/image or placeholder)
 components/programs ProgramsSection (server shell + trial band), ProgramExplorer (client audience filter), ProgramCard
+components/tournaments TournamentsSection (server shell, gets `now`), TournamentExplorer (client: view tabs,
+                age/level filters, search), TournamentRow (fixture-list row, links to /tournaments/[slug])
 components/ui   LoadingScreen, CourtLines (shared court SVG), Reveal (one-shot GSAP fade-up; off under reduced motion)
 lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneState (mutable, GSAP-drivable),
                 performance (tiers, reduced motion, WebGL/visibility hooks), racketGeometry (procedural racket),
@@ -41,6 +43,8 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
 ## Content
 - All copy in `lib/content.ts`; anything marked `// TODO: copy` or `// TODO: real figures` is placeholder.
 - Programs: edit `PROGRAMS` / `PROGRAM_FILTERS` / `TRIAL` in `lib/content.ts`; `featured: true` marks the flagship card. Trial CTA is a mailto until a booking flow exists.
+- Tournaments: data + status logic in `lib/tournaments.ts` (placeholder fixtures until Phase 15). Status is derived from
+  date-only UTC strings and a server-supplied `now` (page `revalidate = 3600`), so server/client render identically.
 - Coach photo: set `COACH_PORTRAIT_URL` in `lib/assets.ts` (e.g. `/images/coach.jpg` in `public/`).
 - Sections after the cinematic stage are server components with a solid `bg-charcoal`; wrap content in `<Reveal>` for entrance motion.
 
@@ -66,7 +70,7 @@ Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-
 
 ## Phases
 - [x] 1 Foundation · [x] 2 Cinematic 3D hero
-- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs
-- [ ] 7 Tournament discovery · 8 Tournament details · 9 Registration (RHF + Zod) · 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
+- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery
+- [ ] 8 Tournament details · 9 Registration (RHF + Zod) · 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
 
 Build only the current phase, then stop for approval.

@@ -188,3 +188,11 @@ export const TRIAL = {
   email: "coach@example.com",
   cta: "Book a trial",
 } as const;
+
+export const TOURNAMENTS_INTRO = {
+  chapter: "05 — Compete",
+  // TODO: copy
+  headline: "Find your next draw",
+  // TODO: copy
+  lead: "Sanctioned events from club nights to state ranking tournaments. Filter by age group and level, then enter in minutes.",
+} as const;

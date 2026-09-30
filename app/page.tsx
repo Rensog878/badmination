@@ -3,6 +3,10 @@ import HeroSection from "@/components/hero/HeroSection";
 import ProgramsSection from "@/components/programs/ProgramsSection";
 import SmashSection from "@/components/smash/SmashSection";
 import CinematicStage from "@/components/stage/CinematicStage";
+import TournamentsSection from "@/components/tournaments/TournamentsSection";
+
+/** Tournament status depends on the date: re-render hourly. */
+export const revalidate = 3600;
 
 export default function Home() {
   return (
@@ -13,8 +17,7 @@ export default function Home() {
       </CinematicStage>
       <CoachSection />
       <ProgramsSection />
-      {/* Placeholder anchor for sections built in later phases. */}
-      <div id="tournaments" className="sr-only scroll-mt-20">Tournaments coming soon</div>
+      <TournamentsSection now={Date.now()} />
     </main>
   );
 }
