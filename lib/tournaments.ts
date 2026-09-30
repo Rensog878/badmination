@@ -199,3 +199,67 @@ const INR = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR",
 export const formatInr = (amount: number) => INR.format(amount);
 
 export const eventLabel = (e: TournamentEvent) => `${e.ageGroup} ${e.type}`;
+
+export function getTournament(slug: string): Tournament | undefined {
+  return TOURNAMENTS.find((t) => t.slug === slug);
+}
+
+export function describeTournament(t: Tournament): string {
+  // TODO: per-tournament copy from the organiser (admin, Phase 15).
+  const article = /^[aeiou]/i.test(t.level) ? "an" : "a";
+  return `${t.name} is ${article} ${t.level.toLowerCase()}-level tournament at ${t.venue}, ${t.city}, with ${t.events.length} events across ${
+    new Set(t.events.map((e) => e.ageGroup)).size
+  } age group${new Set(t.events.map((e) => e.ageGroup)).size === 1 ? "" : "s"}.`;
+}
+
+/** ISO date `offset` days after `iso`. */
+function addDays(iso: string, offset: number): string {
+  return new Date(dayStart(iso) + offset * DAY_MS).toISOString().slice(0, 10);
+}
+
+/** Provisional day-by-day outline derived from the dates until real schedules exist. */
+export function provisionalSchedule(t: Tournament): { date: string; label: string }[] {
+  const days = Math.round((dayStart(t.endDate) - dayStart(t.startDate)) / DAY_MS) + 1;
+  if (days === 1) return [{ date: t.startDate, label: "All rounds through to finals" }];
+  return Array.from({ length: days }, (_, i) => ({
+    date: addDays(t.startDate, i),
+    label: i === 0 ? "Qualifying and early rounds" : i === days - 1 ? "Semi-finals and finals" : "Main draw rounds",
+  }));
+}
+
+// TODO: confirm with the organiser; these are standard defaults.
+export const GENERAL_RULES = [
+  "All matches are best of three games to 21 points, rally-point scoring (BWF Laws of Badminton).",
+  "Age is determined as of 31 December of the tournament year; proof of age is required at check-in.",
+  "Players must report to the control desk 30 minutes before their scheduled match.",
+  "Feather shuttles are supplied by the organiser from the quarter-finals onward.",
+  "Non-marking court shoes are mandatory.",
+] as const;
+
+export const mapsUrl = (t: Tournament) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${t.venue}, ${t.city}`)}`;
+
+/** Registration flow route (built in Phase 9). */
+export const registerHref = (t: Tournament) => `/tournaments/${t.slug}/register`;
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+export function statusCopy(t: Tournament, status: TournamentStatus, now: number) {
+  switch (status) {
+    case "open": {
+      const days = daysToClose(t, now);
+      const soon = days <= CLOSING_SOON_DAYS;
+      return { label: soon ? `Closes in ${plural(days, "day")}` : "Registration open", tone: soon ? "urgent" : "open" } as const;
+    }
+    case "full":
+      return { label: "Full · waitlist", tone: "muted" } as const;
+    case "upcoming":
+      return { label: `Opens in ${plural(daysToOpen(t, now), "day")}`, tone: "muted" } as const;
+    case "closed":
+      return { label: "Entries closed", tone: "muted" } as const;
+    case "live":
+      return { label: "Live now", tone: "urgent" } as const;
+    case "completed":
+      return { label: "Completed", tone: "muted" } as const;
+  }
+}

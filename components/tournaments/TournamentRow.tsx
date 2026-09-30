@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
+import StatusBadge from "@/components/tournaments/StatusBadge";
 import {
-  CLOSING_SOON_DAYS,
-  daysToClose,
-  daysToOpen,
   eventLabel,
   formatDay,
   formatInr,
@@ -18,32 +16,9 @@ interface TournamentRowProps {
   now: number;
 }
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
-
-function statusCopy(t: Tournament, status: TournamentStatus, now: number) {
-  switch (status) {
-    case "open": {
-      const days = daysToClose(t, now);
-      const soon = days <= CLOSING_SOON_DAYS;
-      return { label: soon ? `Closes in ${plural(days, "day")}` : "Registration open", tone: soon ? "urgent" : "open" } as const;
-    }
-    case "full":
-      return { label: "Full · waitlist", tone: "muted" } as const;
-    case "upcoming":
-      return { label: `Opens in ${plural(daysToOpen(t, now), "day")}`, tone: "muted" } as const;
-    case "closed":
-      return { label: "Entries closed", tone: "muted" } as const;
-    case "live":
-      return { label: "Live now", tone: "urgent" } as const;
-    case "completed":
-      return { label: "Completed", tone: "muted" } as const;
-  }
-}
-
 /** One fixture in the broadcast-style listing. The whole row links to the details page. */
 export default function TournamentRow({ tournament: t, status, now }: TournamentRowProps) {
   const date = formatDay(t.startDate);
-  const copy = statusCopy(t, status, now);
   const fill = Math.min(1, t.registered / t.capacity);
   const spotsLeft = Math.max(0, t.capacity - t.registered);
   const showCapacity = status === "open" || status === "full";
@@ -106,21 +81,7 @@ export default function TournamentRow({ tournament: t, status, now }: Tournament
         {t.prizePool && !showCapacity && <p className="mt-1 text-xs text-muted">Prize pool {formatInr(t.prizePool)}</p>}
       </div>
 
-      <p
-        className={`col-start-2 flex items-center gap-2 font-display text-xs font-semibold tracking-[0.18em] uppercase lg:col-start-auto ${
-          copy.tone === "muted" ? "text-muted" : "text-court-green"
-        }`}
-      >
-        {copy.tone !== "muted" && (
-          <span aria-hidden="true" className="relative flex size-2">
-            {copy.tone === "urgent" && (
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-court-green opacity-60 motion-reduce:hidden" />
-            )}
-            <span className="relative inline-flex size-2 rounded-full bg-court-green" />
-          </span>
-        )}
-        {copy.label}
-      </p>
+      <StatusBadge tournament={t} status={status} now={now} className="col-start-2 lg:col-start-auto" />
 
       <ArrowUpRight
         aria-hidden="true"

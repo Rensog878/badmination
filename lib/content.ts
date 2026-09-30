@@ -35,17 +35,18 @@ export const SMASH = {
 
 export interface NavLink {
   label: string;
-  href: `#${string}`;
+  /** Root-relative so links work from sub-pages (e.g. /tournaments/[slug]). */
+  href: `/#${string}`;
 }
 
 // Anchors point at sections built in later phases (placeholders exist in app/page.tsx).
 export const NAV_LINKS: readonly NavLink[] = [
-  { label: "Coach", href: "#coach" },
-  { label: "Programs", href: "#programs" },
-  { label: "Tournaments", href: "#tournaments" },
+  { label: "Coach", href: "/#coach" },
+  { label: "Programs", href: "/#programs" },
+  { label: "Tournaments", href: "/#tournaments" },
 ] as const;
 
-export const NAV_CTA: NavLink = { label: "Register", href: "#tournaments" }; // TODO: copy
+export const NAV_CTA: NavLink = { label: "Register", href: "/#tournaments" }; // TODO: copy
 
 // Phase 5: coach profile. Every figure and line below is placeholder until the coach supplies real ones.
 export const COACH = {

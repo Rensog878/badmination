@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const SOLID_AFTER_PX = 40;
 const HIDE_AFTER_PX = 160;
@@ -44,23 +45,26 @@ export function useHeaderState(locked: boolean) {
 /** Which of the given anchors is currently in the middle band of the viewport. */
 export function useActiveSection(hrefs: readonly string[]) {
   const [active, setActive] = useState<string | null>(null);
+  // The header persists across client navigation: re-observe when the route changes.
+  const pathname = usePathname();
 
   useEffect(() => {
+    setActive(null);
     const targets = hrefs
-      .map((href) => document.getElementById(href.slice(1)))
+      .map((href) => document.getElementById(href.split("#")[1] ?? ""))
       .filter((el): el is HTMLElement => el !== null);
     if (targets.length === 0) return;
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) setActive(`#${entry.target.id}`);
+          if (entry.isIntersecting) setActive(`/#${entry.target.id}`);
         }
       },
       { rootMargin: "-45% 0px -50% 0px" },
     );
     targets.forEach((t) => observer.observe(t));
     return () => observer.disconnect();
-  }, [hrefs]);
+  }, [hrefs, pathname]);
 
   return active;
 }

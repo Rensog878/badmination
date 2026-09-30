@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import MobileMenu from "@/components/nav/MobileMenu";
 import { useActiveSection, useHeaderState } from "@/components/nav/useHeaderState";
@@ -27,10 +28,10 @@ export default function SiteHeader() {
         } ${solid && !menuOpen ? "border-b border-off-white/10 bg-charcoal/85 backdrop-blur-sm" : "border-b border-transparent"}`}
       >
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-8 lg:h-20 lg:px-16">
-          <a href="#top" className="font-display text-sm font-bold tracking-[0.25em] uppercase" onClick={closeMenu}>
+          <Link href="/" className="font-display text-sm font-bold tracking-[0.25em] uppercase" onClick={closeMenu}>
             {COACH_NAME}
             <span aria-hidden="true" className="text-court-green">.</span>
-          </a>
+          </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-10">
