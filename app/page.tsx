@@ -1,5 +1,6 @@
 import CoachSection from "@/components/coach/CoachSection";
 import HeroSection from "@/components/hero/HeroSection";
+import ProgramsSection from "@/components/programs/ProgramsSection";
 import SmashSection from "@/components/smash/SmashSection";
 import CinematicStage from "@/components/stage/CinematicStage";
 
@@ -11,8 +12,8 @@ export default function Home() {
         <SmashSection />
       </CinematicStage>
       <CoachSection />
-      {/* Placeholder anchors for sections built in later phases. */}
-      <div id="programs" className="sr-only scroll-mt-20">Programs coming soon</div>
+      <ProgramsSection />
+      {/* Placeholder anchor for sections built in later phases. */}
       <div id="tournaments" className="sr-only scroll-mt-20">Tournaments coming soon</div>
     </main>
   );

@@ -80,3 +80,111 @@ export const COACH = {
   ],
   cta: { label: "Train With Me", href: "#programs" },
 } as const;
+
+// Phase 6: programs. All details are placeholder until the coach confirms them.
+export type ProgramAudience = "juniors" | "adults" | "competitive";
+
+export interface Program {
+  id: string;
+  name: string;
+  level: string;
+  audience: ProgramAudience;
+  summary: string;
+  format: { label: string; value: string }[];
+  focus: string[];
+  featured?: boolean;
+}
+
+export const PROGRAMS_INTRO = {
+  chapter: "04 — Train",
+  // TODO: copy
+  headline: "Programs built for the next level",
+  // TODO: copy
+  lead: "Small groups, clear progressions and match play every week. Pick the track that fits where you are now.",
+} as const;
+
+export const PROGRAM_FILTERS: { value: ProgramAudience | "all"; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "juniors", label: "Juniors" },
+  { value: "adults", label: "Adults" },
+  { value: "competitive", label: "Competitive" },
+];
+
+// TODO: real programs, ages, schedules
+export const PROGRAMS: readonly Program[] = [
+  {
+    id: "junior-foundations",
+    name: "Junior Foundations",
+    level: "Beginner",
+    audience: "juniors",
+    summary: "Grip, footwork and rally confidence through games-based sessions.",
+    format: [
+      { label: "Ages", value: "7–12" },
+      { label: "Sessions", value: "2 / week" },
+      { label: "Group", value: "Max 8" },
+    ],
+    focus: ["Grips and basic strokes", "Six-corner footwork", "Serve and return", "Fun match play"],
+  },
+  {
+    id: "junior-development",
+    name: "Junior Development",
+    level: "Intermediate",
+    audience: "juniors",
+    summary: "Technique under pressure and a first taste of tournament play.",
+    format: [
+      { label: "Ages", value: "11–16" },
+      { label: "Sessions", value: "3 / week" },
+      { label: "Group", value: "Max 8" },
+    ],
+    focus: ["Overhead power", "Net play and deception", "Singles and doubles tactics", "Local tournaments"],
+  },
+  {
+    id: "adult-performance",
+    name: "Adult Performance",
+    level: "All levels",
+    audience: "adults",
+    summary: "Structured club training for adults who want to play faster and smarter.",
+    format: [
+      { label: "Ages", value: "17+" },
+      { label: "Sessions", value: "2 / week" },
+      { label: "Group", value: "Max 10" },
+    ],
+    focus: ["Stroke rebuilds", "Movement efficiency", "Doubles rotations", "Conditioned games"],
+  },
+  {
+    id: "elite-competition",
+    name: "Elite Competition",
+    level: "Advanced",
+    audience: "competitive",
+    summary: "High-intensity squad for ranked and aspiring tournament players.",
+    format: [
+      { label: "Entry", value: "By trial" },
+      { label: "Sessions", value: "5 / week" },
+      { label: "Group", value: "Max 6" },
+    ],
+    focus: ["Jump smash and attack chains", "Physical conditioning", "Video match analysis", "Tournament planning"],
+    featured: true,
+  },
+  {
+    id: "private-coaching",
+    name: "1:1 Private Coaching",
+    level: "Any level",
+    audience: "competitive",
+    summary: "Individual sessions targeting the one or two things holding your game back.",
+    format: [
+      { label: "Ages", value: "Any" },
+      { label: "Session", value: "60 min" },
+      { label: "Group", value: "1:1" },
+    ],
+    focus: ["Personal game audit", "Targeted technique blocks", "Match-plan preparation"],
+  },
+];
+
+export const TRIAL = {
+  // TODO: copy
+  headline: "Book a trial session",
+  text: "Not sure which program fits? Come for one session and we will place you on the right track.",
+  // TODO: real contact address
+  email: "coach@example.com",
+  cta: "Book a trial",
+} as const;
