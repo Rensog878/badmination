@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import MobileMenu from "@/components/nav/MobileMenu";
 import { useActiveSection, useHeaderState } from "@/components/nav/useHeaderState";
@@ -21,6 +22,10 @@ export default function SiteHeader() {
   const { solid, hidden } = useHeaderState(menuOpen);
   const active = useActiveSection(NAV_HREFS);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const pathname = usePathname();
+
+  // Staff areas (admin, umpire console) have their own compact headers.
+  if (pathname.startsWith("/admin") || pathname.startsWith("/umpire")) return null;
 
   return (
     <>

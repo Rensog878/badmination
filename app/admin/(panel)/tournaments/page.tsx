@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { importSamplesAction } from "@/app/admin/actions";
 import StatusBadge from "@/components/tournaments/StatusBadge";
 import { listTournaments } from "@/lib/data/tournaments";
@@ -15,7 +16,7 @@ export default async function AdminTournaments({ searchParams }: PageProps) {
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">Tournaments</h1>
-        <Link href="/admin/tournaments/new" className="rounded-lg bg-court-green px-5 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white">
+        <Link href="/admin/tournaments/new" className="inline-flex min-h-11 items-center rounded-lg bg-court-green px-5 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white">
           New tournament
         </Link>
       </div>
@@ -32,7 +33,32 @@ export default async function AdminTournaments({ searchParams }: PageProps) {
           </button>
         </form>
       ) : (
-        <div className="mt-8 overflow-x-auto">
+        <>
+        {/* Phones: one tappable card per tournament. */}
+        <ul className="mt-6 space-y-3 md:hidden">
+          {tournaments.map((t) => (
+            <li key={t.slug}>
+              <Link href={`/admin/tournaments/${t.slug}`} className="block rounded-2xl border border-off-white/10 bg-black/40 p-4 active:bg-off-white/5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">{t.name}</p>
+                    <p className="text-sm text-muted">
+                      {formatRange(t.startDate, t.endDate)} · {t.city}
+                    </p>
+                  </div>
+                  <ChevronRight aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-muted" />
+                </div>
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+                  <StatusBadge tournament={t} status={getStatus(t, now)} now={now} />
+                  <span className="text-muted tabular-nums">
+                    {t.registered}/{t.capacity} · {formatInr(t.entryFee)}
+                  </span>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 hidden overflow-x-auto md:block">
           <table className="w-full min-w-[44rem] text-left text-sm">
             <thead className="font-display text-xs tracking-[0.2em] text-muted uppercase">
               <tr className="border-b border-off-white/10">
@@ -61,6 +87,7 @@ export default async function AdminTournaments({ searchParams }: PageProps) {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );

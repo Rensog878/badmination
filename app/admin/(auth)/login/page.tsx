@@ -10,7 +10,7 @@ type PageProps = { searchParams: Promise<{ next?: string; denied?: string }> };
 export default async function LoginPage({ searchParams }: PageProps) {
   const { next, denied } = await searchParams;
   return (
-    <main id="main" className="flex min-h-svh items-center justify-center bg-charcoal px-4 pt-24 pb-16">
+    <main id="main" className="flex min-h-svh items-center justify-center bg-charcoal px-4 py-16">
       <div className="w-full max-w-sm">
         <p className="font-display text-xs tracking-[0.18em] text-court-green uppercase">Staff</p>
         <h1 className="mt-3 font-display text-4xl font-bold tracking-[-0.02em] uppercase">Sign in</h1>

@@ -30,16 +30,16 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
         <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">Registrations</h1>
         <a
           href={`/admin/registrations/export${query ? `?${query}` : ""}`}
-          className="rounded-lg border border-court-green px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black"
+          className="inline-flex min-h-11 items-center rounded-lg border border-court-green px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black"
         >
           Export CSV
         </a>
       </div>
 
-      <form className="mt-8 flex flex-wrap items-end gap-3">
+      <form className="mt-6 grid grid-cols-2 items-end gap-3 sm:flex sm:flex-wrap">
         <label className="text-sm">
           <span className="mb-1 block text-xs tracking-[0.18em] text-muted uppercase">Tournament</span>
-          <select name="tournament" defaultValue={sp.tournament ?? ""} className="border border-off-white/15 bg-charcoal px-3 py-2.5">
+          <select name="tournament" defaultValue={sp.tournament ?? ""} className="min-h-11 w-full rounded-lg border border-off-white/15 bg-charcoal px-3 py-2.5 sm:w-auto">
             <option value="">All</option>
             {tournaments.map((t) => (
               <option key={t.slug} value={t.slug}>
@@ -50,7 +50,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
         </label>
         <label className="text-sm">
           <span className="mb-1 block text-xs tracking-[0.18em] text-muted uppercase">Status</span>
-          <select name="status" defaultValue={status ?? ""} className="border border-off-white/15 bg-charcoal px-3 py-2.5">
+          <select name="status" defaultValue={status ?? ""} className="min-h-11 w-full rounded-lg border border-off-white/15 bg-charcoal px-3 py-2.5 sm:w-auto">
             <option value="">All</option>
             {STATUSES.map((s) => (
               <option key={s.value} value={s.value}>
@@ -59,7 +59,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
             ))}
           </select>
         </label>
-        <button type="submit" className="rounded-lg bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">
+        <button type="submit" className="min-h-11 rounded-lg bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">
           Filter
         </button>
         {(sp.tournament || status) && (
@@ -72,7 +72,42 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
       <p className="mt-6 text-sm text-muted">
         {rows.length} registration{rows.length === 1 ? "" : "s"}
       </p>
-      <div className="mt-3 overflow-x-auto">
+      {/* Phones: one card per registration. */}
+      <ul className="mt-3 space-y-3 md:hidden">
+        {rows.map((r) => (
+          <li key={r.reference} className="rounded-2xl border border-off-white/10 bg-black/40 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate font-semibold">{r.player.fullName}</p>
+                <p className="truncate text-sm text-muted">{r.tournamentName}</p>
+              </div>
+              <span
+                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                  r.status === "paid" ? "bg-court-green/15 text-court-green" : "bg-off-white/10 text-muted"
+                }`}
+              >
+                {r.status === "paid" ? "Paid" : "Awaiting payment"}
+              </span>
+            </div>
+            <p className="mt-2 text-sm">{r.events.join(", ")}</p>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm text-muted">
+              <span className="font-display font-semibold text-off-white">{formatInr(r.total)}</span>
+              <span>{r.reference}</span>
+              <span>{dateTime.format(r.createdAt)}</span>
+            </div>
+            <div className="mt-3 flex gap-2">
+              <a href={`tel:${r.player.phone}`} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-off-white/15 text-sm">
+                Call
+              </a>
+              <a href={`mailto:${r.player.email}`} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-off-white/15 text-sm">
+                Email
+              </a>
+            </div>
+          </li>
+        ))}
+        {rows.length === 0 && <li className="py-8 text-center text-muted">No registrations match.</li>}
+      </ul>
+      <div className="mt-3 hidden overflow-x-auto md:block">
         <table className="w-full min-w-[56rem] text-left text-sm">
           <thead className="font-display text-xs tracking-[0.2em] text-muted uppercase">
             <tr className="border-b border-off-white/10">

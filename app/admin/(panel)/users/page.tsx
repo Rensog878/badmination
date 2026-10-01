@@ -18,7 +18,7 @@ export default async function AdminUsers() {
             {u.id !== me?.id && (
               <form action={deleteUserAction}>
                 <input type="hidden" name="id" value={u.id} />
-                <button type="submit" aria-label={`Remove ${u.email}`} className="text-xs tracking-[0.18em] text-muted uppercase hover:text-off-white">
+                <button type="submit" aria-label={`Remove ${u.email}`} className="min-h-11 px-2 text-xs tracking-[0.18em] text-muted uppercase hover:text-off-white">
                   Remove
                 </button>
               </form>

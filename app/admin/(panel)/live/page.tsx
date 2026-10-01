@@ -26,15 +26,15 @@ export default async function AdminLive({ searchParams }: PageProps) {
     <div className="max-w-4xl">
       <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">Live matches</h1>
       <form className="mt-6 flex items-end gap-3">
-        <label className="text-sm">
+        <label className="flex-1 text-sm sm:flex-none">
           <span className="mb-1 block text-xs tracking-[0.18em] text-muted uppercase">Tournament</span>
-          <select name="t" defaultValue={selected.slug} className="border border-off-white/15 bg-charcoal px-3 py-2.5">
+          <select name="t" defaultValue={selected.slug} className="min-h-11 w-full rounded-lg border border-off-white/15 bg-charcoal px-3 py-2.5 sm:w-auto">
             {tournaments.map((t) => (
               <option key={t.slug} value={t.slug}>{t.name}</option>
             ))}
           </select>
         </label>
-        <button type="submit" className="rounded-lg bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">Show</button>
+        <button type="submit" className="min-h-11 rounded-lg bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">Show</button>
       </form>
 
       {snapshot.demo && (
@@ -57,7 +57,7 @@ export default async function AdminLive({ searchParams }: PageProps) {
               <form action={removeMatchAction}>
                 <input type="hidden" name="slug" value={selected.slug} />
                 <input type="hidden" name="id" value={m.id} />
-                <button type="submit" className="text-xs tracking-[0.18em] text-muted uppercase hover:text-off-white">Remove</button>
+                <button type="submit" className="min-h-11 px-2 text-xs tracking-[0.18em] text-muted uppercase hover:text-off-white">Remove</button>
               </form>
             )}
           </li>

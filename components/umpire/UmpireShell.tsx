@@ -13,7 +13,7 @@ export default async function UmpireShell({ slug, next, children }: { slug: stri
   if (!t) notFound();
   const signedIn = await isUmpire();
   return (
-    <main id="main" className="min-h-svh bg-charcoal pt-28 pb-24 lg:pt-36">
+    <main id="main" className="min-h-svh bg-charcoal pt-[calc(2rem+env(safe-area-inset-top))] pb-24 lg:pt-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
