@@ -26,13 +26,15 @@ export default function SiteHeader() {
 
   // Staff areas (admin, umpire console) have their own compact headers.
   if (pathname.startsWith("/admin") || pathname.startsWith("/umpire")) return null;
+  // Transparent only over the dark 3D hero; other pages are daylight pages with a matching light bar.
+  const backed = solid || pathname !== "/";
 
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] print:hidden transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
+        className={`${pathname === "/" ? "" : "theme-light"} fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] print:hidden transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
           hidden ? "-translate-y-full" : "translate-y-0"
-        } ${solid && !menuOpen ? "border-b border-off-white/10 bg-charcoal/95" : "border-b border-transparent"}`}
+        } ${backed && !menuOpen ? "border-b border-off-white/10 bg-charcoal/95" : "border-b border-transparent"}`}
       >
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-8 lg:h-20 lg:px-16">
           <Link href="/" className="font-display text-sm font-bold tracking-[0.15em] uppercase" onClick={closeMenu}>

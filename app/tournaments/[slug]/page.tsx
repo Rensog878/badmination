@@ -61,7 +61,7 @@ export default async function TournamentPage({ params }: PageProps) {
   ];
 
   return (
-    <main id="main" className="min-h-svh bg-charcoal pb-[calc(7rem+env(safe-area-inset-bottom))] lg:pb-0">
+    <main id="main" className="theme-light min-h-svh bg-charcoal pb-[calc(7rem+env(safe-area-inset-bottom))] lg:pb-0">
       <header className="relative overflow-hidden border-b border-off-white/10 pt-28 pb-14 lg:pt-36 lg:pb-20">
         <CourtLines
           aria-hidden="true"

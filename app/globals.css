@@ -79,6 +79,33 @@ textarea {
   touch-action: manipulation;
 }
 
+/*
+ * "Daylight" surface for content after the dark 3D intro (tournaments, registration, payment).
+ * Components use the semantic tokens (charcoal = page, black = card, off-white = text/lines,
+ * muted = secondary text, court-green = accent), so re-pointing them here re-themes the whole
+ * subtree without touching components. Contrast: ink on #F4F6F9 ≈ 17:1, muted ≈ 5.9:1, blue ≈ 6.7:1.
+ */
+.theme-light {
+  --color-charcoal: #f4f6f9; /* page */
+  --color-black: #ffffff; /* cards, and text on accent buttons */
+  --color-off-white: #0b1220; /* ink: text and hairlines */
+  --color-muted: #5b6474;
+  --color-court-green: #1d4ed8; /* electric blue accent */
+  color-scheme: light; /* native date pickers / selects in light mode */
+  background: var(--color-charcoal);
+  color: var(--color-off-white);
+}
+/* Soft elevation for cards on the light surface. */
+.theme-light .rounded-2xl {
+  box-shadow:
+    0 1px 2px rgb(11 18 32 / 0.06),
+    0 6px 16px rgb(11 18 32 / 0.05);
+}
+.theme-light ::selection {
+  background: color-mix(in srgb, #1d4ed8 25%, transparent);
+  color: #0b1220;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-court-green);
   outline-offset: 3px;

@@ -90,7 +90,7 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
   const paid = result.kind === "ok" && (result.order.status === "paid" || result.payment?.status === "captured");
 
   return (
-    <main id="main" className="min-h-svh bg-charcoal pt-28 pb-24 print:bg-white print:pt-0 print:text-black lg:pt-36">
+    <main id="main" className="theme-light min-h-svh bg-charcoal pt-28 pb-24 print:bg-white print:pt-0 print:text-black lg:pt-36">
       <div className="mx-auto max-w-3xl px-4 sm:px-8">
         {result.kind !== "ok" ? (
           <section className="border border-off-white/15 p-8">

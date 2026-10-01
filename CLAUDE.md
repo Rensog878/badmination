@@ -55,6 +55,13 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
                 athleteRig (faceless procedural athlete + smash poses), smashTimeline (all sequence marks/keys)
 ```
 
+## Theme: "Arena + Daylight"
+- Dark cinematic surface (default tokens) for the 3D hero + smash, live dashboard/scoreboard, admin and umpire.
+- Daylight surface = wrap content in `.theme-light` (globals.css). It re-points the semantic tokens
+  (charcoal→#F4F6F9 page, black→#FFF card / text on accent, off-white→#0B1220 ink, muted→#5B6474, court-green→#1D4ED8
+  electric blue), so components re-theme automatically. Used on the home content after the 3D stage, tournament
+  details, registration and confirmation, and the header on non-home pages. Don't hard-code hex colours in components.
+
 ## Design tokens
 - Colours (only these; use opacity for glow): `charcoal #0A0A0A` (page bg), `black #000`, `off-white #F3F4F6` (text), `muted #9CA3AF`, `court-green #10B981` (accent)
 - Fonts: Inter → `font-sans`, Space Grotesk → `font-display`

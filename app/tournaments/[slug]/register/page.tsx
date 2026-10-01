@@ -30,7 +30,7 @@ export default async function RegisterPage({ params }: PageProps) {
   const open = status === "open";
 
   return (
-    <main id="main" className="min-h-svh bg-charcoal pt-28 pb-24 lg:pt-36">
+    <main id="main" className="theme-light min-h-svh bg-charcoal pt-28 pb-24 lg:pt-36">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-16">
         <Link
           href={`/tournaments/${t.slug}`}

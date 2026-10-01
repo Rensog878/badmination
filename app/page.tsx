@@ -17,11 +17,14 @@ export default function Home() {
         <HeroSection />
         <SmashSection />
       </CinematicStage>
-      {/* Focus: tournaments + the 3D story. Other sections are switched off in lib/features.ts. */}
-      {FEATURES.coachProfile && <CoachSection />}
-      {FEATURES.programs && <ProgramsSection />}
-      <TournamentsSection now={Date.now()} />
-      {FEATURES.showcase && <ShowcaseSection />}
+      {/* Arena + Daylight: dark cinematic intro above, bright readable content below. */}
+      <div className="theme-light">
+        {/* Focus: tournaments + the 3D story. Other sections are switched off in lib/features.ts. */}
+        {FEATURES.coachProfile && <CoachSection />}
+        {FEATURES.programs && <ProgramsSection />}
+        <TournamentsSection now={Date.now()} />
+        {FEATURES.showcase && <ShowcaseSection />}
+      </div>
     </main>
   );
 }
