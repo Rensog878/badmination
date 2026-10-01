@@ -1,0 +1,42 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# One always-running Node web service (needed for live scores over SSE).
+# Secrets use `sync: false`: Render asks for them in the dashboard; they are never stored in git.
+services:
+  - type: web
+    name: badminton-arena
+    runtime: node
+    region: singapore # closest Render region to India
+    plan: free # sleeps after 15 min idle; ping /api/health to keep it awake, or upgrade to "starter"
+    buildCommand: npm ci && npm run build
+    startCommand: npm start # `next start` listens on $PORT, which Render provides
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: badminton
+      # Off in production: no simulated live feed or sample gallery/testimonials.
+      - key: LIVE_DEMO
+        value: "0"
+      - key: SHOW_PLACEHOLDERS
+        value: "0"
+      # Add when ready (leave empty until then; the site degrades gracefully):
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        sync: false
+      - key: R2_PUBLIC_URL
+        sync: false
