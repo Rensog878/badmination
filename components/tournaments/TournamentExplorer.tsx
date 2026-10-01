@@ -88,7 +88,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search name or city"
-              className="w-full border border-off-white/15 bg-transparent py-2.5 pr-3 pl-9 text-sm text-off-white placeholder:text-muted focus:border-court-green focus:outline-none"
+              className="min-h-11 w-full rounded-lg border border-off-white/15 bg-transparent py-2.5 pr-3 pl-9 text-sm text-off-white placeholder:text-muted focus:border-court-green focus:outline-none"
             />
           </label>
           <label className="block">
@@ -96,7 +96,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
             <select
               value={level}
               onChange={(e) => setLevel(e.target.value as TournamentLevel | "all")}
-              className="w-full border border-off-white/15 bg-charcoal px-3 py-2.5 text-sm text-off-white focus:border-court-green focus:outline-none sm:w-44"
+              className="min-h-11 w-full rounded-lg border border-off-white/15 bg-charcoal px-3 py-2.5 text-sm text-off-white focus:border-court-green focus:outline-none sm:w-44"
             >
               {LEVELS.map((l) => (
                 <option key={l} value={l}>
@@ -115,7 +115,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
             type="button"
             aria-pressed={age === a}
             onClick={() => setAge(a)}
-            className={`px-3.5 py-2 font-display text-[0.7rem] font-semibold tracking-[0.2em] uppercase transition-colors ${
+            className={`inline-flex min-h-11 items-center rounded-full px-3.5 py-2 font-display text-xs font-semibold tracking-[0.12em] uppercase transition-colors ${
               age === a ? "bg-off-white text-black" : "border border-off-white/15 text-muted hover:text-off-white"
             }`}
           >
@@ -124,7 +124,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
         ))}
       </div>
 
-      <p aria-live="polite" className="mt-8 font-display text-[0.65rem] tracking-[0.3em] text-muted uppercase">
+      <p aria-live="polite" className="mt-8 font-display text-xs tracking-[0.18em] text-muted uppercase">
         {`${results.length} tournament${results.length === 1 ? "" : "s"}`}
       </p>
 
@@ -143,7 +143,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
           <button
             type="button"
             onClick={reset}
-            className="mt-6 border border-court-green px-5 py-2.5 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase hover:bg-court-green hover:text-black"
+            className="rounded-lg mt-6 border border-court-green px-5 py-2.5 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase hover:bg-court-green hover:text-black"
           >
             Clear filters
           </button>

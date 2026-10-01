@@ -25,7 +25,7 @@ export default async function UmpireScoringPage({ params }: PageProps) {
     <UmpireShell slug={slug} next={`/umpire/${slug}/${matchId}`}>
       <Link
         href={`/umpire/${slug}`}
-        className="mb-8 inline-flex items-center gap-2 font-display text-xs tracking-[0.25em] text-muted uppercase hover:text-off-white"
+        className="mb-8 inline-flex items-center gap-2 font-display text-xs tracking-[0.15em] text-muted uppercase hover:text-off-white"
       >
         <ArrowLeft aria-hidden="true" className="size-4" />
         All matches

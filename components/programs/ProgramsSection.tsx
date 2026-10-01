@@ -9,7 +9,7 @@ export default function ProgramsSection() {
     <section id="programs" aria-labelledby="programs-heading" className="relative scroll-mt-20 border-t border-off-white/10 bg-charcoal">
       <div className="mx-auto max-w-[1600px] px-4 py-24 sm:px-8 md:py-32 lg:px-16 lg:py-40">
         <Reveal stagger className="max-w-3xl">
-          <p className="flex items-center gap-3 font-display text-xs font-medium tracking-[0.32em] text-court-green uppercase">
+          <p className="flex items-center gap-3 font-display text-xs font-medium tracking-[0.18em] text-court-green uppercase">
             <span aria-hidden="true" className="h-px w-8 bg-court-green" />
             {PROGRAMS_INTRO.chapter}
           </p>
@@ -29,7 +29,7 @@ export default function ProgramsSection() {
         <Reveal className="mt-20">
           <div
             id="book-trial"
-            className="relative flex scroll-mt-24 flex-col gap-8 overflow-hidden border border-court-green/40 bg-black p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between"
+            className="relative flex scroll-mt-24 flex-col gap-8 overflow-hidden rounded-2xl border border-court-green/40 bg-black p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between"
           >
             <div
               aria-hidden="true"
@@ -43,7 +43,7 @@ export default function ProgramsSection() {
             </div>
             <a
               href={`mailto:${TRIAL.email}?subject=${encodeURIComponent("Trial session")}`}
-              className="relative inline-flex items-center justify-center gap-3 self-start bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase transition-colors hover:bg-off-white lg:self-auto"
+              className="rounded-lg relative inline-flex items-center justify-center gap-3 self-start bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase transition-colors hover:bg-off-white lg:self-auto"
             >
               <Mail aria-hidden="true" className="size-4" />
               {TRIAL.cta}

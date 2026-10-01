@@ -12,7 +12,7 @@ export default async function AdminUsers() {
           <li key={u.id} className="flex items-center justify-between gap-4 py-4">
             <span>
               <span className="font-semibold">{u.name}</span>
-              <span className="ml-3 font-display text-[0.65rem] tracking-[0.2em] text-court-green uppercase">{u.role}</span>
+              <span className="ml-3 font-display text-xs tracking-[0.2em] text-court-green uppercase">{u.role}</span>
               <span className="block text-sm text-muted">{u.email}</span>
             </span>
             {u.id !== me?.id && (

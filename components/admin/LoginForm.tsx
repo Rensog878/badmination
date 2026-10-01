@@ -32,7 +32,7 @@ export default function LoginForm({ next }: { next: string }) {
         type="submit"
         disabled={pending}
         aria-busy={pending}
-        className="w-full bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white disabled:opacity-60"
+        className="rounded-lg w-full bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white disabled:opacity-60"
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>

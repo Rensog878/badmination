@@ -11,16 +11,16 @@ export default function ProgramCard({ program, index }: ProgramCardProps) {
   return (
     <article
       aria-labelledby={`${program.id}-title`}
-      className={`group relative flex h-full flex-col border bg-black/40 p-6 transition-colors duration-300 hover:border-court-green/60 sm:p-8 ${
+      className={`group relative flex h-full flex-col rounded-2xl border bg-black/40 p-6 transition-colors duration-300 hover:border-court-green/60 sm:p-8 ${
         featured ? "border-court-green/70" : "border-off-white/10"
       }`}
     >
       {featured && (
-        <span className="absolute -top-px right-6 bg-court-green px-3 py-1 font-display text-[0.6rem] font-semibold tracking-[0.25em] text-black uppercase">
+        <span className="absolute -top-3 right-6 rounded-full bg-court-green px-3 py-1 font-display text-xs font-semibold tracking-[0.15em] text-black uppercase">
           Flagship
         </span>
       )}
-      <div className="flex items-center justify-between font-display text-[0.65rem] tracking-[0.3em] uppercase">
+      <div className="flex items-center justify-between font-display text-xs tracking-[0.18em] uppercase">
         <span className="text-court-green">{String(index + 1).padStart(2, "0")}</span>
         <span className="text-muted">{program.level}</span>
       </div>
@@ -33,7 +33,7 @@ export default function ProgramCard({ program, index }: ProgramCardProps) {
       <dl className="mt-6 grid grid-cols-3 border-y border-off-white/10">
         {program.format.map((f) => (
           <div key={f.label} className="flex flex-col-reverse py-4 not-first:border-l not-first:border-off-white/10 not-first:pl-3">
-            <dt className="mt-1 text-[0.6rem] tracking-[0.2em] text-muted uppercase">{f.label}</dt>
+            <dt className="mt-1 text-xs tracking-[0.2em] text-muted uppercase">{f.label}</dt>
             <dd className="font-display text-sm font-semibold text-off-white sm:text-base">{f.value}</dd>
           </div>
         ))}

@@ -71,12 +71,12 @@ export default async function TournamentPage({ params }: PageProps) {
         <div className="relative mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-16">
           <Link
             href="/#tournaments"
-            className="inline-flex items-center gap-2 font-display text-xs tracking-[0.25em] text-muted uppercase transition-colors hover:text-off-white"
+            className="inline-flex items-center gap-2 font-display text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-off-white"
           >
             <ArrowLeft aria-hidden="true" className="size-4" />
             All tournaments
           </Link>
-          <p className="mt-10 font-display text-xs tracking-[0.32em] text-court-green uppercase">{t.level} · {t.city}</p>
+          <p className="mt-10 font-display text-xs tracking-[0.18em] text-court-green uppercase">{t.level} · {t.city}</p>
           <h1 className="mt-4 max-w-4xl font-display text-[clamp(2.75rem,8vw,7rem)] leading-[0.9] font-bold tracking-[-0.03em] uppercase">
             {t.name}
           </h1>
@@ -87,7 +87,7 @@ export default async function TournamentPage({ params }: PageProps) {
             {liveAvailable(t, now).available && (
               <Link
                 href={`/tournaments/${t.slug}/live`}
-                className="inline-flex items-center gap-2 border border-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase transition-colors hover:bg-court-green hover:text-black"
+                className="rounded-lg inline-flex items-center gap-2 border border-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase transition-colors hover:bg-court-green hover:text-black"
               >
                 <Radio aria-hidden="true" className="size-4" />
                 Watch live
@@ -100,14 +100,14 @@ export default async function TournamentPage({ params }: PageProps) {
       <div className="mx-auto grid max-w-[1600px] gap-12 px-4 py-14 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:px-16 lg:py-20">
         <div className="min-w-0 space-y-16 lg:col-span-8">
           <section aria-labelledby="about-heading">
-            <h2 id="about-heading" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">
+            <h2 id="about-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
               About
             </h2>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed">{describeTournament(t)}</p>
             <dl className="mt-8 grid grid-cols-2 border-t border-l border-off-white/10 sm:grid-cols-3">
               {facts.map((f) => (
                 <div key={f.label} className="flex flex-col-reverse border-r border-b border-off-white/10 p-5">
-                  <dt className="mt-1 text-[0.65rem] tracking-[0.2em] text-muted uppercase">{f.label}</dt>
+                  <dt className="mt-1 text-xs tracking-[0.2em] text-muted uppercase">{f.label}</dt>
                   <dd className="font-display font-semibold">{f.value}</dd>
                 </div>
               ))}
@@ -115,12 +115,12 @@ export default async function TournamentPage({ params }: PageProps) {
           </section>
 
           <section aria-labelledby="events-heading">
-            <h2 id="events-heading" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">
+            <h2 id="events-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
               Events
             </h2>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full min-w-[28rem] text-left text-sm">
-                <thead className="font-display text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+                <thead className="font-display text-xs tracking-[0.2em] text-muted uppercase">
                   <tr className="border-b border-off-white/10">
                     <th scope="col" className="py-3 pr-4 font-medium">Event</th>
                     <th scope="col" className="py-3 pr-4 font-medium">Age group</th>
@@ -143,7 +143,7 @@ export default async function TournamentPage({ params }: PageProps) {
           </section>
 
           <section aria-labelledby="schedule-heading">
-            <h2 id="schedule-heading" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">
+            <h2 id="schedule-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
               Provisional schedule
             </h2>
             <ol className="mt-4 border-l border-off-white/15">
@@ -161,7 +161,7 @@ export default async function TournamentPage({ params }: PageProps) {
           </section>
 
           <section aria-labelledby="venue-heading">
-            <h2 id="venue-heading" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">
+            <h2 id="venue-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
               Venue
             </h2>
             <p className="mt-4 font-display text-2xl font-bold uppercase">{t.venue}</p>
@@ -179,7 +179,7 @@ export default async function TournamentPage({ params }: PageProps) {
           </section>
 
           <section aria-labelledby="rules-heading">
-            <h2 id="rules-heading" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">
+            <h2 id="rules-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
               Rules
             </h2>
             <ul className="mt-4 space-y-3">
@@ -224,7 +224,7 @@ export default async function TournamentPage({ params }: PageProps) {
           </p>
           <Link
             href={registerHref(t)}
-            className="inline-flex items-center gap-2 bg-court-green px-5 py-3 font-display text-xs font-semibold tracking-[0.14em] text-black uppercase"
+            className="rounded-lg inline-flex items-center gap-2 bg-court-green px-5 py-3 font-display text-xs font-semibold tracking-[0.14em] text-black uppercase"
           >
             Register
             <ArrowRight aria-hidden="true" className="size-4" />

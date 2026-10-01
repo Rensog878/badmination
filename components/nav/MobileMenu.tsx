@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import { NAV_CTA, NAV_LINKS } from "@/lib/content";
+import { NAV_CTA, VISIBLE_NAV_LINKS } from "@/lib/content";
 
 interface MobileMenuProps {
   open: boolean;
@@ -65,14 +65,14 @@ export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
     >
       <nav aria-label="Mobile" className="flex-1">
         <ol className="flex flex-col gap-2">
-          {NAV_LINKS.map((link, i) => (
+          {VISIBLE_NAV_LINKS.map((link, i) => (
             <li key={link.href} className="border-b border-off-white/10">
               <a
                 href={link.href}
                 onClick={onClose}
                 className="flex items-baseline gap-5 py-5 font-display text-[clamp(2.25rem,11vw,4rem)] leading-none font-bold tracking-[-0.02em] uppercase transition-colors hover:text-court-green"
               >
-                <span className="font-sans text-xs font-medium tracking-[0.3em] text-court-green">
+                <span className="font-sans text-xs font-medium tracking-[0.18em] text-court-green">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 {link.label}
@@ -84,7 +84,7 @@ export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
       <a
         href={NAV_CTA.href}
         onClick={onClose}
-        className="inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase"
+        className="rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase"
       >
         {NAV_CTA.label}
         <ArrowRight aria-hidden="true" className="size-4" />

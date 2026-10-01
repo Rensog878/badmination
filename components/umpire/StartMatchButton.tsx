@@ -20,7 +20,7 @@ export default function StartMatchButton({ slug, matchId }: { slug: string; matc
             else setError(res.error);
           })
         }
-        className="border border-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black disabled:opacity-60"
+        className="rounded-lg border border-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black disabled:opacity-60"
       >
         {pending ? "Starting…" : "Start"}
       </button>

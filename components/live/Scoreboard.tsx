@@ -75,12 +75,12 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
         )}
 
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-off-white/10 pb-5">
-          <p className="font-display text-xs tracking-[0.3em] uppercase">
+          <p className="font-display text-xs tracking-[0.18em] uppercase">
             {match.court ? `Court ${match.court} · ` : ""}
             {match.event} · {match.round}
           </p>
           <div className="flex items-center gap-5">
-            <p className="font-display text-xs tracking-[0.25em] text-muted uppercase tabular-nums">
+            <p className="font-display text-xs tracking-[0.15em] text-muted uppercase tabular-nums">
               {statusLabel} · {elapsed(match.startedAt, finished ? match.finishedAt : now)}
             </p>
             <p className="flex items-center gap-2 font-display text-xs font-semibold tracking-[0.2em] uppercase">
@@ -143,7 +143,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             ))}
           </div>
           {pressure && !finished && (
-            <p className="bg-court-green px-3 py-1 font-display text-sm font-semibold tracking-[0.2em] text-black uppercase">
+            <p className="rounded-lg bg-court-green px-3 py-1 font-display text-sm font-semibold tracking-[0.2em] text-black uppercase">
               {pressure.kind === "match" ? "Match point" : "Game point"} · {sideName(match, pressure.side)}
             </p>
           )}

@@ -41,7 +41,7 @@ export default function UserForm() {
         <button
           type="submit"
           disabled={pending}
-          className="mt-3 bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white disabled:opacity-60"
+          className="rounded-lg mt-3 bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white disabled:opacity-60"
         >
           {pending ? "Creating…" : "Create account"}
         </button>

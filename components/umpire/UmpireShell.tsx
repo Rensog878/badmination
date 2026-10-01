@@ -17,7 +17,7 @@ export default async function UmpireShell({ slug, next, children }: { slug: stri
       <div className="mx-auto max-w-5xl px-4 sm:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="font-display text-xs tracking-[0.32em] text-court-green uppercase">Umpire console</p>
+            <p className="font-display text-xs tracking-[0.18em] text-court-green uppercase">Umpire console</p>
             <h1 className="mt-3 font-display text-4xl font-bold tracking-[-0.02em] uppercase sm:text-5xl">{t.name}</h1>
           </div>
           {signedIn && (
@@ -38,7 +38,7 @@ export default async function UmpireShell({ slug, next, children }: { slug: stri
             usesAccounts() ? (
               <Link
                 href={`/admin/login?next=${encodeURIComponent(next)}`}
-                className="inline-block bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white"
+                className="rounded-lg inline-block bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white"
               >
                 Sign in to score
               </Link>

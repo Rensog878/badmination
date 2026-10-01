@@ -30,7 +30,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
         <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">Registrations</h1>
         <a
           href={`/admin/registrations/export${query ? `?${query}` : ""}`}
-          className="border border-court-green px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black"
+          className="rounded-lg border border-court-green px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black"
         >
           Export CSV
         </a>
@@ -59,7 +59,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
             ))}
           </select>
         </label>
-        <button type="submit" className="bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">
+        <button type="submit" className="rounded-lg bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">
           Filter
         </button>
         {(sp.tournament || status) && (
@@ -74,7 +74,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
       </p>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full min-w-[56rem] text-left text-sm">
-          <thead className="font-display text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+          <thead className="font-display text-xs tracking-[0.2em] text-muted uppercase">
             <tr className="border-b border-off-white/10">
               <th scope="col" className="py-3 pr-4 font-medium">Reference</th>
               <th scope="col" className="py-3 pr-4 font-medium">Player</th>

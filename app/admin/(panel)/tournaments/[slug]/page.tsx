@@ -23,7 +23,7 @@ export default async function EditTournamentPage({ params }: PageProps) {
       <form action={deleteTournamentAction} className="mt-16 border-t border-off-white/10 pt-6">
         <input type="hidden" name="slug" value={t.slug} />
         <p className="text-sm text-muted">Deleting removes the public pages. Registrations stay in the database.</p>
-        <button type="submit" className="mt-3 border border-off-white/30 px-4 py-2 font-display text-xs font-semibold tracking-[0.18em] uppercase hover:border-off-white">
+        <button type="submit" className="rounded-lg mt-3 border border-off-white/30 px-4 py-2 font-display text-xs font-semibold tracking-[0.18em] uppercase hover:border-off-white">
           Delete tournament
         </button>
       </form>

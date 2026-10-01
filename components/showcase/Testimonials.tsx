@@ -52,11 +52,11 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
       >
         {items.map((t) => (
           <li key={t.quote} className="w-[85%] shrink-0 snap-start sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.7rem)]">
-            <figure className="flex h-full flex-col border border-off-white/10 bg-black/40 p-7">
+            <figure className="flex h-full flex-col rounded-2xl border border-off-white/10 bg-black/40 p-7">
               <div className="flex items-start justify-between gap-4">
                 <Quote aria-hidden="true" className="size-8 text-court-green" />
                 {t.placeholder && (
-                  <span className="border border-off-white/20 px-2 py-1 font-display text-[0.6rem] tracking-[0.2em] text-muted uppercase">
+                  <span className="rounded-full border border-off-white/20 px-2.5 py-1 font-display text-xs tracking-[0.2em] text-muted uppercase">
                     Sample
                   </span>
                 )}

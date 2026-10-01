@@ -27,7 +27,7 @@ export default function TestimonialForm() {
       </label>
       {e("consent") && <FieldError id="consent-error" message={e("consent") ?? ""} />}
       {state.ok && <p role="status" className="text-sm text-court-green">{state.ok}</p>}
-      <button type="submit" disabled={pending} className="bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white disabled:opacity-60">
+      <button type="submit" disabled={pending} className="rounded-lg bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white disabled:opacity-60">
         {pending ? "Saving…" : "Publish testimonial"}
       </button>
     </form>

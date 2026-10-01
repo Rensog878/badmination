@@ -10,8 +10,8 @@ export const sideName = (m: LiveMatch, side: Side) => m.sides[side].join(" / ");
 export default function CourtCard({ court, match, href }: { court: number; match: LiveMatch | undefined; href?: string }) {
   if (!match) {
     return (
-      <article aria-label={`Court ${court}, idle`} className="flex min-h-56 flex-col border border-dashed border-off-white/15 p-5">
-        <p className="font-display text-xs tracking-[0.3em] text-muted uppercase">Court {court}</p>
+      <article aria-label={`Court ${court}, idle`} className="flex min-h-56 flex-col rounded-2xl border border-dashed border-off-white/15 p-5">
+        <p className="font-display text-xs tracking-[0.18em] text-muted uppercase">Court {court}</p>
         <p className="m-auto text-sm text-muted">Between matches</p>
       </article>
     );
@@ -25,7 +25,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
   return (
     <article
       aria-label={`Court ${court}: ${sideName(match, "a")} versus ${sideName(match, "b")}, game ${gameNumber}, ${current.a}–${current.b}`}
-      className="group relative flex flex-col border border-off-white/10 bg-black/60 p-5 transition-colors hover:border-court-green/50"
+      className="group relative flex flex-col rounded-2xl border border-off-white/10 bg-black/60 p-5 transition-colors hover:border-court-green/50"
     >
       {href && (
         <Link href={href} className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-court-green">
@@ -33,11 +33,11 @@ export default function CourtCard({ court, match, href }: { court: number; match
         </Link>
       )}
       <header className="flex items-center justify-between gap-3">
-        <p className="flex shrink-0 items-center gap-2 font-display text-xs tracking-[0.3em] whitespace-nowrap uppercase">
+        <p className="flex shrink-0 items-center gap-2 font-display text-xs tracking-[0.18em] whitespace-nowrap uppercase">
           <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-court-green motion-reduce:animate-none" />
           Court {court}
         </p>
-        <p className="min-w-0 truncate text-[0.7rem] tracking-[0.08em] text-muted uppercase">
+        <p className="min-w-0 truncate text-xs tracking-[0.08em] text-muted uppercase">
           {match.event} · {match.round}
         </p>
       </header>
@@ -72,12 +72,12 @@ export default function CourtCard({ court, match, href }: { court: number; match
         })}
       </div>
 
-      <footer className="mt-auto flex items-center justify-between pt-5 text-[0.7rem] tracking-[0.18em] uppercase">
+      <footer className="mt-auto flex items-center justify-between pt-5 text-xs tracking-[0.18em] uppercase">
         <span className="text-muted">
           Game {gameNumber} · Games {gamesWon(match.games, "a")}–{gamesWon(match.games, "b")}
         </span>
         {pressure && (
-          <span className="bg-court-green px-2 py-0.5 font-display font-semibold text-black">
+          <span className="rounded-lg bg-court-green px-2 py-0.5 font-display font-semibold text-black">
             {pressure.kind === "match" ? "Match point" : "Game point"}
           </span>
         )}

@@ -112,7 +112,7 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
               ) : (
                 <Clock aria-hidden="true" className="mx-auto size-14 text-muted" />
               )}
-              <p className="mt-6 font-display text-xs tracking-[0.32em] text-court-green uppercase print:text-black">
+              <p className="mt-6 font-display text-xs tracking-[0.18em] text-court-green uppercase print:text-black">
                 {paid ? "You're in the draw" : "Payment processing"}
               </p>
               <h1
@@ -128,10 +128,10 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
               </p>
             </header>
 
-            <section aria-label="Receipt" className="mt-12 border border-off-white/15 bg-black print:border-black print:bg-white">
+            <section aria-label="Receipt" className="mt-12 overflow-hidden rounded-2xl border border-off-white/15 bg-black print:border-black print:bg-white">
               <div className="flex items-center justify-between border-b border-off-white/10 px-6 py-5 print:border-black">
                 <div>
-                  <p className="font-display text-[0.65rem] tracking-[0.25em] text-muted uppercase print:text-black">Reference</p>
+                  <p className="font-display text-xs tracking-[0.15em] text-muted uppercase print:text-black">Reference</p>
                   <p className="font-display text-2xl font-bold">{result.order.notes.reference ?? result.order.receipt}</p>
                 </div>
                 <p className={`font-display text-xs font-semibold tracking-[0.2em] uppercase ${paid ? "text-court-green print:text-black" : "text-muted"}`}>
@@ -165,12 +165,12 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
             <div className="mt-8 flex flex-col gap-3 sm:flex-row print:hidden">
               <a
                 href={`/tournaments/${t.slug}/calendar`}
-                className="inline-flex items-center justify-center gap-2 bg-court-green px-6 py-3.5 font-display text-xs font-semibold tracking-[0.16em] text-black uppercase hover:bg-off-white"
+                className="rounded-lg inline-flex items-center justify-center gap-2 bg-court-green px-6 py-3.5 font-display text-xs font-semibold tracking-[0.16em] text-black uppercase hover:bg-off-white"
               >
                 <CalendarPlus aria-hidden="true" className="size-4" />
                 Add to calendar
               </a>
-              <PrintButton className="inline-flex items-center justify-center gap-2 border border-off-white/20 px-6 py-3.5 font-display text-xs font-semibold tracking-[0.16em] uppercase hover:border-court-green hover:text-court-green" />
+              <PrintButton className="rounded-lg inline-flex items-center justify-center gap-2 border border-off-white/20 px-6 py-3.5 font-display text-xs font-semibold tracking-[0.16em] uppercase hover:border-court-green hover:text-court-green" />
               <a
                 href={mapsUrl(t)}
                 target="_blank"
@@ -183,7 +183,7 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
 
             {paid && (
               <section aria-labelledby="next-heading" className="mt-14">
-                <h2 id="next-heading" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase print:text-black">
+                <h2 id="next-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase print:text-black">
                   What happens next
                 </h2>
                 <ol className="mt-4 space-y-4">

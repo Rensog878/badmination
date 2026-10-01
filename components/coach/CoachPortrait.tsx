@@ -6,7 +6,7 @@ import { COACH_NAME } from "@/lib/content";
 /** Portrait frame. Until a real photo is supplied, shows a designed placeholder (never a stock face). */
 export default function CoachPortrait() {
   return (
-    <figure className="relative aspect-[4/5] w-full overflow-hidden border border-off-white/10 bg-black">
+    <figure className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-off-white/10 bg-black">
       {COACH_PORTRAIT_URL ? (
         <Image
           src={COACH_PORTRAIT_URL}
@@ -23,7 +23,7 @@ export default function CoachPortrait() {
       <span aria-hidden="true" className="absolute right-3 bottom-3 size-4 border-r border-b border-court-green" />
       <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-linear-to-t from-black/90 to-transparent px-5 pt-16 pb-5">
         <span className="font-display text-lg font-bold tracking-[0.02em] uppercase">{COACH_NAME}</span>
-        <span className="font-display text-[0.65rem] tracking-[0.3em] text-court-green uppercase">Head coach</span>
+        <span className="font-display text-xs tracking-[0.18em] text-court-green uppercase">Head coach</span>
       </figcaption>
     </figure>
   );
@@ -44,7 +44,7 @@ function PortraitPlaceholder() {
         <path d="M66 78C66 55 81 38 100 38C119 38 134 55 134 78" stroke="#10B981" strokeOpacity="0.5" strokeWidth="1.2" />
         <path d="M30 250C33 192 62 158 100 158" stroke="#10B981" strokeOpacity="0.35" strokeWidth="1.2" />
       </svg>
-      <p className="absolute top-6 left-0 w-full text-center font-display text-[0.65rem] tracking-[0.35em] text-muted uppercase">
+      <p className="absolute top-6 left-0 w-full text-center font-display text-xs tracking-[0.18em] text-muted uppercase">
         Portrait coming soon
       </p>
     </div>

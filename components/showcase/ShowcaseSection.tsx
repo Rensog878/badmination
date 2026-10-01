@@ -13,7 +13,7 @@ export default async function ShowcaseSection() {
     <section id="gallery" aria-labelledby="gallery-heading" className="relative scroll-mt-20 border-t border-off-white/10 bg-charcoal">
       <div className="mx-auto max-w-[1600px] px-4 py-24 sm:px-8 md:py-32 lg:px-16 lg:py-40">
         <Reveal stagger className="max-w-3xl">
-          <p className="flex items-center gap-3 font-display text-xs font-medium tracking-[0.32em] text-court-green uppercase">
+          <p className="flex items-center gap-3 font-display text-xs font-medium tracking-[0.18em] text-court-green uppercase">
             <span aria-hidden="true" className="h-px w-8 bg-court-green" />
             {SHOWCASE_INTRO.chapter}
           </p>

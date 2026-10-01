@@ -30,7 +30,7 @@ export default function MatchForm({ slug, events }: { slug: string; events: stri
       <div className="sm:col-span-2">
         {state.error && <FieldError message={state.error} />}
         {state.ok && <p role="status" className="text-sm text-court-green">{state.ok}</p>}
-        <button type="submit" disabled={pending} className="mt-3 bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white disabled:opacity-60">
+        <button type="submit" disabled={pending} className="rounded-lg mt-3 bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white disabled:opacity-60">
           {pending ? "Adding…" : "Add match"}
         </button>
       </div>

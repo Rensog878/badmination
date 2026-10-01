@@ -22,7 +22,7 @@ export default function ProgramExplorer() {
               type="button"
               aria-pressed={pressed}
               onClick={() => setFilter(f.value)}
-              className={`px-4 py-2.5 font-display text-xs font-semibold tracking-[0.2em] uppercase transition-colors ${
+              className={`inline-flex min-h-11 items-center rounded-full px-4 py-2.5 font-display text-xs font-semibold tracking-[0.12em] uppercase transition-colors ${
                 pressed
                   ? "bg-off-white text-black"
                   : "border border-off-white/15 text-muted hover:border-off-white/40 hover:text-off-white"

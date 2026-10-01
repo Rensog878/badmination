@@ -48,7 +48,7 @@ export default function MediaUploader() {
   return (
     <form ref={form} onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
       <FormField id="file" label="Image (JPEG, PNG, WebP, AVIF · max 8 MB)" className="sm:col-span-2">
-        <input id="file" name="file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" required className="block w-full text-sm file:mr-4 file:border-0 file:bg-off-white file:px-4 file:py-2 file:font-display file:text-xs file:font-semibold file:tracking-[0.15em] file:text-black file:uppercase" />
+        <input id="file" name="file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" required className="rounded-lg block w-full text-sm file:mr-4 file:border-0 file:bg-off-white file:px-4 file:py-2 file:font-display file:text-xs file:font-semibold file:tracking-[0.15em] file:text-black file:uppercase" />
       </FormField>
       <FormField id="alt" label="Alt text" hint="Describe what's in the photo for screen-reader users." className="sm:col-span-2">
         <input id="alt" name="alt" required minLength={5} maxLength={200} className={inputClass} aria-describedby="alt-hint" />
@@ -66,7 +66,7 @@ export default function MediaUploader() {
       <div className="sm:col-span-2" aria-live="polite">
         {status.kind === "error" && status.message && <FieldError message={status.message} />}
         {(status.kind === "busy" || status.kind === "done") && <p className="text-sm text-court-green">{status.message}</p>}
-        <button type="submit" disabled={status.kind === "busy"} className="mt-3 bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white disabled:opacity-60">
+        <button type="submit" disabled={status.kind === "busy"} className="rounded-lg mt-3 bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white disabled:opacity-60">
           Upload photo
         </button>
       </div>

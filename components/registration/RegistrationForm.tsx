@@ -57,6 +57,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
     watch,
     setError,
     getValues,
+    reset,
     formState: { errors },
   } = useForm<RegistrationValues>({
     resolver: zodResolver(schema),
@@ -71,6 +72,25 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
   const formRef = useRef<HTMLFormElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
+  const draftKey = `registration-draft:${t.slug}`;
+
+  // Draft autosave: a refresh or accidental back-swipe on a phone shouldn't lose the form.
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(draftKey);
+      if (saved) reset({ ...emptyRegistration, ...(JSON.parse(saved) as Partial<RegistrationValues>) });
+    } catch {
+      // Storage unavailable (private mode) or a stale draft: start fresh.
+    }
+    const sub = watch((values) => {
+      try {
+        sessionStorage.setItem(draftKey, JSON.stringify(values));
+      } catch {
+        // ignore quota / privacy errors
+      }
+    });
+    return () => sub.unsubscribe();
+  }, [draftKey, reset, watch]);
 
   const dob = watch("player.dateOfBirth");
   const selected = watch("events");
@@ -108,6 +128,11 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
         const res = await submitRegistration(t.slug, values);
         if (res.ok) {
           setResult(res);
+          try {
+            sessionStorage.removeItem(draftKey);
+          } catch {
+            // ignore
+          }
           return;
         }
         setFormError(res.formError ?? "Something went wrong. Please try again.");
@@ -135,7 +160,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
 
   if (result) {
     return (
-      <section aria-labelledby="done-heading" className="border border-court-green/50 bg-black p-8 sm:p-12">
+      <section aria-labelledby="done-heading" className="rounded-2xl border border-court-green/50 bg-black p-8 sm:p-12">
         <CircleCheck aria-hidden="true" className="size-10 text-court-green" />
         <h2 id="done-heading" ref={headingRef} tabIndex={-1} className="mt-6 font-display text-3xl font-bold uppercase focus:outline-none sm:text-4xl">
           Entry details confirmed
@@ -150,7 +175,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
             { label: "Total due", value: formatInr(result.total) },
           ].map((f) => (
             <div key={f.label} className="flex flex-col-reverse bg-black p-5">
-              <dt className="mt-1 text-[0.65rem] tracking-[0.2em] text-muted uppercase">{f.label}</dt>
+              <dt className="mt-1 text-xs tracking-[0.2em] text-muted uppercase">{f.label}</dt>
               <dd className="font-display text-xl font-semibold">{f.value}</dd>
             </div>
           ))}
@@ -176,7 +201,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
                 onClick={retryPayment}
                 disabled={pending}
                 aria-busy={pending}
-                className="mt-4 border border-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black disabled:opacity-60"
+                className="rounded-lg mt-4 border border-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black disabled:opacity-60"
               >
                 {pending ? "Retrying…" : "Try payment again"}
               </button>
@@ -198,12 +223,24 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
       <ol className="mb-10 grid grid-cols-4 gap-2" aria-label="Registration steps">
         {STEPS.map((s, i) => (
           <li key={s.title} aria-current={i === step ? "step" : undefined}>
-            <span className={`block h-0.5 ${i <= step ? "bg-court-green" : "bg-off-white/15"}`} />
-            <span className={`mt-3 flex items-center gap-1.5 font-display text-[0.65rem] tracking-[0.2em] uppercase ${i === step ? "text-off-white" : "text-muted"}`}>
-              {i < step && <Check aria-hidden="true" className="size-3 text-court-green" />}
-              <span className="sr-only">Step {i + 1} of {STEPS.length}: </span>
-              {s.title}
-            </span>
+            <span className={`block h-1 rounded-full ${i <= step ? "bg-court-green" : "bg-off-white/15"}`} />
+            {i < step ? (
+              // Completed steps are tappable, so people can go back and fix something directly.
+              <button
+                type="button"
+                onClick={() => setStep(i)}
+                className="mt-2 flex min-h-11 items-center gap-1.5 font-display text-xs tracking-[0.12em] text-muted uppercase underline-offset-4 hover:text-off-white hover:underline"
+              >
+                <Check aria-hidden="true" className="size-3.5 text-court-green" />
+                <span className="sr-only">Step {i + 1} of {STEPS.length}, completed, go back to: </span>
+                {s.title}
+              </button>
+            ) : (
+              <span className={`mt-2 flex min-h-11 items-center gap-1.5 font-display text-xs tracking-[0.12em] uppercase ${i === step ? "text-off-white" : "text-muted"}`}>
+                <span className="sr-only">Step {i + 1} of {STEPS.length}: </span>
+                {s.title}
+              </span>
+            )}
           </li>
         ))}
       </ol>
@@ -265,7 +302,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
                 const checked = selected.includes(key);
                 const partnerError = err(`partners.${key}`);
                 return (
-                  <li key={key} className={`border p-5 transition-colors ${checked ? "border-court-green/60 bg-court-green/5" : "border-off-white/15"} ${eligible ? "" : "opacity-50"}`}>
+                  <li key={key} className={`rounded-xl border p-5 transition-colors ${checked ? "border-court-green/60 bg-court-green/5" : "border-off-white/15"} ${eligible ? "" : "opacity-50"}`}>
                     <label className="flex cursor-pointer items-center gap-4">
                       <input type="checkbox" value={key} disabled={!eligible && !checked} className="size-5 accent-court-green" {...register("events")} />
                       <span className="flex-1">
@@ -367,12 +404,12 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
           <span />
         )}
         {step < STEPS.length - 1 ? (
-          <button type="button" onClick={next} className="inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white">
+          <button type="button" onClick={next} className="rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white">
             Continue
             <ArrowRight aria-hidden="true" className="size-4" />
           </button>
         ) : (
-          <button type="submit" disabled={pending} aria-busy={pending} className="inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white disabled:opacity-60">
+          <button type="submit" disabled={pending} aria-busy={pending} className="rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white disabled:opacity-60">
             {pending ? "Checking…" : `Confirm entry · ${formatInr(total)}`}
           </button>
         )}

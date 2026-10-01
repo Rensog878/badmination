@@ -34,7 +34,7 @@ export default async function AdminLive({ searchParams }: PageProps) {
             ))}
           </select>
         </label>
-        <button type="submit" className="bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">Show</button>
+        <button type="submit" className="rounded-lg bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">Show</button>
       </form>
 
       {snapshot.demo && (

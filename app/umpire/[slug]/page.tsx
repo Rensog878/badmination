@@ -26,7 +26,7 @@ export default async function UmpireMatchesPage({ params }: PageProps) {
     <UmpireShell slug={slug} next={`/umpire/${slug}`}>
       {snapshot?.demo && <p className="mb-6 text-sm text-muted">Demo feed: scoring a match takes it over from the simulator.</p>}
       <section aria-labelledby="in-play">
-        <h2 id="in-play" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">In play</h2>
+        <h2 id="in-play" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">In play</h2>
         <ul className="mt-4 divide-y divide-off-white/10 border-y border-off-white/10">
           {live.map((m) => (
             <li key={m.id} className="flex items-center justify-between gap-4 py-4">
@@ -42,7 +42,7 @@ export default async function UmpireMatchesPage({ params }: PageProps) {
               </span>
               <Link
                 href={`/umpire/${slug}/${m.id}`}
-                className="bg-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white"
+                className="rounded-lg bg-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white"
               >
                 Score
               </Link>
@@ -52,7 +52,7 @@ export default async function UmpireMatchesPage({ params }: PageProps) {
         </ul>
       </section>
       <section aria-labelledby="queue" className="mt-12">
-        <h2 id="queue" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">Queue</h2>
+        <h2 id="queue" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">Queue</h2>
         <ul className="mt-4 divide-y divide-off-white/10 border-y border-off-white/10">
           {scheduled.map((m) => (
             <li key={m.id} className="flex items-center justify-between gap-4 py-4">

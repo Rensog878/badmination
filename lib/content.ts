@@ -1,3 +1,5 @@
+import { FEATURES } from "@/lib/features";
+
 // All hero/site copy in one place so it can be swapped without touching components.
 
 // TODO: copy — replace with the coach's real name
@@ -13,13 +15,14 @@ export const SITE = {
 
 export const HERO = {
   // TODO: copy
-  eyebrow: "Professional Badminton Coaching",
+  eyebrow: "Badminton Tournaments",
   // TODO: copy
   headline: "Enter the Arena",
   // TODO: copy
   subline:
-    "Precision footwork, explosive power and match discipline — built one rally at a time.",
+    "Find your draw, enter in minutes, and follow every rally live.",
   primaryCta: { label: "View Tournaments", href: "#tournaments" }, // TODO: copy
+  // Hidden while FEATURES.programs is off.
   secondaryCta: { label: "Train With Me", href: "#programs" }, // TODO: copy
 } as const;
 
@@ -35,16 +38,21 @@ export const SMASH = {
 
 export interface NavLink {
   label: string;
+  /** Hidden unless this feature is on (lib/features.ts). */
+  feature?: "coachProfile" | "programs" | "showcase";
   /** Root-relative so links work from sub-pages (e.g. /tournaments/[slug]). */
   href: `/#${string}`;
 }
 
 // Anchors point at sections built in later phases (placeholders exist in app/page.tsx).
 export const NAV_LINKS: readonly NavLink[] = [
-  { label: "Coach", href: "/#coach" },
-  { label: "Programs", href: "/#programs" },
+  { label: "Coach", href: "/#coach", feature: "coachProfile" },
+  { label: "Programs", href: "/#programs", feature: "programs" },
   { label: "Tournaments", href: "/#tournaments" },
 ] as const;
+
+/** Navigation after applying feature flags. */
+export const VISIBLE_NAV_LINKS = NAV_LINKS.filter((l) => !l.feature || FEATURES[l.feature]);
 
 export const NAV_CTA: NavLink = { label: "Register", href: "/#tournaments" }; // TODO: copy
 
@@ -191,7 +199,7 @@ export const TRIAL = {
 } as const;
 
 export const TOURNAMENTS_INTRO = {
-  chapter: "05 — Compete",
+  chapter: "03 — Compete",
   // TODO: copy
   headline: "Find your next draw",
   // TODO: copy

@@ -34,7 +34,7 @@ export default async function RegisterPage({ params }: PageProps) {
       <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-16">
         <Link
           href={`/tournaments/${t.slug}`}
-          className="inline-flex items-center gap-2 font-display text-xs tracking-[0.25em] text-muted uppercase transition-colors hover:text-off-white"
+          className="inline-flex items-center gap-2 font-display text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-off-white"
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
           {t.name}
@@ -60,7 +60,7 @@ export default async function RegisterPage({ params }: PageProps) {
 
           <aside aria-label="Tournament summary" className="lg:col-span-4">
             <div className="border border-off-white/10 bg-black p-6 sm:p-8 lg:sticky lg:top-28">
-              <p className="font-display text-xs tracking-[0.3em] text-court-green uppercase">{t.level} · {t.city}</p>
+              <p className="font-display text-xs tracking-[0.18em] text-court-green uppercase">{t.level} · {t.city}</p>
               <p className="mt-3 font-display text-2xl font-bold uppercase">{t.name}</p>
               <dl className="mt-6 space-y-3 border-t border-off-white/10 pt-6 text-sm">
                 <div className="flex justify-between gap-4">

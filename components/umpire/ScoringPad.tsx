@@ -59,7 +59,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
 
   return (
     <div>
-      <p className="font-display text-xs tracking-[0.3em] text-muted uppercase">
+      <p className="font-display text-xs tracking-[0.18em] text-muted uppercase">
         {match.court ? `Court ${match.court} · ` : ""}
         {match.event} · {match.round} · Game {match.games.length || 1} · Games {gamesWon(match.games, "a")}–{gamesWon(match.games, "b")}
       </p>
@@ -72,7 +72,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
             onClick={() => act(side)}
             disabled={finished || pending || match.status !== "live"}
             aria-label={`Point to ${sideName(match, side)}. Current score ${current[side]}.`}
-            className="flex min-h-64 flex-col items-center justify-between gap-4 border border-off-white/15 bg-black/60 p-5 text-center transition-colors enabled:hover:border-court-green enabled:active:bg-court-green/15 disabled:opacity-60"
+            className="flex min-h-64 flex-col items-center justify-between gap-4 rounded-2xl border border-off-white/15 bg-black/60 p-5 text-center transition-colors enabled:hover:border-court-green enabled:active:bg-court-green/15 disabled:opacity-60"
           >
             <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-[0.06em] uppercase sm:text-base">
               <span aria-hidden="true" className={`size-2.5 rounded-full ${match.server === side && !finished ? "bg-court-green" : "bg-transparent"}`} />
@@ -85,7 +85,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
                   {g[side]}
                 </span>
               ))}
-              <kbd className="ml-2 border border-off-white/20 px-1.5 text-[0.7rem]">{side === "a" ? "A" : "B"}</kbd>
+              <kbd className="ml-2 border border-off-white/20 px-1.5 text-xs">{side === "a" ? "A" : "B"}</kbd>
             </span>
           </button>
         ))}
@@ -96,7 +96,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           type="button"
           onClick={() => act("undo")}
           disabled={pending || match.history.length === 0}
-          className="inline-flex items-center gap-2 border border-off-white/20 px-5 py-3 font-display text-xs font-semibold tracking-[0.18em] uppercase hover:border-off-white disabled:opacity-50"
+          className="rounded-lg inline-flex items-center gap-2 border border-off-white/20 px-5 py-3 font-display text-xs font-semibold tracking-[0.18em] uppercase hover:border-off-white disabled:opacity-50"
         >
           <Undo2 aria-hidden="true" className="size-4" />
           Undo last rally <kbd className="text-muted">U</kbd>

@@ -12,7 +12,7 @@ const isSvg = (src: string) => src.endsWith(".svg") || /^https?:\/\//.test(src);
 
 function PlaceholderBadge() {
   return (
-    <span className="absolute top-3 left-3 bg-black/80 px-2 py-1 font-display text-[0.6rem] tracking-[0.2em] text-muted uppercase">
+    <span className="absolute top-3 left-3 bg-black/80 px-2 py-1 font-display text-xs tracking-[0.2em] text-muted uppercase">
       Placeholder
     </span>
   );
@@ -70,7 +70,7 @@ export default function Gallery({ images }: { images: GalleryImage[] }) {
               type="button"
               aria-pressed={filter === c}
               onClick={() => setFilter(c)}
-              className={`px-4 py-2.5 font-display text-xs font-semibold tracking-[0.2em] uppercase transition-colors ${
+              className={`inline-flex min-h-11 items-center rounded-full px-4 py-2.5 font-display text-xs font-semibold tracking-[0.12em] uppercase transition-colors ${
                 filter === c ? "bg-off-white text-black" : "border border-off-white/15 text-muted hover:text-off-white"
               }`}
             >
@@ -89,7 +89,7 @@ export default function Gallery({ images }: { images: GalleryImage[] }) {
                 opener.current = e.currentTarget;
                 setOpen(i);
               }}
-              className="group relative block w-full overflow-hidden border border-off-white/10 text-left"
+              className="group relative block w-full overflow-hidden rounded-2xl border border-off-white/10 text-left"
               aria-label={`Open photo: ${img.caption ?? img.alt}`}
             >
               <Image

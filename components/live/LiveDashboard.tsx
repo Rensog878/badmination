@@ -61,7 +61,7 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
         <dl className="flex gap-10">
           {stats.map((s) => (
             <div key={s.label} className="flex flex-col-reverse">
-              <dt className="mt-1 text-[0.65rem] tracking-[0.25em] text-muted uppercase">{s.label}</dt>
+              <dt className="mt-1 text-xs tracking-[0.15em] text-muted uppercase">{s.label}</dt>
               <dd className="font-display text-4xl font-bold tabular-nums">{s.value}</dd>
             </div>
           ))}
@@ -91,7 +91,7 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
 
       <div className="mt-14 grid gap-12 lg:grid-cols-2">
         <section aria-labelledby="next-heading">
-          <h2 id="next-heading" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">
+          <h2 id="next-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
             Up next
           </h2>
           {scheduled.length === 0 ? (
@@ -116,7 +116,7 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
         </section>
 
         <section aria-labelledby="results-heading">
-          <h2 id="results-heading" className="font-display text-xs font-medium tracking-[0.32em] text-muted uppercase">
+          <h2 id="results-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
             Latest results
           </h2>
           {finished.length === 0 ? (

@@ -22,7 +22,7 @@ export default async function AdminOverview() {
       <dl className="mt-8 grid gap-px border border-off-white/10 bg-off-white/10 sm:grid-cols-2 xl:grid-cols-5">
         {tiles.map((t) => (
           <Link key={t.label} href={t.href} className="flex flex-col-reverse bg-charcoal p-6 hover:bg-off-white/[0.03]">
-            <dt className="mt-1 text-[0.65rem] tracking-[0.25em] text-muted uppercase">{t.label}</dt>
+            <dt className="mt-1 text-xs tracking-[0.15em] text-muted uppercase">{t.label}</dt>
             <dd className="font-display text-3xl font-bold tabular-nums">{t.value}</dd>
           </Link>
         ))}

@@ -123,7 +123,7 @@ export default function PaymentPanel({ order, slug, tournamentName, reference, p
         onClick={pay}
         disabled={busy}
         aria-busy={busy}
-        className="inline-flex w-full items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase transition-colors hover:bg-off-white disabled:opacity-60 sm:w-auto"
+        className="rounded-lg inline-flex w-full items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase transition-colors hover:bg-off-white disabled:opacity-60 sm:w-auto"
       >
         <CreditCard aria-hidden="true" className="size-4" />
         {state.kind === "verifying" ? "Confirming payment…" : state.kind === "opening" ? "Opening checkout…" : `Pay ${formatInr(order.amount / 100)}`}

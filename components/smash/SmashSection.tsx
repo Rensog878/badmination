@@ -29,6 +29,7 @@ export default function SmashSection() {
   const chapter = useRef<HTMLParagraphElement>(null);
   const headline = useRef<HTMLHeadingElement>(null);
   const subline = useRef<HTMLParagraphElement>(null);
+  const bar = useRef<HTMLDivElement>(null);
   const cinematic = mode === "3d";
 
   useEffect(() => {
@@ -60,7 +61,16 @@ export default function SmashSection() {
 
         const tl = gsap.timeline({
           defaults: { ease: "none" },
-          scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom bottom", scrub: SCRUB_SMOOTHING },
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: SCRUB_SMOOTHING,
+            // Progress bar: compositor-only transform, no React re-render.
+            onUpdate: (self) => {
+              if (bar.current) bar.current.style.transform = `scaleX(${self.progress})`;
+            },
+          },
         });
         tl.to(smash, { progress: 1, duration: 1 }, 0);
         tl.fromTo(chapter.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.04 }, CHAPTER_IN);
@@ -95,6 +105,13 @@ export default function SmashSection() {
       <div className={`flex h-svh flex-col overflow-hidden ${mode === "fallback" ? "relative" : "sticky top-0"}`}>
         {mode === "fallback" && <SmashFallback />}
 
+        {/* How far through the intro you are. */}
+        {cinematic && (
+          <div aria-hidden="true" className="absolute inset-x-0 top-0 z-20 h-1 bg-off-white/10">
+            <div ref={bar} className="h-full origin-left scale-x-0 bg-court-green" />
+          </div>
+        )}
+
         <div
           ref={flash}
           aria-hidden="true"
@@ -103,7 +120,7 @@ export default function SmashSection() {
 
         <p
           ref={chapter}
-          className="absolute top-8 left-4 font-display text-[0.7rem] font-medium tracking-[0.35em] text-court-green uppercase opacity-0 sm:left-8 lg:left-16"
+          className="absolute top-8 left-4 font-display text-xs font-medium tracking-[0.18em] text-court-green uppercase opacity-0 sm:left-8 lg:left-16"
         >
           {SMASH.chapter}
         </p>

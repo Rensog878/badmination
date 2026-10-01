@@ -15,7 +15,7 @@ export default async function AdminTournaments({ searchParams }: PageProps) {
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">Tournaments</h1>
-        <Link href="/admin/tournaments/new" className="bg-court-green px-5 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white">
+        <Link href="/admin/tournaments/new" className="rounded-lg bg-court-green px-5 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white">
           New tournament
         </Link>
       </div>
@@ -27,14 +27,14 @@ export default async function AdminTournaments({ searchParams }: PageProps) {
       {tournaments.length === 0 ? (
         <form action={importSamplesAction} className="mt-8 border border-dashed border-off-white/20 p-6">
           <p className="text-muted">No tournaments in the database.</p>
-          <button type="submit" className="mt-4 border border-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black">
+          <button type="submit" className="rounded-lg mt-4 border border-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black">
             Import the 6 sample tournaments
           </button>
         </form>
       ) : (
         <div className="mt-8 overflow-x-auto">
           <table className="w-full min-w-[44rem] text-left text-sm">
-            <thead className="font-display text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+            <thead className="font-display text-xs tracking-[0.2em] text-muted uppercase">
               <tr className="border-b border-off-white/10">
                 <th scope="col" className="py-3 pr-4 font-medium">Tournament</th>
                 <th scope="col" className="py-3 pr-4 font-medium">Dates</th>

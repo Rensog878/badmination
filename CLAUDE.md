@@ -60,6 +60,17 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
 - Fonts: Inter → `font-sans`, Space Grotesk → `font-display`
 - Big uppercase display type, used sparingly. No SaaS gradients, heavy glass, excess neon or random motion.
 
+## Product focus
+- The site is for **running tournaments**, told through the **3D transition**. Everything else (coach profile, programs,
+  gallery/testimonials) is built but switched off in `lib/features.ts`; flags drive the home page, nav and admin menu.
+- Home = hero → 3D smash → tournaments. With one nav destination, phones show a Register button instead of a menu.
+
+## UX rules (mobile first)
+- Tap targets ≥ 44px (`min-h-11`); filter chips are pills; inputs/buttons rounded-lg, cards rounded-2xl.
+- Labels ≥ 12px (`text-xs`), letter-spacing ≤ 0.2em. No global smooth scroll (links would race through the 3D).
+- Loader offers "Skip" after 1.5 s. The smash shows a thin progress bar; no "Skip intro" (product decision).
+- Registration autosaves a draft to sessionStorage per tournament; completed steps are tappable.
+
 ## Content
 - All copy in `lib/content.ts`; anything marked `// TODO: copy` or `// TODO: real figures` is placeholder.
 - Programs: edit `PROGRAMS` / `PROGRAM_FILTERS` / `TRIAL` in `lib/content.ts`; `featured: true` marks the flagship card. Trial CTA is a mailto until a booking flow exists.

@@ -27,13 +27,13 @@ export default function TournamentRow({ tournament: t, status, now }: Tournament
     <article className="group relative grid grid-cols-[4.5rem_1fr] gap-x-5 gap-y-4 border-b border-off-white/10 py-7 transition-colors hover:bg-off-white/[0.025] sm:grid-cols-[5.5rem_1fr] lg:grid-cols-[6rem_minmax(0,1.4fr)_minmax(0,1fr)_11rem_11rem_2rem] lg:items-center lg:gap-x-8 lg:px-4">
       <div className="row-span-2 border-r border-off-white/10 pr-4 lg:row-span-1 lg:border-r-0 lg:pr-0">
         <p className="font-display text-4xl leading-none font-bold tracking-[-0.02em] sm:text-5xl">{date.day}</p>
-        <p className="mt-1 font-display text-xs tracking-[0.25em] text-muted uppercase">
+        <p className="mt-1 font-display text-xs tracking-[0.15em] text-muted uppercase">
           {date.month} {date.year}
         </p>
       </div>
 
       <div className="min-w-0">
-        <p className="font-display text-[0.65rem] tracking-[0.3em] text-court-green uppercase">{t.level}</p>
+        <p className="font-display text-xs tracking-[0.18em] text-court-green uppercase">{t.level}</p>
         <h3 className="mt-1.5 font-display text-xl leading-tight font-bold tracking-[-0.01em] uppercase sm:text-2xl">
           <Link
             href={`/tournaments/${t.slug}`}
@@ -52,7 +52,7 @@ export default function TournamentRow({ tournament: t, status, now }: Tournament
 
       <ul aria-label="Events" className="col-start-2 flex flex-wrap gap-1.5 lg:col-start-auto">
         {t.events.map((e) => (
-          <li key={eventLabel(e)} className="border border-off-white/15 px-2 py-1 text-[0.7rem] tracking-[0.08em] text-off-white/85 uppercase">
+          <li key={eventLabel(e)} className="border border-off-white/15 px-2 py-1 text-xs tracking-[0.08em] text-off-white/85 uppercase">
             {eventLabel(e)}
           </li>
         ))}

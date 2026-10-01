@@ -63,7 +63,7 @@ export default function TournamentForm({ tournament }: { tournament?: Tournament
               <tr>
                 <th />
                 {EVENT_TYPES.map((type) => (
-                  <th key={type} scope="col" className="px-4 pb-2 font-display text-[0.65rem] font-medium tracking-[0.2em] text-muted uppercase">{type}</th>
+                  <th key={type} scope="col" className="px-4 pb-2 font-display text-xs font-medium tracking-[0.2em] text-muted uppercase">{type}</th>
                 ))}
               </tr>
             </thead>
@@ -90,7 +90,7 @@ export default function TournamentForm({ tournament }: { tournament?: Tournament
         </p>
       )}
 
-      <button type="submit" disabled={pending} aria-busy={pending} className="bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white disabled:opacity-60">
+      <button type="submit" disabled={pending} aria-busy={pending} className="rounded-lg bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white disabled:opacity-60">
         {pending ? "Saving…" : tournament ? "Save changes" : "Create tournament"}
       </button>
     </form>

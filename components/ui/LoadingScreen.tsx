@@ -5,6 +5,8 @@ import CourtLines from "@/components/ui/CourtLines";
 
 const FILL_DURATION_MS = 600; // keep in sync with duration-[600ms] below
 const FADE_DURATION_MS = 700;
+/** Offer a way past the loader if the scene takes a moment (it keeps loading behind). */
+const SKIP_AFTER_MS = 1500;
 
 interface LoadingScreenProps {
   /** True once the scene has rendered its first frames. */
@@ -22,6 +24,17 @@ interface LoadingScreenProps {
 export default function LoadingScreen({ sceneReady, progress, reducedMotion }: LoadingScreenProps) {
   const [hidden, setHidden] = useState(false);
   const [removed, setRemoved] = useState(false);
+  const [canSkip, setCanSkip] = useState(false);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setCanSkip(true), SKIP_AFTER_MS);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  const skip = () => {
+    setHidden(true);
+    window.setTimeout(() => setRemoved(true), reducedMotion ? 0 : FADE_DURATION_MS);
+  };
 
   const percent = sceneReady ? 100 : Math.min(progress, 95);
   const fillMs = reducedMotion ? 0 : FILL_DURATION_MS;
@@ -56,10 +69,20 @@ export default function LoadingScreen({ sceneReady, progress, reducedMotion }: L
           pathClassName={`transition-[stroke-dashoffset] ease-out ${reducedMotion ? "duration-0" : "duration-[600ms]"}`}
         />
       </div>
-      <p className="font-display text-xs font-medium tracking-[0.35em] text-muted uppercase">
+      <p className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
         {sceneReady ? "Court ready" : "Preparing the court..."}
         <span className="sr-only"> {Math.round(percent)}%</span>
       </p>
+      <button
+        type="button"
+        onClick={skip}
+        className={`rounded-full border border-off-white/25 px-6 py-3 font-display text-sm font-semibold tracking-[0.12em] text-off-white uppercase transition-opacity hover:border-court-green hover:text-court-green ${
+          canSkip && !sceneReady ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        tabIndex={canSkip && !sceneReady ? 0 : -1}
+      >
+        Skip
+      </button>
     </div>
   );
 }

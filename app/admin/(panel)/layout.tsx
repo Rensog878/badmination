@@ -4,6 +4,7 @@ import Link from "next/link";
 import { adminLogout } from "@/app/admin/actions";
 import { requireRole } from "@/lib/auth/session";
 import { dbConfigured } from "@/lib/db/mongo";
+import { FEATURES } from "@/lib/features";
 
 export const metadata: Metadata = { title: "Admin", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -13,7 +14,7 @@ const NAV = [
   { href: "/admin/tournaments", label: "Tournaments" },
   { href: "/admin/registrations", label: "Registrations" },
   { href: "/admin/live", label: "Live matches" },
-  { href: "/admin/media", label: "Gallery & quotes" },
+  ...(FEATURES.showcase ? [{ href: "/admin/media", label: "Gallery & quotes" }] : []),
   { href: "/admin/users", label: "Users" },
 ];
 
@@ -35,7 +36,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     <main id="main" className="min-h-svh bg-charcoal pt-24 lg:pt-28">
       <div className="mx-auto grid max-w-[1600px] gap-8 px-4 pb-20 sm:px-8 lg:grid-cols-[14rem_1fr] lg:px-16">
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <p className="font-display text-xs tracking-[0.32em] text-court-green uppercase">Admin</p>
+          <p className="font-display text-xs tracking-[0.18em] text-court-green uppercase">Admin</p>
           <nav aria-label="Admin" className="mt-4">
             <ul className="flex gap-1 overflow-x-auto lg:flex-col">
               {NAV.map((n) => (
