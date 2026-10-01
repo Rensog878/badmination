@@ -100,7 +100,6 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
                   reducedMotion={reducedMotion}
                   initialTier={tier}
                   onReady={handleReady}
-                  onTooSlow={handleFailure}
                   onProgress={setProgress}
                 />
               </Suspense>
