@@ -11,8 +11,6 @@ export interface TierConfig {
   environmentResolution: number;
   lights: "full" | "minimal";
   racketDetail: "high" | "low";
-  /** Bloom, vignette and grain. */
-  postprocessing: boolean;
 }
 
 export const TIER_CONFIG: Record<PerformanceTier, TierConfig> = {
@@ -25,7 +23,6 @@ export const TIER_CONFIG: Record<PerformanceTier, TierConfig> = {
     environmentResolution: 256,
     lights: "full",
     racketDetail: "high",
-    postprocessing: true,
   },
   medium: {
     // Mid-range phones: fill-rate is the bottleneck, so cap pixel density hard.
@@ -37,7 +34,6 @@ export const TIER_CONFIG: Record<PerformanceTier, TierConfig> = {
     environmentResolution: 128,
     lights: "full",
     racketDetail: "high",
-    postprocessing: true,
   },
   low: {
     // Weak phones still get the full 3D story: render below native resolution
@@ -50,7 +46,6 @@ export const TIER_CONFIG: Record<PerformanceTier, TierConfig> = {
     environmentResolution: 64,
     lights: "minimal",
     racketDetail: "low",
-    postprocessing: false,
   },
 };
 
