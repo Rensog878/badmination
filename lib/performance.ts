@@ -1,4 +1,4 @@
-import { useCallback, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 export type PerformanceTier = "high" | "medium" | "low";
 
@@ -49,61 +49,25 @@ export const TIER_CONFIG: Record<PerformanceTier, TierConfig> = {
   },
 };
 
-const DESKTOP_MIN_WIDTH = 1025;
-const MOBILE_MAX_WIDTH = 767;
-
-type NavigatorWithHints = Navigator & {
-  deviceMemory?: number;
-  connection?: { saveData?: boolean; effectiveType?: string };
-};
-
-/** Data Saver, a slow connection, or an explicit reduced-data preference. */
-function wantsLightweight(nav: NavigatorWithHints): boolean {
-  if (nav.connection?.saveData) return true;
-  if (nav.connection?.effectiveType && /(^|-)2g|3g/.test(nav.connection.effectiveType)) return true;
-  return window.matchMedia?.("(prefers-reduced-data: reduce)").matches ?? false;
-}
-
-/**
- * Initial tier from device hints, before any 3D code is downloaded. "low" = the
- * lightest 3D settings (every WebGL device gets the 3D story). Runtime step-down is
- * handled by PerformanceMonitor. deviceMemory is Chromium-only and bucketed (0.25–8 GB).
- */
-export function detectTier(): PerformanceTier {
-  if (typeof window === "undefined") return "medium";
-  const nav = navigator as NavigatorWithHints;
-  const cores = nav.hardwareConcurrency ?? 4;
-  const memory = nav.deviceMemory;
-  const width = window.innerWidth;
-
-  if (wantsLightweight(nav)) return "low";
-  if (cores <= 2 || (memory !== undefined && memory <= 3)) return "low";
-  if (width <= MOBILE_MAX_WIDTH && cores <= 4) return "low";
-  if (width >= DESKTOP_MIN_WIDTH && cores >= 8 && (memory === undefined || memory >= 8)) {
-    return "high";
-  }
-  return "medium";
-}
-
 const TIERS: readonly PerformanceTier[] = ["high", "medium", "low"];
 
-/** QA override: `?tier=high|medium|low` locks the tier and disables runtime step-down. */
+/** QA override: `?tier=high|medium|low` (testing only). */
 export function forcedTier(): PerformanceTier | null {
   if (typeof window === "undefined") return null;
   const value = new URLSearchParams(window.location.search).get("tier");
   return TIERS.find((t) => t === value) ?? null;
 }
 
-/** Tier to start from: QA override, else device detection. */
-export const startTier = (): PerformanceTier => forcedTier() ?? detectTier();
+/**
+ * Product decision: every device segment (low-end, mid-range, high-end) gets the
+ * full-quality 3D. No device detection and no automatic downgrade; the lower
+ * tiers exist only for the `?tier=` testing override.
+ */
+export const startTier = (): PerformanceTier => forcedTier() ?? "high";
 
-export function usePerformanceTier(initial?: PerformanceTier) {
-  const [forced] = useState(forcedTier);
-  const [tier, setTier] = useState<PerformanceTier>(() => forced ?? initial ?? detectTier());
-  const stepDown = useCallback(() => {
-    setTier((current) => (current === "high" ? "medium" : "low"));
-  }, []);
-  return { tier, config: TIER_CONFIG[tier], stepDown, locked: forced !== null };
+export function usePerformanceTier(initial: PerformanceTier = "high") {
+  const [tier] = useState<PerformanceTier>(() => forcedTier() ?? initial);
+  return { tier, config: TIER_CONFIG[tier] };
 }
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";

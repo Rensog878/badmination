@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { PerformanceMonitor, useProgress } from "@react-three/drei";
+import { useProgress } from "@react-three/drei";
 import ArenaEnvironment from "@/components/3d/ArenaEnvironment";
 import CameraRig, { CAMERA_FOV } from "@/components/3d/CameraRig";
 import RacketModel from "@/components/3d/RacketModel";
@@ -13,8 +13,6 @@ const BACKGROUND = "#0A0A0A";
 const FOG_NEAR = 12;
 const FOG_FAR = 34;
 const READY_AFTER_FRAMES = 2;
-/** Step down only below 24 fps sustained (drei's default, 40, downgraded phones running a smooth 30 fps). */
-const PERFORMANCE_BOUNDS = (): [number, number] => [24, 50];
 
 interface HeroSceneProps {
   active: boolean;
@@ -50,7 +48,7 @@ function ProgressBridge({ onProgress }: { onProgress: (percent: number) => void 
 
 /** The single persistent Canvas: hero + smash sequence. Later scenes are added here, never as new Canvases. */
 export default function HeroScene({ active, reducedMotion, initialTier, onReady, onProgress }: HeroSceneProps) {
-  const { config, stepDown, locked } = usePerformanceTier(initialTier);
+  const { config } = usePerformanceTier(initialTier);
 
 
   return (
@@ -66,13 +64,6 @@ export default function HeroScene({ active, reducedMotion, initialTier, onReady,
       <color attach="background" args={[BACKGROUND]} />
       <ProgressBridge onProgress={onProgress} />
       {config.fog && <fog attach="fog" args={[BACKGROUND, FOG_NEAR, FOG_FAR]} />}
-      {/*
-        Runtime quality step-down. Mounted only while rendering, so a paused canvas
-        (scrolled past / hidden tab) starts a fresh measurement instead of counting
-        the pause as one very slow frame. Never swaps 3D for the static hero mid-visit:
-        the worst case is the low tier (weak devices are filtered out before 3D loads).
-      */}
-      {!locked && active && <PerformanceMonitor bounds={PERFORMANCE_BOUNDS} onDecline={stepDown} />}
       <CameraRig reducedMotion={reducedMotion} />
       <ArenaEnvironment config={config} />
       {/* Before RacketModel so the hand pose is updated before the racket reads it each frame. */}

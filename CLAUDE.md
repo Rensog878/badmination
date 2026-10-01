@@ -110,15 +110,15 @@ Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-
 - QA: `?tier=high|medium|low` locks the tier and disables auto step-down (headless/software GL otherwise falls back to static).
 - Racket units: metres, butt at y=0, long axis +Y, pivot at the balance point (305 mm), world scale ×4.
 - To swap in a real racket, set `RACKET_MODEL_URL` in `lib/assets.ts`. It is auto-normalised to the same scale and pivot.
-- 3D is a must for every WebGL device. Tiers high/medium/low (`lib/performance.ts`) only set quality, decided in CinematicStage
-  before 3D loads. "low" (≤3 GB RAM, ≤2 cores, ≤4 cores on phones, Data Saver, 2G/3G, prefers-reduced-data) = DPR 0.85,
-  no MSAA, low-poly racket/athlete, minimal lights, no shadows. Medium caps DPR at 1.25. PerformanceMonitor (bounds [24, 50],
-  mounted only while rendering) steps down at runtime but NEVER swaps to static. Static fallback = no WebGL or render error only.
+- Product decision: FULL-QUALITY 3D on every device segment (low-end, mid-range, high-end). No device detection and no
+  automatic downgrade: everyone starts and stays on the "high" tier (DPR up to 2, soft shadows, fog, full lighting, detailed
+  models, MSAA, full-screen loader). `?tier=medium|low` exists only as a testing override. Static fallback = no WebGL or a
+  render error only.
 - Mobile performance rules (keep the first download small: home ≈127 kB JS):
   - Never import `three`, `@react-three/*`, `lib/sceneState` or `lib/racketGeometry` from DOM components. DOM code uses
     `lib/smashProgress` (three-free). `lib/smashTimeline` must stay three-free (tuples, not Vector3).
   - GSAP is dynamically imported in SmashSection only in 3D mode. Reveal uses IntersectionObserver + CSS (no GSAP).
-  - 3D loads after `requestIdleCallback`; the full-screen loader shows only on the high tier.
+  - 3D loads after `requestIdleCallback` (text and CTAs paint first); the loader shows on all devices (all are high tier).
   - No `backdrop-blur` on fixed/sticky elements (expensive on low-end GPUs). `content-visibility` was tried and removed:
     it broke reveals and made the scrollbar jump.
   - Measure with a separate build dir so it doesn't fight `next dev`: `NEXT_DIST_DIR=.next-prod npm run build && NEXT_DIST_DIR=.next-prod npm start`.
