@@ -1,4 +1,5 @@
 import { Euler, Vector3, type Object3D } from "three";
+import { smashProgress } from "@/lib/smashProgress";
 
 /**
  * Non-React, mutable scene state shared by the persistent Canvas.
@@ -34,10 +35,8 @@ export const sceneState = {
   },
   /** Set by the athlete rig: the grip point of the racket hand. */
   handAnchor: null as Object3D | null,
-  smash: {
-    /** 0..1 scroll progress through THE SMASH sequence (written by GSAP). */
-    progress: 0,
-  },
+  /** 0..1 scroll progress through THE SMASH (written by GSAP via the three-free smashProgress module). */
+  smash: smashProgress,
 };
 
 export type SceneState = typeof sceneState;

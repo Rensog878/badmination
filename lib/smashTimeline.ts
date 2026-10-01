@@ -1,4 +1,3 @@
-import { Vector3 } from "three";
 import type { SmashPoseName } from "@/lib/athleteRig";
 
 /**
@@ -41,9 +40,9 @@ export const POSE_KEYS: ReadonlyArray<{ at: number; pose: SmashPoseName }> = [
 ];
 
 /** Where the athlete stands: far half of the court, facing the net and camera. */
-export const ATHLETE_POSITION = new Vector3(0.8, 0, -7.2);
+export const ATHLETE_POSITION: readonly [number, number, number] = [0.8, 0, -7.2];
 /** Where the smash lands: near half, crosscourt. */
-export const SHUTTLE_LANDING = new Vector3(-1.4, 0.03, 1.6);
+export const SHUTTLE_LANDING: readonly [number, number, number] = [-1.4, 0.03, 1.6];
 
 interface CameraKey {
   at: number;

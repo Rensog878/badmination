@@ -23,15 +23,18 @@ import {
 import { applyPoseBlend, buildAthleteRig, SMASH_POSES, type AthleteRig } from "@/lib/athleteRig";
 import { sceneState } from "@/lib/sceneState";
 import {
-  ATHLETE_POSITION,
+  ATHLETE_POSITION as ATHLETE_POSITION_TUPLE,
   CAMERA_KEYS,
   POSE_KEYS,
-  SHUTTLE_LANDING,
+  SHUTTLE_LANDING as SHUTTLE_LANDING_TUPLE,
   SMASH_MARKS as M,
   linear,
   ramp,
   segmentAt,
 } from "@/lib/smashTimeline";
+
+const ATHLETE_POSITION = new Vector3(...ATHLETE_POSITION_TUPLE);
+const SHUTTLE_LANDING = new Vector3(...SHUTTLE_LANDING_TUPLE);
 
 const ATHLETE_KEY_INTENSITY = 220;
 const ATHLETE_RIM_INTENSITY = 120;

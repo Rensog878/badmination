@@ -110,7 +110,17 @@ Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-
 - QA: `?tier=high|medium|low` locks the tier and disables auto step-down (headless/software GL otherwise falls back to static).
 - Racket units: metres, butt at y=0, long axis +Y, pivot at the balance point (305 mm), world scale ×4.
 - To swap in a real racket, set `RACKET_MODEL_URL` in `lib/assets.ts`. It is auto-normalised to the same scale and pivot.
-- Tiers high/medium/low (`lib/performance.ts`), stepped down at runtime by `PerformanceMonitor`. If the low tier is still too slow, the static fallback shows.
+- Tiers high/medium/low (`lib/performance.ts`), decided in CinematicStage BEFORE any 3D code loads. "low" (≤3 GB RAM, ≤2 cores,
+  ≤4 cores on phones, Data Saver, 2G/3G, prefers-reduced-data) = static hero; three.js is never fetched. Medium caps DPR at 1.25.
+  PerformanceMonitor steps down at runtime; if low is still too slow, the static fallback shows.
+- Mobile performance rules (keep the first download small: home ≈127 kB JS):
+  - Never import `three`, `@react-three/*`, `lib/sceneState` or `lib/racketGeometry` from DOM components. DOM code uses
+    `lib/smashProgress` (three-free). `lib/smashTimeline` must stay three-free (tuples, not Vector3).
+  - GSAP is dynamically imported in SmashSection only in 3D mode. Reveal uses IntersectionObserver + CSS (no GSAP).
+  - 3D loads after `requestIdleCallback`; the full-screen loader shows only on the high tier.
+  - No `backdrop-blur` on fixed/sticky elements (expensive on low-end GPUs). `content-visibility` was tried and removed:
+    it broke reveals and made the scrollbar jump.
+  - Measure with a separate build dir so it doesn't fight `next dev`: `NEXT_DIST_DIR=.next-prod npm run build && NEXT_DIST_DIR=.next-prod npm start`.
 - The athlete is NEVER a real, recognisable player: it is an anonymous silhouette or the coach.
 
 ## Scroll story

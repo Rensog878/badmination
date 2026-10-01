@@ -25,11 +25,12 @@ export const TIER_CONFIG: Record<PerformanceTier, TierConfig> = {
     racketDetail: "high",
   },
   medium: {
-    dpr: [1, 1.5],
+    // Mid-range phones: fill-rate is the bottleneck, so cap pixel density hard.
+    dpr: [1, 1.25],
     fog: false,
     softShadows: false,
     contactShadows: true,
-    contactShadowResolution: 512,
+    contactShadowResolution: 256, // re-rendered every frame: keep it cheap
     environmentResolution: 128,
     lights: "full",
     racketDetail: "high",
@@ -49,17 +50,32 @@ export const TIER_CONFIG: Record<PerformanceTier, TierConfig> = {
 const DESKTOP_MIN_WIDTH = 1025;
 const MOBILE_MAX_WIDTH = 767;
 
-type NavigatorWithMemory = Navigator & { deviceMemory?: number };
+type NavigatorWithHints = Navigator & {
+  deviceMemory?: number;
+  connection?: { saveData?: boolean; effectiveType?: string };
+};
 
-/** Initial tier from device hints. Runtime step-down is handled by PerformanceMonitor. */
+/** Data Saver, a slow connection, or an explicit reduced-data preference. */
+function wantsLightweight(nav: NavigatorWithHints): boolean {
+  if (nav.connection?.saveData) return true;
+  if (nav.connection?.effectiveType && /(^|-)2g|3g/.test(nav.connection.effectiveType)) return true;
+  return window.matchMedia?.("(prefers-reduced-data: reduce)").matches ?? false;
+}
+
+/**
+ * Initial tier from device hints, before any 3D code is downloaded. "low" means
+ * the static hero (three.js is never fetched). Runtime step-down is handled by
+ * PerformanceMonitor. deviceMemory is Chromium-only and bucketed (0.25–8 GB).
+ */
 export function detectTier(): PerformanceTier {
   if (typeof window === "undefined") return "medium";
-  const nav = navigator as NavigatorWithMemory;
+  const nav = navigator as NavigatorWithHints;
   const cores = nav.hardwareConcurrency ?? 4;
   const memory = nav.deviceMemory;
   const width = window.innerWidth;
 
-  if (cores <= 2 || (memory !== undefined && memory <= 2)) return "low";
+  if (wantsLightweight(nav)) return "low";
+  if (cores <= 2 || (memory !== undefined && memory <= 3)) return "low";
   if (width <= MOBILE_MAX_WIDTH && cores <= 4) return "low";
   if (width >= DESKTOP_MIN_WIDTH && cores >= 8 && (memory === undefined || memory >= 8)) {
     return "high";
@@ -76,9 +92,12 @@ export function forcedTier(): PerformanceTier | null {
   return TIERS.find((t) => t === value) ?? null;
 }
 
-export function usePerformanceTier() {
+/** Tier to start from: QA override, else device detection. */
+export const startTier = (): PerformanceTier => forcedTier() ?? detectTier();
+
+export function usePerformanceTier(initial?: PerformanceTier) {
   const [forced] = useState(forcedTier);
-  const [tier, setTier] = useState<PerformanceTier>(() => forced ?? detectTier());
+  const [tier, setTier] = useState<PerformanceTier>(() => forced ?? initial ?? detectTier());
   const stepDown = useCallback(() => {
     setTier((current) => (current === "high" ? "medium" : "low"));
   }, []);

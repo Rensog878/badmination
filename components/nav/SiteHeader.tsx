@@ -25,7 +25,7 @@ export default function SiteHeader() {
       <header
         className={`fixed inset-x-0 top-0 z-50 print:hidden transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
           hidden ? "-translate-y-full" : "translate-y-0"
-        } ${solid && !menuOpen ? "border-b border-off-white/10 bg-charcoal/85 backdrop-blur-sm" : "border-b border-transparent"}`}
+        } ${solid && !menuOpen ? "border-b border-off-white/10 bg-charcoal/95" : "border-b border-transparent"}`}
       >
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-8 lg:h-20 lg:px-16">
           <Link href="/" className="font-display text-sm font-bold tracking-[0.25em] uppercase" onClick={closeMenu}>

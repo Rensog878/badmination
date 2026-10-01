@@ -218,7 +218,7 @@ export default async function TournamentPage({ params }: PageProps) {
       )}
 
       {status === "open" && (
-        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-4 border-t border-off-white/10 bg-charcoal/95 px-4 py-3 backdrop-blur-sm sm:px-8 lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-4 border-t border-off-white/10 bg-charcoal px-4 py-3 sm:px-8 lg:hidden">
           <p className="font-display font-semibold">
             {formatInr(t.entryFee)} <span className="text-xs font-normal text-muted">/ event</span>
           </p>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useProgress } from "@react-three/drei";
 import CourtLines from "@/components/ui/CourtLines";
 
 const FILL_DURATION_MS = 600; // keep in sync with duration-[600ms] below
@@ -10,6 +9,8 @@ const FADE_DURATION_MS = 700;
 interface LoadingScreenProps {
   /** True once the scene has rendered its first frames. */
   sceneReady: boolean;
+  /** 0–100 network loading progress, reported from inside the 3D chunk (keeps three.js out of the main bundle). */
+  progress: number;
   reducedMotion: boolean;
 }
 
@@ -18,12 +19,11 @@ interface LoadingScreenProps {
  * progress for network assets, and 100% only once the scene has actually rendered.
  * The procedural racket loads nothing, so it goes straight from waiting to ready.
  */
-export default function LoadingScreen({ sceneReady, reducedMotion }: LoadingScreenProps) {
-  const { active, progress } = useProgress();
+export default function LoadingScreen({ sceneReady, progress, reducedMotion }: LoadingScreenProps) {
   const [hidden, setHidden] = useState(false);
   const [removed, setRemoved] = useState(false);
 
-  const percent = sceneReady ? 100 : active ? Math.min(progress, 95) : 0;
+  const percent = sceneReady ? 100 : Math.min(progress, 95);
   const fillMs = reducedMotion ? 0 : FILL_DURATION_MS;
   const fadeMs = reducedMotion ? 0 : FADE_DURATION_MS;
 

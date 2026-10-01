@@ -1,15 +1,8 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
+import { useEffect, useRef, type ReactNode } from "react";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
-
-const DISTANCE_PX = 28;
-const DURATION_S = 0.9;
-const STAGGER_S = 0.08;
+const STAGGER_MS = 80;
 
 interface RevealProps {
   children: ReactNode;
@@ -21,28 +14,36 @@ interface RevealProps {
 }
 
 /**
- * Fades content up once as it enters the viewport. Content is fully visible
- * without JS and under prefers-reduced-motion (no animation is registered).
+ * Fades content up once as it enters the viewport. IntersectionObserver + a CSS
+ * transition (compositor-only opacity/transform): no animation library, no
+ * scroll listeners. Content is fully visible without JS, under reduced motion,
+ * and when it is already on screen at load (no flash).
  */
 export default function Reveal({ children, className, stagger = false, as: Tag = "div" }: RevealProps) {
   const root = useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      const el = root.current;
-      if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const targets = stagger ? Array.from(el.children) : el;
-      gsap.from(targets, {
-        opacity: 0,
-        y: DISTANCE_PX,
-        duration: DURATION_S,
-        ease: "power3.out",
-        stagger: stagger ? STAGGER_S : 0,
-        scrollTrigger: { trigger: el, start: "top 92%", once: true },
-      });
-    },
-    { scope: root },
-  );
+  useEffect(() => {
+    const el = root.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight) return; // already visible: leave it
+
+    const targets = stagger ? (Array.from(el.children) as HTMLElement[]) : [el];
+    targets.forEach((t, i) => {
+      t.classList.add("reveal-init");
+      if (stagger) t.style.transitionDelay = `${i * STAGGER_MS}ms`;
+    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        targets.forEach((t) => t.classList.add("reveal-in"));
+        observer.disconnect();
+      },
+      { rootMargin: "0px 0px -8% 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [stagger]);
 
   return (
     <Tag ref={(el: HTMLElement | null) => void (root.current = el)} className={className}>
