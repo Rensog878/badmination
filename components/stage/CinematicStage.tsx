@@ -46,7 +46,7 @@ function useIdle(enabled: boolean): boolean {
 /**
  * Owns the one persistent Canvas (fixed behind the content) for every cinematic
  * section inside it, plus device tiering, WebGL detection, error fallback and the loader.
- * Low-end devices (and Data Saver / slow networks) get the static hero and never fetch three.js.
+ * All WebGL devices get 3D; low-end devices get the lightest tier. three.js loads after idle.
  */
 export default function CinematicStage({ children }: { children: ReactNode }) {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -59,8 +59,9 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState(0);
   const [inView, setInView] = useState(true);
 
-  const mode: StageMode =
-    webgl === null || tier === null ? "pending" : webgl && tier !== "low" && !sceneFailed ? "3d" : "fallback";
+  // Every device with WebGL gets the 3D story; the tier only sets its quality.
+  // The static fallback is reserved for no-WebGL and render/model errors.
+  const mode: StageMode = webgl === null || tier === null ? "pending" : webgl && !sceneFailed ? "3d" : "fallback";
   const status = useMemo(() => ({ mode, reducedMotion }), [mode, reducedMotion]);
   const idle = useIdle(mode === "3d");
   // Full-screen loader only where it reads as cinematic (capable desktops); elsewhere the scene fades in behind live text.

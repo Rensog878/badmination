@@ -36,7 +36,9 @@ export const TIER_CONFIG: Record<PerformanceTier, TierConfig> = {
     racketDetail: "high",
   },
   low: {
-    dpr: 1,
+    // Weak phones still get the full 3D story: render below native resolution
+    // (fill-rate is their bottleneck), simplest geometry and lighting, no shadows.
+    dpr: 0.85,
     fog: false,
     softShadows: false,
     contactShadows: false,
@@ -63,9 +65,9 @@ function wantsLightweight(nav: NavigatorWithHints): boolean {
 }
 
 /**
- * Initial tier from device hints, before any 3D code is downloaded. "low" means
- * the static hero (three.js is never fetched). Runtime step-down is handled by
- * PerformanceMonitor. deviceMemory is Chromium-only and bucketed (0.25–8 GB).
+ * Initial tier from device hints, before any 3D code is downloaded. "low" = the
+ * lightest 3D settings (every WebGL device gets the 3D story). Runtime step-down is
+ * handled by PerformanceMonitor. deviceMemory is Chromium-only and bucketed (0.25–8 GB).
  */
 export function detectTier(): PerformanceTier {
   if (typeof window === "undefined") return "medium";

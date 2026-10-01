@@ -110,9 +110,10 @@ Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-
 - QA: `?tier=high|medium|low` locks the tier and disables auto step-down (headless/software GL otherwise falls back to static).
 - Racket units: metres, butt at y=0, long axis +Y, pivot at the balance point (305 mm), world scale ×4.
 - To swap in a real racket, set `RACKET_MODEL_URL` in `lib/assets.ts`. It is auto-normalised to the same scale and pivot.
-- Tiers high/medium/low (`lib/performance.ts`), decided in CinematicStage BEFORE any 3D code loads. "low" (≤3 GB RAM, ≤2 cores,
-  ≤4 cores on phones, Data Saver, 2G/3G, prefers-reduced-data) = static hero; three.js is never fetched. Medium caps DPR at 1.25.
-  PerformanceMonitor steps down at runtime; if low is still too slow, the static fallback shows.
+- 3D is a must for every WebGL device. Tiers high/medium/low (`lib/performance.ts`) only set quality, decided in CinematicStage
+  before 3D loads. "low" (≤3 GB RAM, ≤2 cores, ≤4 cores on phones, Data Saver, 2G/3G, prefers-reduced-data) = DPR 0.85,
+  no MSAA, low-poly racket/athlete, minimal lights, no shadows. Medium caps DPR at 1.25. PerformanceMonitor (bounds [24, 50],
+  mounted only while rendering) steps down at runtime but NEVER swaps to static. Static fallback = no WebGL or render error only.
 - Mobile performance rules (keep the first download small: home ≈127 kB JS):
   - Never import `three`, `@react-three/*`, `lib/sceneState` or `lib/racketGeometry` from DOM components. DOM code uses
     `lib/smashProgress` (three-free). `lib/smashTimeline` must stay three-free (tuples, not Vector3).
