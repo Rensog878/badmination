@@ -19,6 +19,13 @@ Premium, cinematic site for a professional badminton coach. The feel is Olympic 
 - Build with MONGODB_URI set in production: statically generated pages read tournaments at build time.
 - `postinstall` copies the Draco decoder into `public/draco/` (`scripts/copy-draco.mjs`). It is self-hosted, with no CDN.
 
+## Deployment (Render)
+- `render.yaml` Blueprint: free web service (Singapore), `npm ci && npm run build`, `npm start`, health check `/api/health`.
+- Secrets are set in the Render dashboard (never in git): MONGODB_URI (+ MONGODB_DB), later Razorpay / R2.
+  Atlas → Network Access must allow 0.0.0.0/0 (Render free has no static IPs). MONGODB_URI is needed at BUILD time too.
+- Free instances sleep after 15 min idle; `.github/workflows/keep-awake.yml` pings `/api/health` every 10 min
+  (set repo variable SITE_URL). Back it up with an UptimeRobot monitor. Always-on without pings = Render Starter.
+
 ## Structure
 ```
 app/            layout (fonts, metadata, header), page (home story), globals.css (tokens)
