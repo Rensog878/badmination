@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { collection, dbConfigured } from "@/lib/db/mongo";
+import { buildSafe, collection, dbConfigured } from "@/lib/db/mongo";
 import { dayStart, SAMPLE_TOURNAMENTS, type Tournament } from "@/lib/tournaments";
 
 /**
@@ -12,14 +12,18 @@ const byStart = (a: Tournament, b: Tournament) => dayStart(a.startDate) - daySta
 
 export const listTournaments = cache(async (): Promise<Tournament[]> => {
   if (!dbConfigured()) return [...SAMPLE_TOURNAMENTS].sort(byStart);
-  const col = await collection<Tournament>("tournaments");
-  return col.find({}, { projection: { _id: 0 } }).sort({ startDate: 1 }).toArray();
+  return buildSafe(async () => {
+    const col = await collection<Tournament>("tournaments");
+    return col.find({}, { projection: { _id: 0 } }).sort({ startDate: 1 }).toArray();
+  }, []);
 });
 
 export const findTournament = cache(async (slug: string): Promise<Tournament | undefined> => {
   if (!dbConfigured()) return SAMPLE_TOURNAMENTS.find((t) => t.slug === slug);
-  const col = await collection<Tournament>("tournaments");
-  return (await col.findOne({ slug }, { projection: { _id: 0 } })) ?? undefined;
+  return buildSafe(async () => {
+    const col = await collection<Tournament>("tournaments");
+    return (await col.findOne({ slug }, { projection: { _id: 0 } })) ?? undefined;
+  }, undefined);
 });
 
 /** Insert or replace. `previousSlug` lets an admin rename a tournament. */

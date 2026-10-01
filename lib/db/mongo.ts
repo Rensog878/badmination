@@ -38,6 +38,21 @@ export function getDb(): Promise<Db> {
   return g.__mongo.ready;
 }
 
+/**
+ * During `next build`, a database hiccup must not fail the whole deploy: pages
+ * are pre-rendered without DB content and regenerated on the first request /
+ * hourly revalidation. At runtime errors propagate as usual.
+ */
+export async function buildSafe<T>(read: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await read();
+  } catch (error) {
+    if (process.env.NEXT_PHASE !== "phase-production-build") throw error;
+    console.warn("[db] unavailable during build; continuing without DB content:", (error as Error).message);
+    return fallback;
+  }
+}
+
 export async function collection<T extends Document>(name: CollectionName): Promise<Collection<T>> {
   return (await getDb()).collection<T>(name);
 }

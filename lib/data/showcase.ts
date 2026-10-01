@@ -1,6 +1,6 @@
 import "server-only";
 import { ObjectId } from "mongodb";
-import { collection, dbConfigured } from "@/lib/db/mongo";
+import { buildSafe, collection, dbConfigured } from "@/lib/db/mongo";
 import { PLACEHOLDER_GALLERY, PLACEHOLDER_TESTIMONIALS, showPlaceholders, type GalleryCategory, type GalleryImage, type Testimonial } from "@/lib/showcase";
 
 export interface MediaDoc {
@@ -27,7 +27,7 @@ export interface TestimonialDoc {
 
 export async function listMedia(): Promise<MediaDoc[]> {
   if (!dbConfigured()) return [];
-  return (await collection<MediaDoc>("media")).find().sort({ createdAt: -1 }).toArray();
+  return buildSafe(async () => (await collection<MediaDoc>("media")).find().sort({ createdAt: -1 }).toArray(), []);
 }
 
 export async function addMedia(doc: Omit<MediaDoc, "_id">) {
@@ -40,7 +40,10 @@ export async function removeMedia(id: string): Promise<MediaDoc | null> {
 
 export async function listTestimonialDocs(): Promise<TestimonialDoc[]> {
   if (!dbConfigured()) return [];
-  return (await collection<TestimonialDoc>("testimonials")).find().sort({ createdAt: -1 }).toArray();
+  return buildSafe(
+    async () => (await collection<TestimonialDoc>("testimonials")).find().sort({ createdAt: -1 }).toArray(),
+    [],
+  );
 }
 
 export async function addTestimonial(doc: Omit<TestimonialDoc, "_id">) {
