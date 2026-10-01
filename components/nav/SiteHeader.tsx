@@ -23,7 +23,7 @@ export default function SiteHeader() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
+        className={`fixed inset-x-0 top-0 z-50 print:hidden transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
           hidden ? "-translate-y-full" : "translate-y-0"
         } ${solid && !menuOpen ? "border-b border-off-white/10 bg-charcoal/85 backdrop-blur-sm" : "border-b border-transparent"}`}
       >

@@ -159,6 +159,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
           {result.payment ? (
             <PaymentPanel
               order={result.payment}
+              slug={t.slug}
               tournamentName={t.name}
               reference={result.reference}
               prefill={{

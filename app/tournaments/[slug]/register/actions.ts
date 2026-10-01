@@ -65,6 +65,7 @@ export async function submitRegistration(slug: string, data: unknown): Promise<R
         tournament: tournament.slug,
         events: parsed.data.events.join(", "),
         player: parsed.data.player.fullName,
+        email: parsed.data.player.email,
       },
     });
     return { ...base, payment: { orderId: order.id, amount: order.amount, currency: order.currency, keyId: config.keyId } };

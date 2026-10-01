@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { CircleCheck, CreditCard, Lock } from "lucide-react";
 import { FieldError } from "@/components/registration/FormField";
 import { verifyPayment, type PaymentOrder } from "@/app/tournaments/[slug]/register/actions";
@@ -30,6 +31,7 @@ function loadCheckout(): Promise<void> {
 
 interface PaymentPanelProps {
   order: PaymentOrder;
+  slug: string;
   tournamentName: string;
   reference: string;
   prefill: { name: string; email: string; contact: string };
@@ -42,7 +44,8 @@ type State =
   | { kind: "verifying" }
   | { kind: "paid"; paymentId: string; amount: number };
 
-export default function PaymentPanel({ order, tournamentName, reference, prefill }: PaymentPanelProps) {
+export default function PaymentPanel({ order, slug, tournamentName, reference, prefill }: PaymentPanelProps) {
+  const router = useRouter();
   const [state, setState] = useState<State>({ kind: "idle" });
   const [, startTransition] = useTransition();
 
@@ -77,7 +80,12 @@ export default function PaymentPanel({ order, tournamentName, reference, prefill
             paymentId: response.razorpay_payment_id,
             signature: response.razorpay_signature,
           });
-          setState(res.ok ? { kind: "paid", paymentId: res.paymentId, amount: res.amount } : { kind: "failed", message: res.error });
+          if (res.ok) {
+            setState({ kind: "paid", paymentId: res.paymentId, amount: res.amount });
+            router.push(`/tournaments/${slug}/confirmation?order=${encodeURIComponent(response.razorpay_order_id)}`);
+          } else {
+            setState({ kind: "failed", message: res.error });
+          }
         });
       },
       modal: { ondismiss: () => setState((s) => (s.kind === "opening" ? { kind: "idle" } : s)) },

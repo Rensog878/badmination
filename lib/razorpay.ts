@@ -7,7 +7,8 @@ import { createHmac, timingSafeEqual } from "node:crypto";
  * Docs: https://razorpay.com/docs/api/orders/ and payment signature verification.
  */
 
-const API = "https://api.razorpay.com/v1";
+/** Overridable only so tests can point at a local mock gateway. */
+const API = process.env.RAZORPAY_API_BASE ?? "https://api.razorpay.com/v1";
 const REQUEST_TIMEOUT_MS = 10_000;
 
 export interface RazorpayConfig {
@@ -32,6 +33,13 @@ export interface RazorpayOrder {
   notes: Record<string, string>;
 }
 
+/** Carries the gateway's HTTP status so callers can tell "not found" from "unreachable". */
+export class RazorpayError extends Error {
+  constructor(readonly status: number) {
+    super(`Razorpay request failed (${status})`);
+  }
+}
+
 async function request<T>(config: RazorpayConfig, path: string, init?: RequestInit): Promise<T> {
   const auth = Buffer.from(`${config.keyId}:${config.keySecret}`).toString("base64");
   const res = await fetch(`${API}${path}`, {
@@ -43,7 +51,7 @@ async function request<T>(config: RazorpayConfig, path: string, init?: RequestIn
   if (!res.ok) {
     // Log the gateway's reason server-side only; callers show a generic message.
     console.error(`[razorpay] ${init?.method ?? "GET"} ${path} failed: ${res.status} ${await res.text()}`);
-    throw new Error(`Razorpay request failed (${res.status})`);
+    throw new RazorpayError(res.status);
   }
   return (await res.json()) as T;
 }
@@ -67,6 +75,25 @@ export function createOrder(
 export function fetchOrder(config: RazorpayConfig, orderId: string): Promise<RazorpayOrder> {
   return request<RazorpayOrder>(config, `/orders/${encodeURIComponent(orderId)}`);
 }
+
+export interface RazorpayPayment {
+  id: string;
+  amount: number;
+  status: "created" | "authorized" | "captured" | "refunded" | "failed";
+  method: string;
+  email: string | null;
+  contact: string | null;
+  /** Unix seconds. */
+  created_at: number;
+}
+
+export async function fetchOrderPayments(config: RazorpayConfig, orderId: string): Promise<RazorpayPayment[]> {
+  const res = await request<{ items: RazorpayPayment[] }>(config, `/orders/${encodeURIComponent(orderId)}/payments`);
+  return res.items ?? [];
+}
+
+/** Razorpay order ids look like `order_` + alphanumerics. */
+export const isOrderId = (value: unknown): value is string => typeof value === "string" && /^order_[A-Za-z0-9]{6,32}$/.test(value);
 
 function safeEqualHex(expected: string, received: string): boolean {
   const a = Buffer.from(expected, "utf8");

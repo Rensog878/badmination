@@ -22,6 +22,7 @@ app/            layout (fonts, metadata, header), page (home story), globals.css
                 tournaments/[slug]/page (SSG details; dynamicParams=false, revalidate 1h)
                 tournaments/[slug]/register/page + actions.ts (submitRegistration: validate + create order; verifyPayment)
                 api/razorpay/webhook/route.ts (signature-verified webhook; source of truth for payment state)
+                tournaments/[slug]/confirmation (receipt read from Razorpay by ?order=; noindex) · tournaments/[slug]/calendar (.ics)
 components/stage CinematicStage (owns the ONE persistent Canvas, WebGL check, error fallback, loader),
                 StageContext (mode: pending | 3d | fallback, reducedMotion)
 components/hero HeroSection (text/CTAs), HeroFallback (static SVG)
@@ -62,6 +63,8 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
 - Payments: amount is computed server-side (fee × validated events, in paise); the browser never sends a price.
   Checkout success → `verifyPayment` checks HMAC(order|payment) and reads the order back for reference/amount.
   Webhook verifies HMAC(raw body). Persisting entries/payments is Phase 15 (TODOs mark the spots).
+- Confirmation trusts nothing in the URL except the order id: order, notes and payments are fetched from Razorpay;
+  unknown ids or another tournament's order → 404. `RAZORPAY_API_BASE` exists only to point tests at a mock gateway.
 - Palette has no error colour: errors use an icon + text (never colour alone).
 - Coach photo: set `COACH_PORTRAIT_URL` in `lib/assets.ts` (e.g. `/images/coach.jpg` in `public/`).
 - Sections after the cinematic stage are server components with a solid `bg-charcoal`; wrap content in `<Reveal>` for entrance motion.
@@ -88,7 +91,7 @@ Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-
 
 ## Phases
 - [x] 1 Foundation · [x] 2 Cinematic 3D hero
-- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery · [x] 8 Tournament details · [x] 9 Registration · [x] 10 Payment
-- [ ] 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
+- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery · [x] 8 Tournament details · [x] 9 Registration · [x] 10 Payment · [x] 11 Confirmation
+- [ ] 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
 
 Build only the current phase, then stop for approval.
