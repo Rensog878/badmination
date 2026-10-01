@@ -1,6 +1,7 @@
 import CoachSection from "@/components/coach/CoachSection";
 import HeroSection from "@/components/hero/HeroSection";
 import ProgramsSection from "@/components/programs/ProgramsSection";
+import ShowcaseSection from "@/components/showcase/ShowcaseSection";
 import SmashSection from "@/components/smash/SmashSection";
 import CinematicStage from "@/components/stage/CinematicStage";
 import TournamentsSection from "@/components/tournaments/TournamentsSection";
@@ -18,6 +19,7 @@ export default function Home() {
       <CoachSection />
       <ProgramsSection />
       <TournamentsSection now={Date.now()} />
+      <ShowcaseSection />
     </main>
   );
 }
