@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, Radio } from "lucide-react";
 import RegistrationCard from "@/components/tournaments/RegistrationCard";
 import StatusBadge from "@/components/tournaments/StatusBadge";
 import TournamentRow from "@/components/tournaments/TournamentRow";
 import CourtLines from "@/components/ui/CourtLines";
 import { SITE } from "@/lib/content";
+import { liveAvailable } from "@/lib/live/store";
 import {
   dayStart,
   describeTournament,
@@ -85,6 +86,15 @@ export default async function TournamentPage({ params }: PageProps) {
             <p className="font-display text-lg font-semibold">{formatRange(t.startDate, t.endDate)}</p>
             <p className="text-muted">{t.venue}</p>
             <StatusBadge tournament={t} status={status} now={now} />
+            {liveAvailable(t, now).available && (
+              <Link
+                href={`/tournaments/${t.slug}/live`}
+                className="inline-flex items-center gap-2 border border-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase transition-colors hover:bg-court-green hover:text-black"
+              >
+                <Radio aria-hidden="true" className="size-4" />
+                Watch live
+              </Link>
+            )}
           </div>
         </div>
       </header>

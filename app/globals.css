@@ -11,6 +11,20 @@
   --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, sans-serif;
 }
 
+@theme {
+  --animate-score-flash: score-flash 700ms ease-out;
+  @keyframes score-flash {
+    0% {
+      color: var(--color-court-green);
+      transform: scale(1.18);
+    }
+    100% {
+      color: inherit;
+      transform: scale(1);
+    }
+  }
+}
+
 html,
 body {
   overflow-x: clip;
