@@ -2,8 +2,7 @@ import { FEATURES } from "@/lib/features";
 
 // All hero/site copy in one place so it can be swapped without touching components.
 
-// TODO: copy — replace with the coach's real name
-export const COACH_NAME = "Coach Name";
+export const COACH_NAME = "Hensiya";
 
 export const SITE = {
   // TODO: copy
