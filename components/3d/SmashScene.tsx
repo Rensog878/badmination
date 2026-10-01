@@ -38,7 +38,8 @@ const SHUTTLE_LANDING = new Vector3(...SHUTTLE_LANDING_TUPLE);
 
 const ATHLETE_KEY_INTENSITY = 220;
 const ATHLETE_RIM_INTENSITY = 120;
-const IMPACT_INTENSITY = 60;
+const IMPACT_INTENSITY = 180;
+const IMPACT_GLOW_SIZE = 0.28; // metres, peak radius of the flash sprite
 const IMPACT_WIDTH = 0.012; // progress units (gaussian width of the impact light)
 const GRIP_TO_HEAD_CENTRE = 0.5; // metres from the hand to the racket head centre
 const SHUTTLE_SCALE = 1.8; // slightly oversized so it reads at broadcast distance
@@ -120,6 +121,7 @@ export default function SmashScene({ detail }: SmashSceneProps) {
   const keyLight = useRef<SpotLight>(null);
   const rimLight = useRef<SpotLight>(null);
   const impactLight = useRef<PointLight>(null);
+  const impactGlow = useRef<Mesh>(null);
   const blob = useRef<Mesh>(null);
 
   const rig = useMemo(() => buildAthleteRig(detail), [detail]);
@@ -213,9 +215,13 @@ export default function SmashScene({ detail }: SmashSceneProps) {
     const lit = ramp(p, M.athleteLightStart, M.athleteLightFull);
     if (keyLight.current) keyLight.current.intensity = ATHLETE_KEY_INTENSITY * lit;
     if (rimLight.current) rimLight.current.intensity = ATHLETE_RIM_INTENSITY * lit;
-    if (impactLight.current) {
-      const d = (p - M.contact) / IMPACT_WIDTH;
-      impactLight.current.intensity = IMPACT_INTENSITY * Math.exp(-d * d);
+    const impactD = (p - M.contact) / IMPACT_WIDTH;
+    const impact = Math.exp(-impactD * impactD);
+    if (impactLight.current) impactLight.current.intensity = IMPACT_INTENSITY * impact;
+    if (impactGlow.current) {
+      impactGlow.current.visible = impact > 0.02;
+      impactGlow.current.scale.setScalar(0.05 + impact * IMPACT_GLOW_SIZE);
+      (impactGlow.current.material as MeshBasicMaterial).opacity = impact * impact;
     }
 
     // Ground shadow shrinks and fades as the athlete leaves the floor.
@@ -293,6 +299,11 @@ export default function SmashScene({ detail }: SmashSceneProps) {
         color="#10B981"
       />
       <pointLight ref={impactLight} position={contact} intensity={0} decay={2} distance={8} color="#10B981" />
+      {/* Impact flash: over-bright additive sprite that the bloom pass turns into a burst. */}
+      <mesh ref={impactGlow} position={contact} visible={false}>
+        <sphereGeometry args={[1, 16, 12]} />
+        <meshBasicMaterial color={[4, 6, 5]} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
+      </mesh>
 
       <mesh ref={blob} rotation-x={-Math.PI / 2} renderOrder={3}>
         <planeGeometry args={[1, 1]} />
