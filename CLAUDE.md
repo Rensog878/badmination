@@ -8,17 +8,20 @@ Premium, cinematic site for a professional badminton coach. The feel is Olympic 
 - three, @react-three/fiber v9, @react-three/drei v10, lucide-react
 - gsap + ScrollTrigger + @gsap/react (Phase 3)
 - react-hook-form + zod v4 + @hookform/resolvers (Phase 9)
+- Razorpay via REST (`lib/razorpay.ts`, `server-only`) + Standard Checkout script loaded on demand (Phase 10)
 - Later: Framer Motion, React Hook Form + Zod
 
 ## Commands
 - `npm run dev` / `npm run build` / `npm run start` / `npm run lint`
+- Env: copy `.env.example` → `.env.local` (RAZORPAY_KEY_ID / _KEY_SECRET / _WEBHOOK_SECRET). Without keys, entry works and payment shows "not available".
 - `postinstall` copies the Draco decoder into `public/draco/` (`scripts/copy-draco.mjs`). It is self-hosted, with no CDN.
 
 ## Structure
 ```
 app/            layout (fonts, metadata, header), page (home story), globals.css (tokens)
                 tournaments/[slug]/page (SSG details; dynamicParams=false, revalidate 1h)
-                tournaments/[slug]/register/page + actions.ts (server action re-validates with the same schema)
+                tournaments/[slug]/register/page + actions.ts (submitRegistration: validate + create order; verifyPayment)
+                api/razorpay/webhook/route.ts (signature-verified webhook; source of truth for payment state)
 components/stage CinematicStage (owns the ONE persistent Canvas, WebGL check, error fallback, loader),
                 StageContext (mode: pending | 3d | fallback, reducedMotion)
 components/hero HeroSection (text/CTAs), HeroFallback (static SVG)
@@ -33,7 +36,7 @@ components/programs ProgramsSection (server shell + trial band), ProgramExplorer
 components/tournaments TournamentsSection (server shell, gets `now`), TournamentExplorer (client: view tabs,
                 age/level filters, search), TournamentRow (fixture-list row, links to /tournaments/[slug]),
                 StatusBadge, RegistrationCard (status-aware entry card)
-components/registration RegistrationForm (4-step RHF form), FormField (label/hint/error wiring)
+components/registration RegistrationForm (4-step RHF form), FormField (label/hint/error wiring), PaymentPanel (Checkout)
 components/ui   LoadingScreen, CourtLines (shared court SVG), Reveal (one-shot GSAP fade-up; off under reduced motion)
 lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneState (mutable, GSAP-drivable),
                 performance (tiers, reduced motion, WebGL/visibility hooks), racketGeometry (procedural racket),
@@ -56,6 +59,9 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
   (age eligibility on 31 Dec, partners, guardian for under-18s) live in `crossFieldIssues`, because Zod skips an object's
   superRefine while other fields are invalid: the form runs it per step, the schema runs it for the final/server check.
   No persistence yet: the action returns a reference + total (Phase 10 attaches payment, Phase 15 stores entries).
+- Payments: amount is computed server-side (fee × validated events, in paise); the browser never sends a price.
+  Checkout success → `verifyPayment` checks HMAC(order|payment) and reads the order back for reference/amount.
+  Webhook verifies HMAC(raw body). Persisting entries/payments is Phase 15 (TODOs mark the spots).
 - Palette has no error colour: errors use an icon + text (never colour alone).
 - Coach photo: set `COACH_PORTRAIT_URL` in `lib/assets.ts` (e.g. `/images/coach.jpg` in `public/`).
 - Sections after the cinematic stage are server components with a solid `bg-charcoal`; wrap content in `<Reveal>` for entrance motion.
@@ -82,7 +88,7 @@ Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-
 
 ## Phases
 - [x] 1 Foundation · [x] 2 Cinematic 3D hero
-- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery · [x] 8 Tournament details · [x] 9 Registration
-- [ ] 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
+- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery · [x] 8 Tournament details · [x] 9 Registration · [x] 10 Payment
+- [ ] 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
 
 Build only the current phase, then stop for approval.

@@ -6,6 +6,7 @@ import { useForm, type FieldErrors, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight, Check, CircleCheck } from "lucide-react";
 import FormField, { describedBy, FieldError, inputClass } from "@/components/registration/FormField";
+import PaymentPanel from "@/components/registration/PaymentPanel";
 import { submitRegistration, type RegistrationResult } from "@/app/tournaments/[slug]/register/actions";
 import {
   ageAtCutoff,
@@ -125,6 +126,13 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
     },
   );
 
+  // Re-submits the same (already valid) entry to get a fresh payment order.
+  const retryPayment = () =>
+    startTransition(async () => {
+      const res = await submitRegistration(t.slug, getValues());
+      if (res.ok) setResult(res);
+    });
+
   if (result) {
     return (
       <section aria-labelledby="done-heading" className="border border-court-green/50 bg-black p-8 sm:p-12">
@@ -133,7 +141,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
           Entry details confirmed
         </h2>
         <p className="mt-3 max-w-xl text-muted">
-          Your details passed all checks. Your place is held once payment is complete.
+          Your details passed all checks. Your place is confirmed once payment is complete.
         </p>
         <dl className="mt-8 grid gap-px border border-off-white/10 bg-off-white/10 sm:grid-cols-3">
           {[
@@ -147,10 +155,37 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
             </div>
           ))}
         </dl>
-        {/* TODO(Phase 10): Razorpay checkout replaces this. */}
-        <p className="mt-8 border border-dashed border-off-white/20 px-5 py-4 text-sm text-muted">
-          Online payment is being set up. Keep your reference; payment opens in the next release.
-        </p>
+        <div className="mt-8">
+          {result.payment ? (
+            <PaymentPanel
+              order={result.payment}
+              tournamentName={t.name}
+              reference={result.reference}
+              prefill={{
+                name: getValues("player.fullName"),
+                email: getValues("player.email"),
+                contact: getValues("player.phone"),
+              }}
+            />
+          ) : result.paymentError ? (
+            <div role="alert">
+              <FieldError message={result.paymentError} />
+              <button
+                type="button"
+                onClick={retryPayment}
+                disabled={pending}
+                aria-busy={pending}
+                className="mt-4 border border-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase hover:bg-court-green hover:text-black disabled:opacity-60"
+              >
+                {pending ? "Retrying…" : "Try payment again"}
+              </button>
+            </div>
+          ) : (
+            <p className="border border-dashed border-off-white/20 px-5 py-4 text-sm text-muted">
+              Online payment isn&apos;t available yet. Keep your reference; the organiser will contact you to complete payment.
+            </p>
+          )}
+        </div>
       </section>
     );
   }
