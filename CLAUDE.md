@@ -70,6 +70,9 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
 - Labels ≥ 12px (`text-xs`), letter-spacing ≤ 0.2em. No global smooth scroll (links would race through the 3D).
 - Loader offers "Skip" after 1.5 s. The smash shows a thin progress bar; no "Skip intro" (product decision).
 - Registration autosaves a draft to sessionStorage per tournament; completed steps are tappable.
+- iPhone/Safari: inputs ≥16px on ≤1024px screens (no focus zoom); viewport-fit=cover + env(safe-area-inset-*) on the header
+  and bottom bars; the 3D stage is `h-lvh` so the canvas doesn't resize when the URL bar collapses; no tap highlight,
+  touch-action: manipulation; fullscreen buttons only where `document.fullscreenEnabled`.
 
 ## Content
 - All copy in `lib/content.ts`; anything marked `// TODO: copy` or `// TODO: real figures` is placeholder.

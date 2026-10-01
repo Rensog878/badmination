@@ -25,7 +25,7 @@ export default function SiteHeader() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 print:hidden transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
+        className={`fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] print:hidden transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
           hidden ? "-translate-y-full" : "translate-y-0"
         } ${solid && !menuOpen ? "border-b border-off-white/10 bg-charcoal/95" : "border-b border-transparent"}`}
       >

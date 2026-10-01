@@ -58,6 +58,27 @@ body {
   transform: none;
 }
 
+/* Phones: inputs under 16px make iOS Safari zoom in on focus. */
+@media (max-width: 1024px) {
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* Remove the grey tap flash and the double-tap-zoom delay on controls (focus rings still show). */
+a,
+button,
+summary,
+label,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-court-green);
   outline-offset: 3px;

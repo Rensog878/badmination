@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Expand, Minimize } from "lucide-react";
 import { sideName } from "@/components/live/CourtCard";
 import { useLiveFeed } from "@/components/live/useLiveFeed";
@@ -15,6 +15,11 @@ export const currentGameRallies = (m: LiveMatch) => {
   const n = g ? g.a + g.b : 0;
   return n ? m.history.slice(-n) : [];
 };
+
+const noopSubscribe = () => () => {};
+/** iPhone Safari can't fullscreen arbitrary elements; only offer the button where it works. */
+const useFullscreenSupported = () =>
+  useSyncExternalStore(noopSubscribe, () => Boolean(document.fullscreenEnabled), () => false);
 
 /** Re-renders every second after mount (null during SSR to avoid mismatches). */
 function useNow(intervalMs = 1000) {
@@ -40,6 +45,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
   const frame = useRef<HTMLDivElement>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const now = useNow();
+  const canFullscreen = useFullscreenSupported();
 
   useEffect(() => {
     const onChange = () => setFullscreen(document.fullscreenElement === frame.current);
@@ -87,14 +93,16 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
               <span aria-hidden="true" className={`size-2 rounded-full ${connection === "live" ? "bg-court-green" : "bg-muted"}`} />
               {connection === "live" ? "Live" : "Reconnecting"}
             </p>
-            <button
-              type="button"
-              onClick={toggleFullscreen}
-              aria-label={fullscreen ? "Exit full screen" : "Full screen"}
-              className="inline-flex size-10 items-center justify-center border border-off-white/15 hover:border-court-green hover:text-court-green"
-            >
-              {fullscreen ? <Minimize aria-hidden="true" className="size-4" /> : <Expand aria-hidden="true" className="size-4" />}
-            </button>
+            {canFullscreen && (
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                aria-label={fullscreen ? "Exit full screen" : "Full screen"}
+                className="inline-flex size-11 items-center justify-center rounded-lg border border-off-white/15 hover:border-court-green hover:text-court-green"
+              >
+                {fullscreen ? <Minimize aria-hidden="true" className="size-4" /> : <Expand aria-hidden="true" className="size-4" />}
+              </button>
+            )}
           </div>
         </header>
 
