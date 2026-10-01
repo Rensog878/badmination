@@ -1,0 +1,49 @@
+import type { ReactNode } from "react";
+import { AlertCircle } from "lucide-react";
+
+export const inputClass =
+  "w-full border border-off-white/15 bg-black/40 px-4 py-3 text-off-white placeholder:text-muted/70 transition-colors focus:border-court-green focus:outline-none aria-invalid:border-off-white";
+
+interface FormFieldProps {
+  id: string;
+  label: string;
+  error?: string;
+  hint?: string;
+  optional?: boolean;
+  children: ReactNode;
+  className?: string;
+}
+
+/** Label + control + hint/error. Errors use an icon and text, never colour alone. */
+export default function FormField({ id, label, error, hint, optional, children, className = "" }: FormFieldProps) {
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="mb-2 flex items-baseline justify-between font-display text-xs font-medium tracking-[0.18em] uppercase">
+        {label}
+        {optional && <span className="text-[0.65rem] tracking-[0.15em] text-muted normal-case">Optional</span>}
+      </label>
+      {children}
+      {hint && !error && (
+        <p id={`${id}-hint`} className="mt-2 text-xs text-muted">
+          {hint}
+        </p>
+      )}
+      {error && <FieldError id={`${id}-error`} message={error} />}
+    </div>
+  );
+}
+
+export function FieldError({ id, message }: { id?: string; message: string }) {
+  return (
+    <p id={id} className="mt-2 flex items-start gap-2 text-sm font-medium text-off-white">
+      <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-court-green" />
+      {message}
+    </p>
+  );
+}
+
+/** aria props wiring a control to its hint/error. */
+export const describedBy = (id: string, error?: string, hint?: string) => ({
+  "aria-invalid": error ? true : undefined,
+  "aria-describedby": error ? `${id}-error` : hint ? `${id}-hint` : undefined,
+});

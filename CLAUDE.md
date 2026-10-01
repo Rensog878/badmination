@@ -7,6 +7,7 @@ Premium, cinematic site for a professional badminton coach. The feel is Olympic 
 - Tailwind v4: tokens live in `app/globals.css` under `@theme`. There is no `tailwind.config.ts`.
 - three, @react-three/fiber v9, @react-three/drei v10, lucide-react
 - gsap + ScrollTrigger + @gsap/react (Phase 3)
+- react-hook-form + zod v4 + @hookform/resolvers (Phase 9)
 - Later: Framer Motion, React Hook Form + Zod
 
 ## Commands
@@ -17,6 +18,7 @@ Premium, cinematic site for a professional badminton coach. The feel is Olympic 
 ```
 app/            layout (fonts, metadata, header), page (home story), globals.css (tokens)
                 tournaments/[slug]/page (SSG details; dynamicParams=false, revalidate 1h)
+                tournaments/[slug]/register/page + actions.ts (server action re-validates with the same schema)
 components/stage CinematicStage (owns the ONE persistent Canvas, WebGL check, error fallback, loader),
                 StageContext (mode: pending | 3d | fallback, reducedMotion)
 components/hero HeroSection (text/CTAs), HeroFallback (static SVG)
@@ -31,6 +33,7 @@ components/programs ProgramsSection (server shell + trial band), ProgramExplorer
 components/tournaments TournamentsSection (server shell, gets `now`), TournamentExplorer (client: view tabs,
                 age/level filters, search), TournamentRow (fixture-list row, links to /tournaments/[slug]),
                 StatusBadge, RegistrationCard (status-aware entry card)
+components/registration RegistrationForm (4-step RHF form), FormField (label/hint/error wiring)
 components/ui   LoadingScreen, CourtLines (shared court SVG), Reveal (one-shot GSAP fade-up; off under reduced motion)
 lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneState (mutable, GSAP-drivable),
                 performance (tiers, reduced motion, WebGL/visibility hooks), racketGeometry (procedural racket),
@@ -49,6 +52,11 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
   date-only UTC strings and a server-supplied `now` (page `revalidate = 3600`), so server/client render identically.
 - Nav links are root-relative (`/#coach`) so they work from sub-pages.
 - Detail pages derive a provisional schedule, description and default rules (`GENERAL_RULES`) until real data exists.
+- Registration: `lib/registration.ts` builds the Zod schema per tournament (shared client + server). Cross-field rules
+  (age eligibility on 31 Dec, partners, guardian for under-18s) live in `crossFieldIssues`, because Zod skips an object's
+  superRefine while other fields are invalid: the form runs it per step, the schema runs it for the final/server check.
+  No persistence yet: the action returns a reference + total (Phase 10 attaches payment, Phase 15 stores entries).
+- Palette has no error colour: errors use an icon + text (never colour alone).
 - Coach photo: set `COACH_PORTRAIT_URL` in `lib/assets.ts` (e.g. `/images/coach.jpg` in `public/`).
 - Sections after the cinematic stage are server components with a solid `bg-charcoal`; wrap content in `<Reveal>` for entrance motion.
 
@@ -74,7 +82,7 @@ Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-
 
 ## Phases
 - [x] 1 Foundation · [x] 2 Cinematic 3D hero
-- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery · [x] 8 Tournament details
-- [ ] 9 Registration (RHF + Zod) · 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
+- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery · [x] 8 Tournament details · [x] 9 Registration
+- [ ] 10 Payment (Razorpay) · 11 Confirmation · 12 Live dashboard · 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
 
 Build only the current phase, then stop for approval.
