@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import { findTournament } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import UmpireShell from "@/components/umpire/UmpireShell";
 import ScoringPad from "@/components/umpire/ScoringPad";
-import { getSnapshot, liveAvailable } from "@/lib/live/store";
-import { getTournament } from "@/lib/tournaments";
+import { ensureFeed, getSnapshot, liveAvailable } from "@/lib/live/store";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Umpire scoring", robots: { index: false, follow: false } };
@@ -14,9 +14,11 @@ type PageProps = { params: Promise<{ slug: string; matchId: string }> };
 
 export default async function UmpireScoringPage({ params }: PageProps) {
   const { slug, matchId } = await params;
-  const t = getTournament(slug);
+  const t = await findTournament(slug);
   if (!t) notFound();
-  const snapshot = liveAvailable(t, Date.now()).available ? getSnapshot(t) : null;
+  const available = liveAvailable(t, Date.now()).available;
+  if (available) await ensureFeed(t);
+  const snapshot = available ? getSnapshot(t) : null;
   if (snapshot && !snapshot.matches.some((m) => m.id === matchId)) notFound();
 
   return (

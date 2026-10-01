@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { findTournament } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarPlus, CircleCheck, Clock } from "lucide-react";
@@ -14,7 +15,7 @@ import {
   type RazorpayPayment,
 } from "@/lib/razorpay";
 import { eventKey } from "@/lib/registration";
-import { eventLabel, formatInr, formatRange, getTournament, mapsUrl, type Tournament } from "@/lib/tournaments";
+import { eventLabel, formatInr, formatRange, mapsUrl, type Tournament } from "@/lib/tournaments";
 
 export const metadata: Metadata = { title: `Entry confirmation | ${SITE.title}`, robots: { index: false, follow: false } };
 
@@ -75,7 +76,7 @@ async function lookup(orderId: string): Promise<Lookup> {
  * order (looked up by order id), never from query parameters.
  */
 export default async function ConfirmationPage({ params, searchParams }: PageProps) {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   if (!t) notFound();
   const orderParam = (await searchParams).order;
   const orderId = Array.isArray(orderParam) ? orderParam[0] : orderParam;

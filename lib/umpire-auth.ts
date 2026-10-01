@@ -1,17 +1,20 @@
 import "server-only";
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import { canScore, getCurrentUser } from "@/lib/auth/session";
+import { dbConfigured } from "@/lib/db/mongo";
 
 /**
- * Interim umpire access (until Phase 15 adds real accounts): a shared passcode
- * from UMPIRE_TOKEN, exchanged for an httpOnly cookie holding an HMAC derived
- * from it. Rotating UMPIRE_TOKEN signs everyone out.
+ * Umpire access. With the database configured, umpires and admins sign in with
+ * their accounts (lib/auth/session). Without it (local demos), a shared passcode
+ * from UMPIRE_TOKEN is exchanged for an httpOnly HMAC cookie.
  */
 
 const COOKIE = "umpire_session";
 const SESSION_HOURS = 12;
 
-export const umpireEnabled = () => Boolean(process.env.UMPIRE_TOKEN);
+export const usesAccounts = () => dbConfigured();
+export const umpireEnabled = () => usesAccounts() || Boolean(process.env.UMPIRE_TOKEN);
 
 const digest = (value: string) => createHash("sha256").update(value).digest();
 
@@ -21,12 +24,14 @@ function sessionValue(token: string) {
 
 export function checkPasscode(input: string): boolean {
   const token = process.env.UMPIRE_TOKEN;
+  if (usesAccounts()) return false;
   if (!token) return false;
   // Compare fixed-length digests so timing doesn't leak length or content.
   return timingSafeEqual(digest(input), digest(token));
 }
 
 export async function isUmpire(): Promise<boolean> {
+  if (usesAccounts()) return canScore(await getCurrentUser());
   const token = process.env.UMPIRE_TOKEN;
   if (!token) return false;
   const value = (await cookies()).get(COOKIE)?.value;

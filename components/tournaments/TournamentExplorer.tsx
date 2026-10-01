@@ -6,8 +6,8 @@ import TournamentRow from "@/components/tournaments/TournamentRow";
 import {
   dayStart,
   getStatus,
-  TOURNAMENTS,
   type AgeGroup,
+  type Tournament,
   type TournamentLevel,
   type TournamentStatus,
 } from "@/lib/tournaments";
@@ -31,9 +31,10 @@ function inView(view: View, status: TournamentStatus) {
 interface TournamentExplorerProps {
   /** Reference time from the server render, so status is identical on server and client. */
   now: number;
+  tournaments: Tournament[];
 }
 
-export default function TournamentExplorer({ now }: TournamentExplorerProps) {
+export default function TournamentExplorer({ now, tournaments }: TournamentExplorerProps) {
   const [view, setView] = useState<View>("upcoming");
   const [age, setAge] = useState<AgeGroup | "all">("all");
   const [level, setLevel] = useState<TournamentLevel | "all">("all");
@@ -41,7 +42,7 @@ export default function TournamentExplorer({ now }: TournamentExplorerProps) {
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return TOURNAMENTS.map((t) => ({ t, status: getStatus(t, now) }))
+    return tournaments.map((t) => ({ t, status: getStatus(t, now) }))
       .filter(({ status }) => inView(view, status))
       .filter(({ t }) => age === "all" || t.events.some((e) => e.ageGroup === age))
       .filter(({ t }) => level === "all" || t.level === level)
@@ -51,7 +52,7 @@ export default function TournamentExplorer({ now }: TournamentExplorerProps) {
           ? dayStart(b.t.startDate) - dayStart(a.t.startDate)
           : dayStart(a.t.startDate) - dayStart(b.t.startDate),
       );
-  }, [now, view, age, level, query]);
+  }, [tournaments, now, view, age, level, query]);
 
   const reset = () => {
     setAge("all");

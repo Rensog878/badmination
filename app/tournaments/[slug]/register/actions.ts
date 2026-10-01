@@ -1,9 +1,11 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { attachOrder, createRegistration, markPaid } from "@/lib/data/registrations";
+import { findTournament } from "@/lib/data/tournaments";
 import { makeRegistrationSchema, registrationTotal } from "@/lib/registration";
 import { createOrder, fetchOrder, getRazorpayConfig, verifyPaymentSignature } from "@/lib/razorpay";
-import { getStatus, getTournament } from "@/lib/tournaments";
+import { getStatus } from "@/lib/tournaments";
 
 export interface PaymentOrder {
   orderId: string;
@@ -32,7 +34,7 @@ export type RegistrationResult =
  * computed here from the tournament fee — the client never supplies a price.
  */
 export async function submitRegistration(slug: string, data: unknown): Promise<RegistrationResult> {
-  const tournament = getTournament(slug);
+  const tournament = await findTournament(slug);
   if (!tournament) return { ok: false, formError: "This tournament no longer exists." };
   if (getStatus(tournament, Date.now()) !== "open") {
     return { ok: false, formError: "Registration for this tournament is closed." };
@@ -48,10 +50,30 @@ export async function submitRegistration(slug: string, data: unknown): Promise<R
     return { ok: false, formError: "Some details need fixing.", fieldErrors };
   }
 
-  // TODO(Phase 15): persist the entry with status "pending_payment".
+  // Capacity counts paid entries (one per event entered); checked again by the admin before the draw.
+  if (tournament.registered + parsed.data.events.length > tournament.capacity) {
+    return { ok: false, formError: "Sorry, there aren't enough places left for all the events you chose." };
+  }
+
   const reference = `REG-${randomUUID().slice(0, 8).toUpperCase()}`;
   const total = registrationTotal(tournament, parsed.data.events);
   const base = { ok: true as const, reference, total, events: parsed.data.events };
+
+  const { player, events, partners, emergency, guardianName, consents } = parsed.data;
+  await createRegistration({
+    reference,
+    tournamentSlug: tournament.slug,
+    tournamentName: tournament.name,
+    player,
+    events,
+    partners: Object.fromEntries(Object.entries(partners).filter(([key]) => events.includes(key))),
+    emergency,
+    guardianName,
+    mediaConsent: consents.media,
+    total,
+    status: "pending_payment",
+    createdAt: new Date(),
+  });
 
   const config = getRazorpayConfig();
   if (!config) return { ...base, payment: null };
@@ -68,6 +90,7 @@ export async function submitRegistration(slug: string, data: unknown): Promise<R
         email: parsed.data.player.email,
       },
     });
+    await attachOrder(reference, order.id);
     return { ...base, payment: { orderId: order.id, amount: order.amount, currency: order.currency, keyId: config.keyId } };
   } catch {
     return { ...base, payment: null, paymentError: "We couldn't start the payment. Please try again in a moment." };
@@ -98,7 +121,8 @@ export async function verifyPayment(input: {
 
   try {
     const order = await fetchOrder(config, input.orderId);
-    // TODO(Phase 15): mark the entry paid (idempotently; the webhook may arrive first).
+    // Idempotent: the webhook may already have marked it paid.
+    if (order.status === "paid") await markPaid(input.orderId, input.paymentId);
     return { ok: true, reference: order.notes.reference ?? order.receipt ?? "", paymentId: input.paymentId, amount: order.amount };
   } catch {
     return { ok: false, error: "Payment received but we couldn't confirm it yet. You'll get a confirmation shortly." };

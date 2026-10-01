@@ -1,6 +1,6 @@
 /**
  * Tournament data + derived status. Shaped like a future API response (Phase 15
- * admin/DB replaces TOURNAMENTS). Dates are date-only ISO strings interpreted as
+ * admin/DB replaces SAMPLE_TOURNAMENTS). Dates are date-only ISO strings interpreted as
  * UTC calendar days, so server and client format them identically.
  */
 
@@ -31,8 +31,8 @@ export interface Tournament {
   prizePool?: number;
 }
 
-// TODO: placeholder fixtures until the admin/DB (Phase 15) supplies real ones.
-export const TOURNAMENTS: readonly Tournament[] = [
+/** Sample fixtures used when no database is configured (and importable from the admin). */
+export const SAMPLE_TOURNAMENTS: readonly Tournament[] = [
   {
     slug: "autumn-open-2026",
     name: "Autumn Open",
@@ -199,10 +199,6 @@ const INR = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR",
 export const formatInr = (amount: number) => INR.format(amount);
 
 export const eventLabel = (e: TournamentEvent) => `${e.ageGroup} ${e.type}`;
-
-export function getTournament(slug: string): Tournament | undefined {
-  return TOURNAMENTS.find((t) => t.slug === slug);
-}
 
 export function describeTournament(t: Tournament): string {
   // TODO: per-tournament copy from the organiser (admin, Phase 15).

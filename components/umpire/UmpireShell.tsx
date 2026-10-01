@@ -1,14 +1,15 @@
 import { notFound } from "next/navigation";
+import { findTournament } from "@/lib/data/tournaments";
 import type { ReactNode } from "react";
 import { logoutUmpire } from "@/app/umpire/actions";
 import UmpireLogin from "@/components/umpire/UmpireLogin";
 import { liveAvailable } from "@/lib/live/store";
-import { getTournament } from "@/lib/tournaments";
-import { isUmpire, umpireEnabled } from "@/lib/umpire-auth";
+import Link from "next/link";
+import { isUmpire, umpireEnabled, usesAccounts } from "@/lib/umpire-auth";
 
 /** Umpire console shell; shared by the match list and the scoring pad. */
 export default async function UmpireShell({ slug, next, children }: { slug: string; next: string; children: ReactNode }) {
-  const t = getTournament(slug);
+  const t = await findTournament(slug);
   if (!t) notFound();
   const signedIn = await isUmpire();
   return (
@@ -30,11 +31,20 @@ export default async function UmpireShell({ slug, next, children }: { slug: stri
         </div>
         <div className="mt-10">
           {!umpireEnabled() ? (
-            <p className="border border-off-white/15 p-6 text-muted">The umpire console is disabled. Set UMPIRE_TOKEN on the server to enable it.</p>
+            <p className="border border-off-white/15 p-6 text-muted">The umpire console is disabled. Configure the database (MONGODB_URI) or set UMPIRE_TOKEN.</p>
           ) : !liveAvailable(t, Date.now()).available ? (
             <p className="border border-off-white/15 p-6 text-muted">Live scoring opens when the tournament starts.</p>
           ) : !signedIn ? (
-            <UmpireLogin next={next} />
+            usesAccounts() ? (
+              <Link
+                href={`/admin/login?next=${encodeURIComponent(next)}`}
+                className="inline-block bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white"
+              >
+                Sign in to score
+              </Link>
+            ) : (
+              <UmpireLogin next={next} />
+            )
           ) : (
             children
           )}

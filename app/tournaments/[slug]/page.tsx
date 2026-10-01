@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { findTournament, listTournaments } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink, Radio } from "lucide-react";
@@ -16,27 +17,24 @@ import {
   formatRange,
   GENERAL_RULES,
   getStatus,
-  getTournament,
   mapsUrl,
   provisionalSchedule,
   registerHref,
-  TOURNAMENTS,
 } from "@/lib/tournaments";
 
 /** Status depends on the date: re-render hourly. Unknown slugs 404. */
 export const revalidate = 3600;
-export const dynamicParams = false;
 
 const RELATED_COUNT = 3;
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return TOURNAMENTS.map((t) => ({ slug: t.slug }));
+export async function generateStaticParams() {
+  return (await listTournaments()).map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   if (!t) return {};
   return {
     title: `${t.name} · ${formatRange(t.startDate, t.endDate)} | ${SITE.title}`,
@@ -45,12 +43,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function TournamentPage({ params }: PageProps) {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   if (!t) notFound();
 
   const now = Date.now();
   const status = getStatus(t, now);
-  const related = TOURNAMENTS.filter((o) => o.slug !== t.slug && getStatus(o, now) !== "completed")
+  const related = (await listTournaments()).filter((o) => o.slug !== t.slug && getStatus(o, now) !== "completed")
     .sort((a, b) => dayStart(a.startDate) - dayStart(b.startDate))
     .slice(0, RELATED_COUNT);
 

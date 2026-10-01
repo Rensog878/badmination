@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
+import { findTournament } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import LiveDashboard from "@/components/live/LiveDashboard";
 import { SITE } from "@/lib/content";
-import { getSnapshot, liveAvailable } from "@/lib/live/store";
-import { formatRange, getTournament } from "@/lib/tournaments";
+import { ensureFeed, getSnapshot, liveAvailable } from "@/lib/live/store";
+import { formatRange } from "@/lib/tournaments";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   return t ? { title: `Live · ${t.name} | ${SITE.title}` } : {};
 }
 
 export default async function LivePage({ params }: PageProps) {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   if (!t) notFound();
   const { available } = liveAvailable(t, Date.now());
+  if (available) await ensureFeed(t);
 
   return (
     <main id="main" className="min-h-svh bg-charcoal pt-28 pb-24 lg:pt-36">

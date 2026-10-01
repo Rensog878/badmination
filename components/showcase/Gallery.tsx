@@ -7,7 +7,8 @@ import type { GalleryCategory, GalleryImage } from "@/lib/showcase";
 
 type Filter = GalleryCategory | "All";
 
-const isSvg = (src: string) => src.endsWith(".svg");
+/** SVG placeholders and remote (R2) uploads are served as-is; R2 already serves cached, immutable files. */
+const isSvg = (src: string) => src.endsWith(".svg") || /^https?:\/\//.test(src);
 
 function PlaceholderBadge() {
   return (

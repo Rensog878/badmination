@@ -1,29 +1,29 @@
 import type { Metadata } from "next";
+import { findTournament, listTournaments } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import RegistrationForm from "@/components/registration/RegistrationForm";
 import StatusBadge from "@/components/tournaments/StatusBadge";
 import { SITE } from "@/lib/content";
-import { daysToClose, formatInr, formatRange, getStatus, getTournament, TOURNAMENTS } from "@/lib/tournaments";
+import { daysToClose, formatInr, formatRange, getStatus } from "@/lib/tournaments";
 
 export const revalidate = 3600;
-export const dynamicParams = false;
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return TOURNAMENTS.map((t) => ({ slug: t.slug }));
+export async function generateStaticParams() {
+  return (await listTournaments()).map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   if (!t) return {};
   return { title: `Register · ${t.name} | ${SITE.title}`, robots: { index: false } };
 }
 
 export default async function RegisterPage({ params }: PageProps) {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   if (!t) notFound();
   const now = Date.now();
   const status = getStatus(t, now);

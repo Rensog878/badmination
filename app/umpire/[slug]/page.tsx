@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import { findTournament } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { sideName } from "@/components/live/CourtCard";
 import StartMatchButton from "@/components/umpire/StartMatchButton";
 import UmpireShell from "@/components/umpire/UmpireShell";
-import { getSnapshot, liveAvailable } from "@/lib/live/store";
-import { getTournament } from "@/lib/tournaments";
+import { ensureFeed, getSnapshot, liveAvailable } from "@/lib/live/store";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Umpire console", robots: { index: false, follow: false } };
@@ -14,9 +14,11 @@ type PageProps = { params: Promise<{ slug: string }> };
 
 export default async function UmpireMatchesPage({ params }: PageProps) {
   const { slug } = await params;
-  const t = getTournament(slug);
+  const t = await findTournament(slug);
   if (!t) notFound();
-  const snapshot = liveAvailable(t, Date.now()).available ? getSnapshot(t) : null;
+  const available = liveAvailable(t, Date.now()).available;
+  if (available) await ensureFeed(t);
+  const snapshot = available ? getSnapshot(t) : null;
   const live = snapshot?.matches.filter((m) => m.status === "live") ?? [];
   const scheduled = snapshot?.matches.filter((m) => m.status === "scheduled") ?? [];
 

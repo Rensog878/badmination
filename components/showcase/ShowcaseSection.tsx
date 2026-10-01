@@ -1,12 +1,12 @@
 import Gallery from "@/components/showcase/Gallery";
 import Testimonials from "@/components/showcase/Testimonials";
 import Reveal from "@/components/ui/Reveal";
-import { getGallery, getTestimonials, SHOWCASE_INTRO } from "@/lib/showcase";
+import { getGallery, getTestimonials } from "@/lib/data/showcase";
+import { SHOWCASE_INTRO } from "@/lib/showcase";
 
 /** WIN: gallery + testimonials. Renders nothing until there is real (or, in dev, sample) content. */
-export default function ShowcaseSection() {
-  const images = getGallery();
-  const testimonials = getTestimonials();
+export default async function ShowcaseSection() {
+  const [images, testimonials] = await Promise.all([getGallery(), getTestimonials()]);
   if (images.length === 0 && testimonials.length === 0) return null;
 
   return (

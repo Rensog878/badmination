@@ -1,10 +1,10 @@
-import { dayStart, describeTournament, getTournament, TOURNAMENTS } from "@/lib/tournaments";
+import { dayStart, describeTournament } from "@/lib/tournaments";
+import { findTournament, listTournaments } from "@/lib/data/tournaments";
 
 /** Static .ics per tournament (no personal data), so "Add to calendar" works everywhere. */
-export const dynamicParams = false;
 
-export function generateStaticParams() {
-  return TOURNAMENTS.map((t) => ({ slug: t.slug }));
+export async function generateStaticParams() {
+  return (await listTournaments()).map((t) => ({ slug: t.slug }));
 }
 
 const DAY_MS = 86_400_000;
@@ -13,7 +13,7 @@ const icsDate = (ms: number) => new Date(ms).toISOString().slice(0, 10).replaceA
 const esc = (s: string) => s.replace(/[\\;,]/g, (c) => `\\${c}`).replace(/\n/g, "\\n");
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   if (!t) return new Response("Not found", { status: 404 });
 
   const ics = [

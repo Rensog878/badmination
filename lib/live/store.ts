@@ -1,6 +1,7 @@
 import "server-only";
 import { addPoint, matchWinner, removePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
+import { collection, dbConfigured } from "@/lib/db/mongo";
 import { eventLabel, getStatus, type Tournament } from "@/lib/tournaments";
 
 /**
@@ -15,7 +16,12 @@ interface Feed {
   snapshot: LiveSnapshot;
   listeners: Set<Listener>;
   timer: ReturnType<typeof setInterval> | null;
+  /** Resolves once a real feed has been loaded from the database. */
+  hydrated: Promise<void> | null;
+  saveTimer: ReturnType<typeof setTimeout> | null;
 }
+
+const SAVE_DEBOUNCE_MS = 500;
 
 const DEMO_COURTS = 4;
 const DEMO_TICK_MS = 1800;
@@ -156,6 +162,8 @@ function getFeed(t: Tournament): Feed {
       snapshot: demo ? createDemoSnapshot(t) : { slug: t.slug, demo: false, courts: DEMO_COURTS, matches: [], updatedAt: Date.now() },
       listeners: new Set(),
       timer: null,
+      hydrated: null,
+      saveTimer: null,
     };
     feeds.set(t.slug, feed);
   }
@@ -164,6 +172,35 @@ function getFeed(t: Tournament): Feed {
 
 function publish(feed: Feed) {
   for (const listener of feed.listeners) listener(feed.snapshot);
+  if (!feed.snapshot.demo) scheduleSave(feed);
+}
+
+/** Real feeds are written through to MongoDB (debounced) so restarts keep scores. */
+function scheduleSave(feed: Feed) {
+  if (!dbConfigured() || feed.saveTimer) return;
+  feed.saveTimer = setTimeout(async () => {
+    feed.saveTimer = null;
+    try {
+      const col = await collection<LiveSnapshot>("liveFeeds");
+      await col.replaceOne({ slug: feed.snapshot.slug }, feed.snapshot, { upsert: true });
+    } catch (e) {
+      console.error("[live] failed to save feed", feed.snapshot.slug, e);
+    }
+  }, SAVE_DEBOUNCE_MS);
+}
+
+/** Call (await) before reading or changing a feed: loads saved real feeds once per process. */
+export async function ensureFeed(t: Tournament): Promise<void> {
+  const feed = getFeed(t);
+  if (feed.snapshot.demo || !dbConfigured()) return;
+  feed.hydrated ??= (async () => {
+    const saved = await (await collection<LiveSnapshot>("liveFeeds")).findOne({ slug: t.slug }, { projection: { _id: 0 } });
+    if (saved) feed.snapshot = { ...saved, demo: false };
+  })().catch((e) => {
+    feed.hydrated = null; // retry next time
+    throw e;
+  });
+  await feed.hydrated;
 }
 
 export function getSnapshot(t: Tournament): LiveSnapshot {
@@ -257,4 +294,43 @@ export function umpireStart(t: Tournament, id: string): UmpireResult {
   });
   if (!match) return { ok: false, error: "Match not found." };
   return error ? { ok: false, error } : { ok: true, match };
+}
+
+// ---------- match management (admin) ----------
+
+export function addMatch(
+  t: Tournament,
+  input: { event: string; round: string; a: string[]; b: string[] },
+): LiveMatch {
+  const feed = getFeed(t);
+  serial += 1;
+  const match: LiveMatch = {
+    id: `m${Date.now().toString(36)}${serial}`,
+    event: input.event,
+    round: input.round,
+    court: null,
+    sides: { a: input.a, b: input.b },
+    games: [],
+    server: "a",
+    status: "scheduled",
+    winner: null,
+    startedAt: null,
+    finishedAt: null,
+    history: [],
+    controlledBy: "umpire",
+  };
+  feed.snapshot.matches.push(match);
+  feed.snapshot.updatedAt = Date.now();
+  publish(feed);
+  return match;
+}
+
+export function removeMatch(t: Tournament, id: string): boolean {
+  const feed = getFeed(t);
+  const before = feed.snapshot.matches.length;
+  feed.snapshot.matches = feed.snapshot.matches.filter((m) => m.id !== id);
+  if (feed.snapshot.matches.length === before) return false;
+  feed.snapshot.updatedAt = Date.now();
+  publish(feed);
+  return true;
 }

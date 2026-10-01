@@ -1,10 +1,8 @@
 /**
- * Gallery photos and testimonials. Placeholder entries are visibly labelled
- * and are hidden in production (unless SHOW_PLACEHOLDERS=1), so the live site
- * never presents sample quotes or artwork as real.
- *
- * To add real content: put photos in /public/gallery/ and add entries below
- * WITHOUT `placeholder: true`; add testimonials only with the person's consent.
+ * Gallery/testimonial types and labelled placeholders. Real content is managed
+ * in the admin (Gallery & quotes) and read via lib/data/showcase. Placeholders
+ * are hidden in production unless SHOW_PLACEHOLDERS=1, so sample quotes or
+ * artwork are never presented as real.
  */
 
 export const showPlaceholders = () =>
@@ -38,7 +36,7 @@ const placeholderImage = (
   placeholder: true,
 });
 
-const GALLERY: GalleryImage[] = [
+export const PLACEHOLDER_GALLERY: GalleryImage[] = [
   placeholderImage("training-1", "Training", 1200, 1500, "Footwork drills"),
   placeholderImage("tournament-1", "Tournaments", 1200, 1200, "Finals day"),
   placeholderImage("academy-1", "Academy", 1600, 1000, "Junior squad"),
@@ -56,7 +54,7 @@ export interface Testimonial {
 }
 
 // Samples only: no names, clearly labelled, hidden in production.
-const TESTIMONIALS: Testimonial[] = [
+export const PLACEHOLDER_TESTIMONIALS: Testimonial[] = [
   {
     quote: "Sessions are structured and demanding, and every drill has a reason. My footwork changed within a term.",
     attribution: "Sample testimonial",
@@ -82,9 +80,6 @@ const TESTIMONIALS: Testimonial[] = [
     placeholder: true,
   },
 ];
-
-export const getGallery = () => GALLERY.filter((g) => !g.placeholder || showPlaceholders());
-export const getTestimonials = () => TESTIMONIALS.filter((t) => !t.placeholder || showPlaceholders());
 
 export const SHOWCASE_INTRO = {
   chapter: "06 — Win",

@@ -1,6 +1,6 @@
-import { getSnapshot, liveAvailable, subscribe } from "@/lib/live/store";
+import { ensureFeed, getSnapshot, liveAvailable, subscribe } from "@/lib/live/store";
+import { findTournament } from "@/lib/data/tournaments";
 import type { LiveSnapshot } from "@/lib/live/types";
-import { getTournament } from "@/lib/tournaments";
 
 /**
  * Server-Sent Events stream of a tournament's live snapshot. Sends the full
@@ -13,9 +13,10 @@ export const runtime = "nodejs";
 const HEARTBEAT_MS = 15_000;
 
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   if (!t) return new Response("Not found", { status: 404 });
   if (!liveAvailable(t, Date.now()).available) return new Response("Live coverage is not running", { status: 404 });
+  await ensureFeed(t);
 
   const encoder = new TextEncoder();
   let cleanup = () => {};

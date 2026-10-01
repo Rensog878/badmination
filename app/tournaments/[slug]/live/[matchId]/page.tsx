@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
+import { findTournament } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Scoreboard from "@/components/live/Scoreboard";
 import { SITE } from "@/lib/content";
-import { getSnapshot, liveAvailable } from "@/lib/live/store";
-import { getTournament } from "@/lib/tournaments";
+import { ensureFeed, getSnapshot, liveAvailable } from "@/lib/live/store";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = { params: Promise<{ slug: string; matchId: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const t = getTournament((await params).slug);
+  const t = await findTournament((await params).slug);
   return t ? { title: `Scoreboard · ${t.name} | ${SITE.title}` } : {};
 }
 
 export default async function ScoreboardPage({ params }: PageProps) {
   const { slug, matchId } = await params;
-  const t = getTournament(slug);
+  const t = await findTournament(slug);
   if (!t || !liveAvailable(t, Date.now()).available) notFound();
+  await ensureFeed(t);
   const snapshot = getSnapshot(t);
   if (!snapshot.matches.some((m) => m.id === matchId)) notFound();
 

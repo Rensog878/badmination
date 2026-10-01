@@ -1,12 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { liveAvailable, umpireScore, umpireStart, umpireUndo, type UmpireResult } from "@/lib/live/store";
+import { findTournament } from "@/lib/data/tournaments";
+import { ensureFeed, liveAvailable, umpireScore, umpireStart, umpireUndo, type UmpireResult } from "@/lib/live/store";
 import type { Side } from "@/lib/live/scoring";
-import { getTournament } from "@/lib/tournaments";
-import { checkPasscode, endUmpireSession, isUmpire, startUmpireSession } from "@/lib/umpire-auth";
+import type { Tournament } from "@/lib/tournaments";
+import { logout } from "@/lib/auth/session";
+import { checkPasscode, endUmpireSession, isUmpire, startUmpireSession, usesAccounts } from "@/lib/umpire-auth";
 
-const FAILED_LOGIN_DELAY_MS = 600; // slows guessing; real rate limiting arrives with Phase 15
+const FAILED_LOGIN_DELAY_MS = 600; // passcode mode only; accounts have DB-backed rate limiting
 
 export async function loginUmpire(_prev: { error?: string }, formData: FormData): Promise<{ error?: string }> {
   const passcode = String(formData.get("passcode") ?? "");
@@ -21,15 +23,17 @@ export async function loginUmpire(_prev: { error?: string }, formData: FormData)
 }
 
 export async function logoutUmpire(formData: FormData) {
-  await endUmpireSession();
+  if (usesAccounts()) await logout();
+  else await endUmpireSession();
   const slug = String(formData.get("slug") ?? "");
   redirect(/^[a-z0-9-]+$/.test(slug) ? `/umpire/${slug}` : "/");
 }
 
-async function guard(slug: string): Promise<{ error: string } | { t: NonNullable<ReturnType<typeof getTournament>> }> {
+async function guard(slug: string): Promise<{ error: string } | { t: Tournament }> {
   if (!(await isUmpire())) return { error: "Your umpire session has expired. Sign in again." };
-  const t = getTournament(slug);
+  const t = await findTournament(slug);
   if (!t || !liveAvailable(t, Date.now()).available) return { error: "Live scoring isn't open for this tournament." };
+  await ensureFeed(t);
   return { t };
 }
 

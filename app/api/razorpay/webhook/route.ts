@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { markPaid } from "@/lib/data/registrations";
 import { verifyWebhookSignature } from "@/lib/razorpay";
 
 /**
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
   switch (event.event) {
     case "payment.captured":
     case "order.paid":
-      // TODO(Phase 15): mark entry `payment.notes.reference` as paid (idempotent on payment id).
+      if (payment?.order_id && payment.id) await markPaid(payment.order_id, payment.id);
       console.info(`[razorpay] ${event.event} ${payment?.id ?? ""} ref=${payment?.notes?.reference ?? "?"}`);
       break;
     case "payment.failed":

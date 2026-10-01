@@ -1,4 +1,5 @@
 import TournamentExplorer from "@/components/tournaments/TournamentExplorer";
+import { listTournaments } from "@/lib/data/tournaments";
 import Reveal from "@/components/ui/Reveal";
 import { TOURNAMENTS_INTRO } from "@/lib/content";
 
@@ -7,7 +8,8 @@ interface TournamentsSectionProps {
 }
 
 /** COMPETE → REGISTER: tournament discovery listing. */
-export default function TournamentsSection({ now }: TournamentsSectionProps) {
+export default async function TournamentsSection({ now }: TournamentsSectionProps) {
+  const tournaments = await listTournaments();
   return (
     <section
       id="tournaments"
@@ -30,7 +32,7 @@ export default function TournamentsSection({ now }: TournamentsSectionProps) {
         </Reveal>
 
         <Reveal className="mt-14">
-          <TournamentExplorer now={now} />
+          <TournamentExplorer now={now} tournaments={tournaments} />
         </Reveal>
       </div>
     </section>
