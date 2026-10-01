@@ -75,9 +75,17 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
       <section aria-labelledby="courts-heading" className="mt-10">
         <h2 id="courts-heading" className="sr-only">Courts</h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: snapshot.courts }, (_, i) => i + 1).map((court) => (
-            <CourtCard key={court} court={court} match={live.find((m) => m.court === court)} />
-          ))}
+          {Array.from({ length: snapshot.courts }, (_, i) => i + 1).map((court) => {
+            const match = live.find((m) => m.court === court);
+            return (
+              <CourtCard
+                key={court}
+                court={court}
+                match={match}
+                href={match ? `/tournaments/${snapshot.slug}/live/${match.id}` : undefined}
+              />
+            );
+          })}
         </div>
       </section>
 

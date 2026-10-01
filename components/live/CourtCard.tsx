@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch } from "@/lib/live/types";
 
@@ -6,7 +7,7 @@ const SIDES: Side[] = ["a", "b"];
 export const sideName = (m: LiveMatch, side: Side) => m.sides[side].join(" / ");
 
 /** One court in play: players, completed games, current points, server and pressure points. */
-export default function CourtCard({ court, match }: { court: number; match: LiveMatch | undefined }) {
+export default function CourtCard({ court, match, href }: { court: number; match: LiveMatch | undefined; href?: string }) {
   if (!match) {
     return (
       <article aria-label={`Court ${court}, idle`} className="flex min-h-56 flex-col border border-dashed border-off-white/15 p-5">
@@ -24,8 +25,13 @@ export default function CourtCard({ court, match }: { court: number; match: Live
   return (
     <article
       aria-label={`Court ${court}: ${sideName(match, "a")} versus ${sideName(match, "b")}, game ${gameNumber}, ${current.a}–${current.b}`}
-      className="relative flex flex-col border border-off-white/10 bg-black/60 p-5"
+      className="group relative flex flex-col border border-off-white/10 bg-black/60 p-5 transition-colors hover:border-court-green/50"
     >
+      {href && (
+        <Link href={href} className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-court-green">
+          <span className="sr-only">Open court {court} scoreboard</span>
+        </Link>
+      )}
       <header className="flex items-center justify-between gap-3">
         <p className="flex shrink-0 items-center gap-2 font-display text-xs tracking-[0.3em] whitespace-nowrap uppercase">
           <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-court-green motion-reduce:animate-none" />

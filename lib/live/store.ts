@@ -1,5 +1,5 @@
 import "server-only";
-import { addPoint, matchWinner, type Side } from "@/lib/live/scoring";
+import { addPoint, matchWinner, removePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
 import { eventLabel, getStatus, type Tournament } from "@/lib/tournaments";
 
@@ -66,13 +66,20 @@ function demoMatch(t: Tournament, roundIndex: number): LiveMatch {
     winner: null,
     startedAt: null,
     finishedAt: null,
+    history: [],
+    controlledBy: null,
   };
 }
 
 /** Plays random rallies so live matches start mid-game. */
 function fastForward(match: LiveMatch, rallies: number) {
-  let state = { games: match.games, server: match.server };
-  for (let i = 0; i < rallies && !matchWinner(state.games); i++) state = addPoint(state, randomRallyWinner(state.server));
+  for (let i = 0; i < rallies && !matchWinner(match.games); i++) applyRally(match, randomRallyWinner(match.server));
+}
+
+/** One rally won by `side`, with history for undo. */
+export function applyRally(match: LiveMatch, side: Side) {
+  const state = addPoint({ games: match.games.length ? match.games : [{ a: 0, b: 0 }], server: match.server }, side);
+  match.history.push({ side, previousServer: match.server });
   match.games = state.games;
   match.server = state.server;
 }
@@ -112,12 +119,10 @@ function createDemoSnapshot(t: Tournament): LiveSnapshot {
 function demoTick(feed: Feed, t: Tournament) {
   const now = Date.now();
   const snap = feed.snapshot;
-  const live = snap.matches.filter((m) => m.status === "live");
+  const live = snap.matches.filter((m) => m.status === "live" && m.controlledBy === null);
   if (live.length === 0) return;
   const match = pick(live);
-  const state = addPoint({ games: match.games.length ? match.games : [{ a: 0, b: 0 }], server: match.server }, randomRallyWinner(match.server));
-  match.games = state.games;
-  match.server = state.server;
+  applyRally(match, randomRallyWinner(match.server));
 
   if (matchWinner(match.games)) {
     finish(match, now);
@@ -188,4 +193,68 @@ export function updateMatch(t: Tournament, id: string, mutate: (match: LiveMatch
   feed.snapshot.updatedAt = Date.now();
   publish(feed);
   return match;
+}
+
+// ---------- umpire operations (auth is checked by the calling server action) ----------
+
+export type UmpireResult = { ok: true; match: LiveMatch } | { ok: false; error: string };
+
+export function umpireScore(t: Tournament, id: string, side: Side): UmpireResult {
+  let error: string | null = null;
+  const match = updateMatch(t, id, (m) => {
+    if (m.status !== "live") {
+      error = "This match isn't in play.";
+      return;
+    }
+    m.controlledBy = "umpire";
+    applyRally(m, side);
+    if (matchWinner(m.games)) finish(m, Date.now());
+  });
+  if (!match) return { ok: false, error: "Match not found." };
+  return error ? { ok: false, error } : { ok: true, match };
+}
+
+export function umpireUndo(t: Tournament, id: string): UmpireResult {
+  let error: string | null = null;
+  const match = updateMatch(t, id, (m) => {
+    const last = m.history.pop();
+    if (!last) {
+      error = "Nothing to undo.";
+      return;
+    }
+    const state = removePoint({ games: m.games, server: m.server }, last.side, last.previousServer);
+    m.games = state.games;
+    m.server = state.server;
+    m.controlledBy = "umpire";
+    // Undoing the winning rally reopens the match.
+    if (m.status === "finished") {
+      m.status = "live";
+      m.winner = null;
+      m.finishedAt = null;
+    }
+  });
+  if (!match) return { ok: false, error: "Match not found." };
+  return error ? { ok: false, error } : { ok: true, match };
+}
+
+/** Puts a scheduled match on the lowest-numbered free court. */
+export function umpireStart(t: Tournament, id: string): UmpireResult {
+  const snap = getFeed(t).snapshot;
+  const busy = new Set(snap.matches.filter((m) => m.status === "live").map((m) => m.court));
+  const court = Array.from({ length: snap.courts }, (_, i) => i + 1).find((c) => !busy.has(c));
+  if (!court) return { ok: false, error: "All courts are in use." };
+  let error: string | null = null;
+  const match = updateMatch(t, id, (m) => {
+    if (m.status !== "scheduled") {
+      error = "This match has already started.";
+      return;
+    }
+    m.status = "live";
+    m.court = court;
+    m.startedAt = Date.now();
+    m.games = [{ a: 0, b: 0 }];
+    m.controlledBy = "umpire";
+  });
+  if (!match) return { ok: false, error: "Match not found." };
+  return error ? { ok: false, error } : { ok: true, match };
 }

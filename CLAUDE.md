@@ -23,7 +23,8 @@ app/            layout (fonts, metadata, header), page (home story), globals.css
                 tournaments/[slug]/register/page + actions.ts (submitRegistration: validate + create order; verifyPayment)
                 api/razorpay/webhook/route.ts (signature-verified webhook; source of truth for payment state)
                 tournaments/[slug]/confirmation (receipt read from Razorpay by ?order=; noindex) · tournaments/[slug]/calendar (.ics)
-                tournaments/[slug]/live (dashboard) · api/live/[slug] (SSE snapshot stream)
+                tournaments/[slug]/live (dashboard) · tournaments/[slug]/live/[matchId] (public scoreboard, fullscreen)
+                api/live/[slug] (SSE snapshot stream) · umpire/[slug] (+ /[matchId]) umpire console + actions.ts
 components/stage CinematicStage (owns the ONE persistent Canvas, WebGL check, error fallback, loader),
                 StageContext (mode: pending | 3d | fallback, reducedMotion)
 components/hero HeroSection (text/CTAs), HeroFallback (static SVG)
@@ -39,7 +40,8 @@ components/tournaments TournamentsSection (server shell, gets `now`), Tournament
                 age/level filters, search), TournamentRow (fixture-list row, links to /tournaments/[slug]),
                 StatusBadge, RegistrationCard (status-aware entry card)
 components/registration RegistrationForm (4-step RHF form), FormField (label/hint/error wiring), PaymentPanel (Checkout)
-components/live LiveDashboard (courts, up next, results, SR result announcements), CourtCard, useLiveFeed (EventSource)
+components/live LiveDashboard, CourtCard (links to scoreboard), Scoreboard (broadcast view, momentum strip), useLiveFeed
+components/umpire UmpireShell (auth gate), UmpireLogin, ScoringPad (tap/keyboard A·B·U), StartMatchButton
 components/ui   LoadingScreen, CourtLines (shared court SVG), Reveal (one-shot GSAP fade-up; off under reduced motion)
 lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneState (mutable, GSAP-drivable),
                 performance (tiers, reduced motion, WebGL/visibility hooks), racketGeometry (procedural racket),
@@ -71,6 +73,9 @@ lib/            content (all copy), assets (model URLs, ATHLETE_SOURCE), sceneSt
   `lib/live/store.ts` = in-memory feed + subscribers (single process; Phase 15 → DB + pub/sub). Demo simulator runs only
   while someone watches and only when LIVE_DEMO=1 (or in dev); the UI always labels it "Demo feed". `updateMatch()` is the
   hook for real scoring. SSE needs a long-running Node server (not serverless functions).
+- Umpire auth (interim): UMPIRE_TOKEN passcode → httpOnly HMAC cookie (path /umpire, 12h); every scoring action re-checks it
+  (`lib/umpire-auth.ts`). Umpire-scored matches get `controlledBy: "umpire"` so the demo simulator skips them.
+  Store ops: umpireScore / umpireUndo (rally history) / umpireStart (lowest free court). Phase 15 → real accounts + rate limits.
 - Palette has no error colour: errors use an icon + text (never colour alone).
 - Coach photo: set `COACH_PORTRAIT_URL` in `lib/assets.ts` (e.g. `/images/coach.jpg` in `public/`).
 - Sections after the cinematic stage are server components with a solid `bg-charcoal`; wrap content in `<Reveal>` for entrance motion.
@@ -97,7 +102,7 @@ Skip link 70 · loader 60 · header 50 · mobile menu 40 · content · Canvas (-
 
 ## Phases
 - [x] 1 Foundation · [x] 2 Cinematic 3D hero
-- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery · [x] 8 Tournament details · [x] 9 Registration · [x] 10 Payment · [x] 11 Confirmation · [x] 12 Live dashboard
-- [ ] 13 Live scoreboard · 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
+- [x] 3 Scroll smash sequence (GSAP) · [x] 4 Navigation · [x] 5 Coach profile · [x] 6 Programs · [x] 7 Tournament discovery · [x] 8 Tournament details · [x] 9 Registration · [x] 10 Payment · [x] 11 Confirmation · [x] 12 Live dashboard · [x] 13 Live scoreboard
+- [ ] 14 Gallery/testimonials · 15 Admin (Node + MongoDB)
 
 Build only the current phase, then stop for approval.

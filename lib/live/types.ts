@@ -16,6 +16,10 @@ export interface LiveMatch {
   /** Epoch ms. */
   startedAt: number | null;
   finishedAt: number | null;
+  /** Rally log (oldest first) for undo and the momentum strip. */
+  history: { side: Side; previousServer: Side }[];
+  /** Set when an umpire scores this match; the demo simulator then leaves it alone. */
+  controlledBy: "umpire" | null;
 }
 
 export interface LiveSnapshot {
