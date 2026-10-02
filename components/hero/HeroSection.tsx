@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, ChevronDown, Sliders, X, Zap } from "lucide-react";
+import { ArrowRight, ChevronDown, Film, Sliders, X, Zap } from "lucide-react";
 import HeroFallback from "@/components/hero/HeroFallback";
 import { useStage } from "@/components/stage/StageContext";
 import { COACH_NAME, HERO } from "@/lib/content";
 import { FEATURES } from "@/lib/features";
 
-/** Hero content. The 3D scene behind it lives in CinematicStage's persistent Canvas. */
+/** Hero content. The 3D scene or Cinematic Video behind it lives in CinematicStage. */
 export default function HeroSection() {
-  const { mode } = useStage();
+  const { mode, stageView, setStageView } = useStage();
   const [specsOpen, setSpecsOpen] = useState(false);
 
   return (
@@ -40,7 +40,46 @@ export default function HeroSection() {
 
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted sm:text-lg">{HERO.subline}</p>
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 md:gap-4">
+          {mode !== "fallback" && (
+            <div className="mt-7 flex items-center gap-2">
+              <div
+                role="radiogroup"
+                aria-label="Hero visual experience"
+                className="inline-flex items-center rounded-xl border border-white/15 bg-black/70 p-1 backdrop-blur-xl shadow-lg"
+              >
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={stageView === "video"}
+                  onClick={() => setStageView("video")}
+                  className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 font-display text-[11px] font-bold tracking-[0.14em] uppercase transition-all ${
+                    stageView === "video"
+                      ? "bg-court-green text-black shadow-[0_0_15px_rgba(16,185,129,0.35)]"
+                      : "text-muted hover:text-off-white"
+                  }`}
+                >
+                  <Film className="size-3.5" />
+                  <span>Cinematic Video</span>
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={stageView === "3d"}
+                  onClick={() => setStageView("3d")}
+                  className={`flex items-center gap-2 rounded-lg px-3.5 py-1.5 font-display text-[11px] font-bold tracking-[0.14em] uppercase transition-all ${
+                    stageView === "3d"
+                      ? "bg-court-green text-black shadow-[0_0_15px_rgba(16,185,129,0.35)]"
+                      : "text-muted hover:text-off-white"
+                  }`}
+                >
+                  <Zap className="size-3.5" />
+                  <span>3D WebGL</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 md:gap-4">
             <a
               href={HERO.primaryCta.href}
               className="group relative inline-flex w-full items-center justify-center gap-3 rounded-xl bg-court-green px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-black uppercase shadow-[0_0_25px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-[1.02] hover:bg-off-white hover:shadow-[0_0_35px_rgba(243,244,246,0.35)] active:scale-[0.98] sm:w-auto"
