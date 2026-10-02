@@ -30,6 +30,8 @@ export default function SmashSection() {
   const headline = useRef<HTMLHeadingElement>(null);
   const subline = useRef<HTMLParagraphElement>(null);
   const bar = useRef<HTMLDivElement>(null);
+  const telemetry = useRef<HTMLDivElement>(null);
+  const speedRef = useRef<HTMLSpanElement>(null);
   const cinematic = mode === "3d";
 
   useEffect(() => {
@@ -66,15 +68,28 @@ export default function SmashSection() {
             start: "top bottom",
             end: "bottom bottom",
             scrub: SCRUB_SMOOTHING,
-            // Progress bar: compositor-only transform, no React re-render.
+            // Progress bar & Telemetry HUD update: compositor/DOM-direct, no React re-render.
             onUpdate: (self) => {
-              if (bar.current) bar.current.style.transform = `scaleX(${self.progress})`;
+              const p = self.progress;
+              if (bar.current) bar.current.style.transform = `scaleX(${p})`;
+              if (speedRef.current) {
+                let speed = 0;
+                if (p > 0.22 && p <= 0.65) {
+                  const frac = (p - 0.22) / 0.43;
+                  speed = Math.round(140 + Math.pow(frac, 1.8) * 277);
+                } else if (p > 0.65) {
+                  speed = 417;
+                }
+                speedRef.current.textContent = String(speed);
+              }
             },
           },
         });
         tl.to(smash, { progress: 1, duration: 1 }, 0);
         tl.fromTo(chapter.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.04 }, CHAPTER_IN);
         tl.to(chapter.current, { opacity: 0, duration: 0.04 }, CHAPTER_OUT);
+        tl.fromTo(telemetry.current, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.04 }, CHAPTER_IN);
+        tl.to(telemetry.current, { opacity: 0, x: 20, duration: 0.04 }, SMASH_MARKS.contact + 0.03);
         tl.fromTo(flash.current, { opacity: 0 }, { opacity: FLASH_PEAK, duration: FLASH_IN }, SMASH_MARKS.contact - FLASH_IN);
         tl.to(flash.current, { opacity: 0, duration: FLASH_OUT, ease: "power2.out" }, SMASH_MARKS.contact);
         tl.fromTo(
@@ -125,6 +140,45 @@ export default function SmashSection() {
           <span aria-hidden="true" className="size-1.5 rounded-full bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
           <span>{SMASH.chapter}</span>
         </div>
+
+        {cinematic && (
+          <div
+            ref={telemetry}
+            className="pointer-events-none absolute right-4 top-20 z-20 flex flex-col gap-3 rounded-2xl border border-white/[0.08] bg-black/75 p-4 backdrop-blur-xl opacity-0 shadow-2xl sm:right-8 sm:top-24 sm:p-5 lg:right-16"
+          >
+            <div className="flex items-center gap-2 border-b border-white/10 pb-2">
+              <span className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
+              <span className="font-display text-[11px] font-bold tracking-[0.2em] uppercase text-off-white">SMASH TELEMETRY</span>
+              <span className="ml-auto font-mono text-[10px] text-court-green tracking-wider">LIVE HUD</span>
+            </div>
+            <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-left">
+              <div>
+                <p className="font-display text-[10px] font-medium tracking-[0.16em] uppercase text-muted">SHUTTLE SPEED</p>
+                <p className="font-display text-2xl font-black text-off-white sm:text-3xl tabular-nums">
+                  <span ref={speedRef}>0</span> <span className="text-xs font-bold text-court-green">KM/H</span>
+                </p>
+              </div>
+              <div>
+                <p className="font-display text-[10px] font-medium tracking-[0.16em] uppercase text-muted">IMPACT G-FORCE</p>
+                <p className="font-display text-2xl font-black text-off-white sm:text-3xl tabular-nums">
+                  18.4 <span className="text-xs font-bold text-court-green">G</span>
+                </p>
+              </div>
+              <div>
+                <p className="font-display text-[10px] font-medium tracking-[0.16em] uppercase text-muted">LEAP HEIGHT</p>
+                <p className="font-display text-lg font-bold text-off-white sm:text-xl tabular-nums">
+                  0.82 <span className="text-xs font-semibold text-muted">M</span>
+                </p>
+              </div>
+              <div>
+                <p className="font-display text-[10px] font-medium tracking-[0.16em] uppercase text-muted">STEEP ANGLE</p>
+                <p className="font-display text-lg font-bold text-court-green sm:text-xl tabular-nums">
+                  -14.8°
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="relative mt-auto flex flex-col items-center px-4 pb-[8vh] text-center">
           <h2

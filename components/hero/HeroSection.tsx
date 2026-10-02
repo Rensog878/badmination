@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, ChevronDown, Sliders, X, Zap } from "lucide-react";
 import HeroFallback from "@/components/hero/HeroFallback";
 import { useStage } from "@/components/stage/StageContext";
 import { COACH_NAME, HERO } from "@/lib/content";
@@ -9,6 +10,7 @@ import { FEATURES } from "@/lib/features";
 /** Hero content. The 3D scene behind it lives in CinematicStage's persistent Canvas. */
 export default function HeroSection() {
   const { mode } = useStage();
+  const [specsOpen, setSpecsOpen] = useState(false);
 
   return (
     <section aria-labelledby="hero-heading" className="relative isolate flex min-h-[600px] h-svh flex-col">
@@ -38,7 +40,7 @@ export default function HeroSection() {
 
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted sm:text-lg">{HERO.subline}</p>
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
+          <div className="mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
             <a
               href={HERO.primaryCta.href}
               className="group relative inline-flex items-center justify-center gap-3 rounded-xl bg-court-green px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-black uppercase shadow-[0_0_25px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-[1.02] hover:bg-off-white hover:shadow-[0_0_35px_rgba(243,244,246,0.35)] active:scale-[0.98]"
@@ -49,6 +51,16 @@ export default function HeroSection() {
                 className="size-4 transition-transform group-hover:translate-x-1.5 motion-reduce:transition-none"
               />
             </a>
+
+            <button
+              type="button"
+              onClick={() => setSpecsOpen(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[0.04] px-6 py-4 font-display text-sm font-bold tracking-[0.14em] text-off-white uppercase backdrop-blur-md transition-all duration-300 hover:border-court-green hover:bg-court-green/10 hover:text-court-green active:scale-95"
+            >
+              <Sliders className="size-4 text-court-green" />
+              <span>Pro Specs</span>
+            </button>
+
             {FEATURES.programs && (
             <a
               href={HERO.secondaryCta.href}
@@ -60,6 +72,75 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
+
+      {/* Interactive Racket Specs Modal */}
+      {specsOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="specs-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md animate-fade-in"
+          onClick={() => setSpecsOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-lg rounded-2xl border border-white/15 bg-black/90 p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2">
+                <span className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
+                <h3 id="specs-title" className="font-display text-base font-extrabold tracking-[0.16em] uppercase text-off-white">
+                  Championship Racket Spec
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSpecsOpen(false)}
+                className="rounded-lg p-1 text-muted hover:bg-white/10 hover:text-off-white"
+                aria-label="Close specifications"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-4 text-left">
+              <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                <p className="font-display text-[10px] font-bold tracking-[0.18em] text-muted uppercase">BALANCE POINT</p>
+                <p className="mt-1 font-display text-2xl font-black text-court-green tabular-nums">305 mm</p>
+                <p className="mt-0.5 text-xs text-muted">Head-Heavy Smash Attack</p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                <p className="font-display text-[10px] font-bold tracking-[0.18em] text-muted uppercase">STRING TENSION</p>
+                <p className="mt-1 font-display text-2xl font-black text-off-white tabular-nums">30 LBS</p>
+                <p className="mt-0.5 text-xs text-muted">Pro Competition Stringing</p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                <p className="font-display text-[10px] font-bold tracking-[0.18em] text-muted uppercase">FRAME STRUCTURE</p>
+                <p className="mt-1 font-display text-lg font-bold text-off-white">Aero-Hex Box</p>
+                <p className="mt-0.5 text-xs text-muted">Ultra High Modulus Carbon</p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                <p className="font-display text-[10px] font-bold tracking-[0.18em] text-muted uppercase">WEIGHT / GRIP</p>
+                <p className="mt-1 font-display text-lg font-bold text-off-white">3U (88g) · G5</p>
+                <p className="mt-0.5 text-xs text-muted">Aero Dynamic Precision</p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between rounded-xl border border-court-green/30 bg-court-green/10 p-3.5">
+              <div className="flex items-center gap-2">
+                <Zap className="size-4 text-court-green" />
+                <span className="font-display text-xs font-bold tracking-[0.12em] text-court-green uppercase">
+                  Interactive 3D Stage Active
+                </span>
+              </div>
+              <span className="font-mono text-[10px] text-muted">Drag to Rotate in Canvas</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Scroll cue: phones get a compact animated chevron below the CTAs; desktop the labelled line. */}
       <div aria-hidden="true" className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 lg:hidden">

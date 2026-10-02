@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink, Radio } from "lucide-react";
 import RegistrationCard from "@/components/tournaments/RegistrationCard";
 import StatusBadge from "@/components/tournaments/StatusBadge";
+import TournamentBracket from "@/components/tournaments/TournamentBracket";
 import TournamentRow from "@/components/tournaments/TournamentRow";
 import CourtLines from "@/components/ui/CourtLines";
 import { SITE } from "@/lib/content";
@@ -146,6 +147,8 @@ export default async function TournamentPage({ params }: PageProps) {
               </table>
             </div>
           </section>
+
+          <TournamentBracket tournament={t} />
 
           <section aria-labelledby="schedule-heading">
             <h2 id="schedule-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
