@@ -1,12 +1,16 @@
 import {
   BoxGeometry,
   CapsuleGeometry,
+  CylinderGeometry,
   Group,
   Mesh,
   MeshPhysicalMaterial,
+  MeshStandardMaterial,
   Object3D,
   SphereGeometry,
+  TorusGeometry,
   type BufferGeometry,
+  type Material,
 } from "three";
 
 /**
@@ -181,16 +185,61 @@ export type SmashPoseName = keyof typeof SMASH_POSES;
 
 export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   const capSeg = detail === "high" ? 6 : 3;
-  const radial = detail === "high" ? 12 : 6;
+  const radial = detail === "high" ? 14 : 8;
   const geometries: BufferGeometry[] = [];
-  const material = new MeshPhysicalMaterial({
-    color: "#08080a",
-    roughness: 0.6,
-    metalness: 0.1,
-    sheen: 0.55,
+  const materials: Material[] = [];
+
+  // Athlete body: sleek graphite with iridescent electric green rim sheen
+  const skinMat = new MeshPhysicalMaterial({
+    color: "#121316",
+    roughness: 0.45,
+    metalness: 0.15,
+    sheen: 0.85,
     sheenColor: "#10B981",
-    sheenRoughness: 0.35,
+    sheenRoughness: 0.3,
   });
+  materials.push(skinMat);
+
+  // Performance athletic kit / jersey
+  const kitMat = new MeshStandardMaterial({
+    color: "#08090b",
+    roughness: 0.75,
+    metalness: 0.05,
+  });
+  materials.push(kitMat);
+
+  // Compression shorts
+  const shortsMat = new MeshStandardMaterial({
+    color: "#14151a",
+    roughness: 0.65,
+    metalness: 0.1,
+  });
+  materials.push(shortsMat);
+
+  // Tournament court shoes body
+  const shoeMat = new MeshStandardMaterial({
+    color: "#F3F4F6",
+    roughness: 0.35,
+    metalness: 0.15,
+  });
+  materials.push(shoeMat);
+
+  // Performance socks
+  const sockMat = new MeshStandardMaterial({
+    color: "#E5E7EB",
+    roughness: 0.7,
+  });
+  materials.push(sockMat);
+
+  // Electric court-green accent trim (headband, wristband, sole, kit accents)
+  const accentMat = new MeshStandardMaterial({
+    color: "#10B981",
+    emissive: "#10B981",
+    emissiveIntensity: 0.4,
+    roughness: 0.25,
+    metalness: 0.2,
+  });
+  materials.push(accentMat);
 
   const joint = (parent: Object3D, x: number, y: number, z = 0) => {
     const o = new Object3D();
@@ -198,62 +247,96 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
     parent.add(o);
     return o;
   };
-  const limb = (parent: Object3D, radius: number, length: number, centreY: number) => {
-    const g = new CapsuleGeometry(radius, length, capSeg, radial);
-    geometries.push(g);
-    const m = new Mesh(g, material);
-    m.position.y = centreY;
+
+  const addMesh = <G extends BufferGeometry, M extends Material>(
+    parent: Object3D,
+    geo: G,
+    mat: M,
+    pos: [number, number, number] = [0, 0, 0],
+    rot: [number, number, number] = [0, 0, 0],
+  ) => {
+    geometries.push(geo);
+    const m = new Mesh(geo, mat);
+    m.position.set(...pos);
+    m.rotation.set(...rot);
     parent.add(m);
     return m;
   };
 
   const root = new Group();
+
+  // Hips & Pelvis
   const hips = joint(root, 0, SMASH_POSES.reach.rootY);
-  const pelvis = limb(hips, 0.1, 0.1, 0);
-  pelvis.rotation.z = Math.PI / 2;
+  addMesh(hips, new CapsuleGeometry(0.105, 0.11, capSeg, radial), shortsMat, [0, 0, 0], [0, 0, Math.PI / 2]);
+  // Compression shorts accent trim
+  addMesh(hips, new TorusGeometry(0.106, 0.008, 6, radial), accentMat, [0, -0.06, 0], [Math.PI / 2, 0, 0]);
 
+  // Spine & Waist
   const spine = joint(hips, 0, 0.08);
-  limb(spine, 0.12, 0.12, 0.1);
+  addMesh(spine, new CapsuleGeometry(0.12, 0.12, capSeg, radial), kitMat, [0, 0.1, 0]);
+
+  // Chest & Upper Torso
   const chest = joint(spine, 0, 0.24);
-  const torso = limb(chest, 0.14, 0.12, 0.06);
-  torso.scale.set(1.15, 1, 0.8);
-  const shoulders = limb(chest, 0.065, 0.3, 0.2);
-  shoulders.rotation.z = Math.PI / 2;
+  const torso = addMesh(chest, new CapsuleGeometry(0.142, 0.12, capSeg, radial), kitMat, [0, 0.06, 0]);
+  torso.scale.set(1.16, 1, 0.82);
+  addMesh(chest, new CapsuleGeometry(0.065, 0.32, capSeg, radial), kitMat, [0, 0.2, 0], [0, 0, Math.PI / 2]);
 
+  // Neck & Head
   const neck = joint(chest, 0, 0.27);
-  limb(neck, 0.045, 0.05, 0.03);
-  const headGeo = new SphereGeometry(0.105, radial * 2, radial);
-  geometries.push(headGeo);
-  const head = new Mesh(headGeo, material);
-  head.position.y = 0.16;
+  addMesh(neck, new CapsuleGeometry(0.045, 0.05, capSeg, radial), skinMat, [0, 0.03, 0]);
+  const head = addMesh(neck, new SphereGeometry(0.105, radial * 2, radial), skinMat, [0, 0.16, 0]);
   head.scale.set(0.92, 1.12, 1);
-  neck.add(head);
+  // Aerodynamic athletic headband
+  const headband = addMesh(neck, new TorusGeometry(0.096, 0.012, 8, radial), accentMat, [0, 0.2, 0]);
+  headband.rotation.x = Math.PI / 2 - 0.12;
 
-  const arm = (side: 1 | -1) => {
+  // Arms
+  const arm = (side: 1 | -1, isRacketArm: boolean) => {
     const shoulder = joint(chest, side * SHOULDER_HALF_SPAN, 0.2);
-    limb(shoulder, 0.048, UPPER_ARM - 0.08, -UPPER_ARM / 2);
+    // Shoulder cap / armhole trim
+    addMesh(shoulder, new CapsuleGeometry(0.056, 0.06, capSeg, radial), kitMat, [0, -0.04, 0]);
+    // Bicep / tricep
+    addMesh(shoulder, new CapsuleGeometry(0.046, UPPER_ARM - 0.1, capSeg, radial), skinMat, [0, -UPPER_ARM / 2, 0]);
+
     const elbow = joint(shoulder, 0, -UPPER_ARM);
-    limb(elbow, 0.04, FOREARM - 0.07, -FOREARM / 2);
-    const handGeo = new SphereGeometry(0.045, radial, radial / 2);
-    geometries.push(handGeo);
-    const hand = new Mesh(handGeo, material);
-    hand.position.y = -FOREARM - 0.02;
-    elbow.add(hand);
+    // Forearm
+    addMesh(elbow, new CapsuleGeometry(0.038, FOREARM - 0.08, capSeg, radial), skinMat, [0, -FOREARM / 2, 0]);
+
+    // Racket wristband on right arm
+    if (isRacketArm) {
+      addMesh(elbow, new CylinderGeometry(0.042, 0.04, 0.045, radial), accentMat, [0, -FOREARM + 0.025, 0]);
+    }
+
+    // Hand
+    const hand = addMesh(elbow, new SphereGeometry(0.045, radial, radial / 2), skinMat, [0, -FOREARM - 0.02, 0]);
+    hand.scale.set(0.85, 1.2, 0.7);
+
     return { shoulder, elbow };
   };
-  const right = arm(-1);
-  const left = arm(1);
+  const right = arm(-1, true);
+  const left = arm(1, false);
 
+  // Legs & Court Shoes
   const leg = (side: 1 | -1) => {
     const hip = joint(hips, side * HIP_HALF_SPAN, -0.03);
-    limb(hip, 0.068, THIGH - 0.12, -THIGH / 2);
+    // Upper thigh (compression shorts sleeve)
+    addMesh(hip, new CapsuleGeometry(0.075, 0.09, capSeg, radial), shortsMat, [0, -0.06, 0]);
+    // Lower thigh
+    addMesh(hip, new CapsuleGeometry(0.062, THIGH - 0.16, capSeg, radial), skinMat, [0, -THIGH / 2 - 0.02, 0]);
+
     const knee = joint(hip, 0, -THIGH);
-    limb(knee, 0.052, SHIN - 0.1, -SHIN / 2);
-    const footGeo = new BoxGeometry(0.09, 0.06, 0.25);
-    geometries.push(footGeo);
-    const foot = new Mesh(footGeo, material);
-    foot.position.set(0, -SHIN, 0.06);
-    knee.add(foot);
+    // Calf / upper shin
+    addMesh(knee, new CapsuleGeometry(0.049, SHIN - 0.22, capSeg, radial), skinMat, [0, -0.15, 0]);
+    // Court sock
+    addMesh(knee, new CylinderGeometry(0.044, 0.038, 0.14, radial), sockMat, [0, -SHIN + 0.07, 0]);
+
+    // Badminton court shoe
+    addMesh(knee, new BoxGeometry(0.092, 0.062, 0.24), shoeMat, [0, -SHIN, 0.06]);
+    // Shoe sole plate with gum rubber accent
+    addMesh(knee, new BoxGeometry(0.096, 0.016, 0.25), accentMat, [0, -SHIN - 0.035, 0.06]);
+    // Heel accent trim
+    addMesh(knee, new BoxGeometry(0.088, 0.03, 0.05), accentMat, [0, -SHIN + 0.01, -0.04]);
+
     return { hip, knee };
   };
   const rightLeg = leg(-1);
@@ -286,7 +369,7 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
     },
     dispose: () => {
       geometries.forEach((g) => g.dispose());
-      material.dispose();
+      materials.forEach((m) => m.dispose());
     },
   };
 }
