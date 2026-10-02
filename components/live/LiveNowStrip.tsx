@@ -59,7 +59,8 @@ export default function LiveNowStrip() {
   const visible = sorted.slice(0, MAX_VISIBLE);
   const hidden = sorted.length - visible.length;
   const slugs = [...new Set(matches.map((m) => m.slug))];
-  const allHref = `/tournaments/${matches.find((m) => !m.demo)?.slug ?? slugs[0]}/live`;
+  // One tournament: its dashboard. Several: the combined /live page.
+  const allHref = slugs.length > 1 ? "/live" : `/tournaments/${slugs[0]}/live`;
   const demo = matches.every((m) => m.demo);
 
   return (
