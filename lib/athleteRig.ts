@@ -3,16 +3,12 @@ import {
   CapsuleGeometry,
   ConeGeometry,
   CylinderGeometry,
-  DoubleSide,
   Group,
   Mesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   Object3D,
   SphereGeometry,
-  SRGBColorSpace,
-  Texture,
-  TextureLoader,
   TorusGeometry,
   type BufferGeometry,
   type Material,
@@ -201,152 +197,121 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   const materials: Material[] = [];
 
   // ==========================================
-  // MATERIALS PALETTE: SAINA NEHWAL TOURNAMENT
+  // MATERIALS PALETTE (World Tour Standard)
   // ==========================================
 
-  // 1. Saina Nehwal Authentic Skin Tone (warm golden tan #b98469)
+  // 1. Natural Athletic Human Skin (warm natural Asian/Indian athlete tone)
   const skinMat = new MeshPhysicalMaterial({
-    color: "#b98469",
-    roughness: 0.65,
-    metalness: 0.02,
-    sheen: 0.25,
-    sheenColor: "#cb8868",
-    sheenRoughness: 0.45,
+    color: "#d09575",
+    roughness: 0.5,
+    metalness: 0.04,
+    sheen: 0.42,
+    sheenColor: "#ffc2a8",
+    sheenRoughness: 0.35,
   });
   materials.push(skinMat);
 
   // 2. Realistic Eyeball Sclera
   const eyeWhiteMat = new MeshStandardMaterial({
     color: "#ffffff",
-    roughness: 0.15,
+    roughness: 0.18,
     metalness: 0.02,
   });
   materials.push(eyeWhiteMat);
 
-  // 3. Dark Iris & Pupil
+  // 3. Dark Iris & Pupil (focused tournament intensity)
   const irisMat = new MeshStandardMaterial({
-    color: "#140e0c",
-    roughness: 0.15,
+    color: "#1c1410",
+    roughness: 0.2,
     metalness: 0.1,
   });
   materials.push(irisMat);
 
-  // 4. Natural Lips & Smile Contour
+  // 4. Natural Lips
   const lipMat = new MeshStandardMaterial({
-    color: "#b86a58",
+    color: "#b87060",
     roughness: 0.55,
     metalness: 0.02,
   });
   materials.push(lipMat);
 
-  // 5. Saina's Signature Silver Hoop Earrings
-  const silverMat = new MeshStandardMaterial({
-    color: "#f1f5f9",
-    roughness: 0.15,
-    metalness: 0.95,
-  });
-  materials.push(silverMat);
-
-  // 6. Photo-Accurate Facial Decal (Saina Nehwal: eyes, brows, nose, smile, teeth, left cheek mole)
-  let faceTexture: Texture | null = null;
-  let crestTexture: Texture | null = null;
-  if (typeof window !== "undefined") {
-    const loader = new TextureLoader();
-    faceTexture = loader.load("/textures/saina_face_front_seamless.png");
-    faceTexture.colorSpace = SRGBColorSpace;
-    crestTexture = loader.load("/textures/saina_chest_crest.png");
-    crestTexture.colorSpace = SRGBColorSpace;
-  }
-  const faceDecalMat = new MeshStandardMaterial({
-    map: faceTexture,
-    transparent: true,
-    roughness: 0.72,
-    metalness: 0.0,
-    depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -2,
-    polygonOffsetUnits: -2,
-    side: DoubleSide,
-  });
-  materials.push(faceDecalMat);
-
-  const chestCrestMat = new MeshStandardMaterial({
-    map: crestTexture,
-    transparent: true,
-    roughness: 0.55,
-    metalness: 0.05,
-    depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
-    polygonOffsetUnits: -1,
-    side: DoubleSide,
-  });
-  materials.push(chestCrestMat);
-
-  // 7. Sleek Pulled-Back Hair & Ponytail (deep espresso natural black)
+  // 5. Pro Athlete Tapered Haircut (espresso/dark black)
   const hairMat = new MeshStandardMaterial({
-    color: "#141110",
-    roughness: 0.62,
-    metalness: 0.1,
+    color: "#161311",
+    roughness: 0.65,
+    metalness: 0.12,
   });
   materials.push(hairMat);
 
-  // 8. Saina's Signature Hair Accessories (Yellow & Pink Clips)
-  const clipYellowMat = new MeshStandardMaterial({ color: "#facc15", roughness: 0.35, metalness: 0.1 });
-  const clipPinkMat = new MeshStandardMaterial({ color: "#ec4899", roughness: 0.35, metalness: 0.1 });
-  materials.push(clipYellowMat, clipPinkMat);
-
-  // 9. Saina's Necklaces (Gold Chain + Black Beaded Cord)
-  const goldNecklaceMat = new MeshStandardMaterial({ color: "#eab308", roughness: 0.25, metalness: 0.9 });
-  const blackBeadsMat = new MeshStandardMaterial({ color: "#0a0a0c", roughness: 0.35, metalness: 0.2 });
-  materials.push(goldNecklaceMat, blackBeadsMat);
-
-  // 10. Black Performance Tournament Jersey
+  // 6. Pro Tournament T-Shirt - Obsidian Body
   const jerseyBaseMat = new MeshStandardMaterial({
-    color: "#101014",
+    color: "#0c1018",
     roughness: 0.62,
     metalness: 0.06,
   });
   materials.push(jerseyBaseMat);
 
-  // 11. Subtle Purple Detailing (Inner collar & trim)
-  const jerseyPurpleMat = new MeshStandardMaterial({
-    color: "#7c3aed",
-    roughness: 0.38,
-    metalness: 0.12,
+  // 7. Tournament Electric Cyan Speed Graphics
+  const jerseyCyanMat = new MeshStandardMaterial({
+    color: "#06b6d4",
+    roughness: 0.35,
+    metalness: 0.15,
+    emissive: "#06b6d4",
+    emissiveIntensity: 0.28,
   });
-  materials.push(jerseyPurpleMat);
+  materials.push(jerseyCyanMat);
 
-  // 12. Crisp White Contrast Trim
+  // 8. Tournament Court Emerald Speed Graphics
+  const jerseyEmeraldMat = new MeshStandardMaterial({
+    color: "#10b981",
+    roughness: 0.35,
+    metalness: 0.15,
+    emissive: "#10b981",
+    emissiveIntensity: 0.28,
+  });
+  materials.push(jerseyEmeraldMat);
+
+  // 9. Tournament Crest White Accents
   const whiteMat = new MeshStandardMaterial({
     color: "#f8fafc",
-    roughness: 0.35,
+    roughness: 0.38,
     metalness: 0.05,
   });
   materials.push(whiteMat);
 
-  // 13. Breathable Flank Mesh Panels
+  // 10. Breathable Flank Mesh Panels
   const jerseyMeshMat = new MeshStandardMaterial({
-    color: "#181b24",
+    color: "#161c28",
     roughness: 0.85,
     metalness: 0.04,
   });
   materials.push(jerseyMeshMat);
 
-  // 14. Black Pleated Tournament Match Skirt & Compression Shorts
-  const skirtBaseMat = new MeshStandardMaterial({
-    color: "#121318",
+  // 11. Competition Match Shorts (matte performance black)
+  const shortsBaseMat = new MeshStandardMaterial({
+    color: "#0e1117",
     roughness: 0.68,
     metalness: 0.05,
   });
-  materials.push(skirtBaseMat);
+  materials.push(shortsBaseMat);
 
-  // 15. Saina's Signature Tournament Wristband (Yellow on Racket Arm) & Watch (White on Left)
-  const wristbandYellowMat = new MeshStandardMaterial({ color: "#eab308", roughness: 0.78, metalness: 0.05 });
-  const watchWhiteMat = new MeshStandardMaterial({ color: "#f8fafc", roughness: 0.3, metalness: 0.5 });
-  materials.push(wristbandYellowMat, watchWhiteMat);
+  // 12. Shorts Elastic Waistband
+  const shortsWaistMat = new MeshStandardMaterial({
+    color: "#1a1f2c",
+    roughness: 0.78,
+    metalness: 0.04,
+  });
+  materials.push(shortsWaistMat);
 
-  // 16. Low-Cut White Athletic Court Socks
+  // 13. Knee Kinesiology Tape (Cyan pro athletic tape)
+  const kinesioTapeMat = new MeshStandardMaterial({
+    color: "#06b6d4",
+    roughness: 0.85,
+    metalness: 0.02,
+  });
+  materials.push(kinesioTapeMat);
+
+  // 14. Mid-Calf Technical Tournament Socks
   const sockMat = new MeshStandardMaterial({
     color: "#f1f5f9",
     roughness: 0.75,
@@ -354,30 +319,30 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   });
   materials.push(sockMat);
 
-  // 17. Yonex Power Cushion Shoes Upper
+  // 15. Pro Court Shoes - Premium White Synthetic Upper
   const shoeUpperMat = new MeshStandardMaterial({
     color: "#ffffff",
     roughness: 0.32,
-    metalness: 0.08,
+    metalness: 0.1,
   });
   materials.push(shoeUpperMat);
 
-  // 18. Magenta TPU Lateral Claw & Heel Counter
-  const shoeMagentaMat = new MeshStandardMaterial({
-    color: "#db2777",
-    roughness: 0.28,
-    metalness: 0.2,
+  // 16. Shoes - Carbon Graphite Shank & Quarter Panels
+  const shoeCarbonMat = new MeshStandardMaterial({
+    color: "#181d26",
+    roughness: 0.45,
+    metalness: 0.25,
   });
-  materials.push(shoeMagentaMat);
+  materials.push(shoeCarbonMat);
 
-  // 19. EVA Cushion Midsole
+  // 17. Shoes - Sculpted EVA Cushion Midsole
   const shoeMidsoleMat = new MeshStandardMaterial({
     color: "#f8fafc",
     roughness: 0.5,
   });
   materials.push(shoeMidsoleMat);
 
-  // 20. Amber Gum Rubber Non-Marking Outsole
+  // 18. Shoes - Authentic Non-Marking Amber Gum Rubber Outsole
   const shoeGumSoleMat = new MeshStandardMaterial({
     color: "#d97706",
     roughness: 0.58,
@@ -385,13 +350,29 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   });
   materials.push(shoeGumSoleMat);
 
-  // 21. Carbon Graphite Quarter Panels
-  const shoeCarbonMat = new MeshStandardMaterial({
-    color: "#181d26",
-    roughness: 0.45,
-    metalness: 0.25,
+  // 19. Shoes - Power Cushion TPU Lateral Stability Claw
+  const shoeClawMat = new MeshStandardMaterial({
+    color: "#10b981",
+    roughness: 0.25,
+    metalness: 0.2,
+    emissive: "#10b981",
+    emissiveIntensity: 0.35,
   });
-  materials.push(shoeCarbonMat);
+  materials.push(shoeClawMat);
+
+  // 20. Shoes - Tournament Laces
+  const shoeLacesMat = new MeshStandardMaterial({
+    color: "#e2e8f0",
+    roughness: 0.7,
+  });
+  materials.push(shoeLacesMat);
+
+  // 21. Racket Arm Terrycloth Wristband
+  const wristbandMat = new MeshStandardMaterial({
+    color: "#0f131b",
+    roughness: 0.85,
+  });
+  materials.push(wristbandMat);
 
   const joint = (parent: Object3D, x: number, y: number, z = 0) => {
     const o = new Object3D();
@@ -422,202 +403,235 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   const root = new Group();
 
   // ==========================================
-  // HIPS & PELVIS: Black Skirt & Compression Shorts
+  // HIPS & PELVIS (Match Shorts Waistband & Seat)
   // ==========================================
   const hips = joint(root, 0, SMASH_POSES.reach.rootY);
 
-  // Pelvis & black compression shorts seat
-  addMesh(hips, new CapsuleGeometry(0.098, 0.11, capSeg, radial), skirtBaseMat, [0, 0, 0], [0, 0, Math.PI / 2]);
-  // Shorts elastic waistband
-  addMesh(hips, new CylinderGeometry(0.112, 0.112, 0.038, radial), skirtBaseMat, [0, 0.04, 0]);
+  // Pelvis bridge / shorts seat
+  addMesh(hips, new CapsuleGeometry(0.108, 0.12, capSeg, radial), shortsBaseMat, [0, 0, 0], [0, 0, Math.PI / 2]);
 
-  // Match pleated skirt flared silhouette (drapes naturally over hips)
-  addMesh(hips, new CylinderGeometry(0.115, 0.155, 0.13, radial, 1, true), skirtBaseMat, [0, -0.015, 0]);
-  // Skirt white hem trim
-  addMesh(hips, new TorusGeometry(0.155, 0.003, 6, radial), whiteMat, [0, -0.078, 0], [Math.PI / 2, 0, 0]);
-  // Skirt Yonex logo badge on hem
-  addMesh(hips, new BoxGeometry(0.016, 0.012, 0.004), whiteMat, [0.12, -0.065, 0.09], [0, -0.6, 0]);
+  // Ribbed elastic waistband
+  addMesh(hips, new CylinderGeometry(0.122, 0.122, 0.04, radial), shortsWaistMat, [0, 0.045, 0]);
+  // Waistband emerald accent rim
+  addMesh(hips, new TorusGeometry(0.123, 0.006, 6, radial), jerseyEmeraldMat, [0, 0.045, 0], [Math.PI / 2, 0, 0]);
+  // Drawcord aglets at center front
+  addMesh(hips, new CylinderGeometry(0.003, 0.003, 0.035, 6), jerseyCyanMat, [0.008, 0.02, 0.12], [0.15, 0, -0.1]);
+  addMesh(hips, new CylinderGeometry(0.003, 0.003, 0.035, 6), jerseyCyanMat, [-0.008, 0.02, 0.12], [0.15, 0, 0.1]);
 
   // ==========================================
-  // SPINE & LOWER JERSEY TORSO
+  // SPINE & LOWER T-SHIRT TORSO
   // ==========================================
   const spine = joint(hips, 0, 0.08);
 
-  // Lower jersey body (tapered athletic female core)
-  addMesh(spine, new CapsuleGeometry(0.118, 0.12, capSeg, radial), jerseyBaseMat, [0, 0.095, 0]);
-  // Lower jersey hem with white contrast piping
-  addMesh(spine, new CylinderGeometry(0.122, 0.126, 0.032, radial), jerseyBaseMat, [0, 0.012, 0]);
-  addMesh(spine, new TorusGeometry(0.126, 0.004, 6, radial), whiteMat, [0, -0.002, 0], [Math.PI / 2, 0, 0]);
+  // T-Shirt lower body (tapered athletic core)
+  addMesh(spine, new CapsuleGeometry(0.126, 0.13, capSeg, radial), jerseyBaseMat, [0, 0.1, 0]);
+
+  // T-Shirt lower hem (drapes naturally over the shorts waistband)
+  addMesh(spine, new CylinderGeometry(0.132, 0.136, 0.035, radial), jerseyBaseMat, [0, 0.015, 0]);
+  // T-Shirt hem piping line
+  addMesh(spine, new TorusGeometry(0.136, 0.005, 6, radial), jerseyCyanMat, [0, -0.002, 0], [Math.PI / 2, 0, 0]);
 
   // Breathable side ventilation mesh panels along rib flanks
-  addMesh(spine, new BoxGeometry(0.01, 0.15, 0.13), jerseyMeshMat, [-0.118, 0.095, 0]);
-  addMesh(spine, new BoxGeometry(0.01, 0.15, 0.13), jerseyMeshMat, [0.118, 0.095, 0]);
+  addMesh(spine, new BoxGeometry(0.012, 0.16, 0.14), jerseyMeshMat, [-0.126, 0.1, 0]);
+  addMesh(spine, new BoxGeometry(0.012, 0.16, 0.14), jerseyMeshMat, [0.126, 0.1, 0]);
 
-  // Dynamic silver/white speed stitch dashes across lower torso
-  addMesh(spine, new BoxGeometry(0.18, 0.012, 0.006), whiteMat, [0, 0.085, 0.118], [0, 0, 0.32]);
-  addMesh(spine, new BoxGeometry(0.16, 0.01, 0.006), jerseyPurpleMat, [0, 0.065, 0.118], [0, 0, 0.32]);
+  // Dynamic tournament speed slash continuing down front torso
+  addMesh(spine, new BoxGeometry(0.2, 0.016, 0.008), jerseyCyanMat, [0, 0.09, 0.124], [0, 0, 0.35]);
+  addMesh(spine, new BoxGeometry(0.18, 0.012, 0.008), jerseyEmeraldMat, [0, 0.07, 0.124], [0, 0, 0.35]);
 
   // ==========================================
-  // CHEST & UPPER JERSEY TORSO
+  // CHEST & UPPER T-SHIRT TORSO
   // ==========================================
   const chest = joint(spine, 0, 0.24);
 
-  // Contoured athletic female chest & pectoral flare
-  addMesh(chest, new CapsuleGeometry(0.136, 0.125, capSeg, radial), jerseyBaseMat, [0, 0.055, 0], [0, 0, 0], [1.14, 1, 0.86]);
+  // Contoured athletic chest (pectoral & lat flare)
+  addMesh(
+    chest,
+    new CapsuleGeometry(0.146, 0.13, capSeg, radial),
+    jerseyBaseMat,
+    [0, 0.06, 0],
+    [0, 0, 0],
+    [1.18, 1, 0.84],
+  );
 
-  // Shoulder bridge yoke
-  addMesh(chest, new CapsuleGeometry(0.062, 0.31, capSeg, radial), jerseyBaseMat, [0, 0.19, 0], [0, 0, Math.PI / 2]);
+  // Shoulders yoke bridging across upper chest
+  addMesh(chest, new CapsuleGeometry(0.068, 0.33, capSeg, radial), jerseyBaseMat, [0, 0.2, 0], [0, 0, Math.PI / 2]);
 
-  // V-Neck collar with purple inner lining and white edge piping
-  addMesh(chest, new TorusGeometry(0.068, 0.009, 8, radial), jerseyPurpleMat, [0, 0.22, 0.02], [Math.PI / 2 - 0.25, 0, 0]);
-  addMesh(chest, new TorusGeometry(0.064, 0.005, 6, radial), whiteMat, [0, 0.218, 0.022], [Math.PI / 2 - 0.25, 0, 0]);
+  // Tailored V-Neck collar with contrast cyan/emerald piping
+  addMesh(chest, new TorusGeometry(0.074, 0.01, 8, radial), jerseyEmeraldMat, [0, 0.23, 0.02], [Math.PI / 2 - 0.25, 0, 0]);
+  addMesh(chest, new TorusGeometry(0.068, 0.005, 6, radial), jerseyCyanMat, [0, 0.228, 0.022], [Math.PI / 2 - 0.25, 0, 0]);
+  addMesh(chest, new CylinderGeometry(0.062, 0.062, 0.02, radial), jerseyBaseMat, [0, 0.218, 0.02]);
 
-  // Chest Crest: Indian flag shield & Yonex logo on upper left chest (+X)
-  addMesh(chest, new CylinderGeometry(0.138, 0.138, 0.055, radial, 1, true, -Math.PI * 0.25, Math.PI * 0.5), chestCrestMat, [0, 0.135, 0.01]);
+  // Dynamic Tournament Chest Graphics (Multi-layered Speed Sash as in reference photos)
+  addMesh(chest, new BoxGeometry(0.24, 0.022, 0.008), jerseyCyanMat, [-0.01, 0.138, 0.124], [0, 0, 0.38]);
+  addMesh(chest, new BoxGeometry(0.23, 0.018, 0.008), jerseyEmeraldMat, [-0.01, 0.112, 0.124], [0, 0, 0.38]);
+  addMesh(chest, new BoxGeometry(0.21, 0.008, 0.008), whiteMat, [-0.01, 0.088, 0.124], [0, 0, 0.38]);
+
+  // Tournament Crest Badge on Left Chest
+  addMesh(chest, new BoxGeometry(0.034, 0.038, 0.006), whiteMat, [0.066, 0.15, 0.122]);
+  addMesh(chest, new BoxGeometry(0.024, 0.028, 0.008), jerseyCyanMat, [0.066, 0.15, 0.123]);
+
+  // Back Player Name & Number Plate ("HENSIYA" as seen on Lakshya Sen reference photo)
+  addMesh(chest, new BoxGeometry(0.18, 0.045, 0.006), whiteMat, [0, 0.165, -0.122]);
+  addMesh(chest, new BoxGeometry(0.12, 0.024, 0.006), jerseyCyanMat, [0, 0.125, -0.122]);
 
   // ==========================================
-  // REAL HUMAN HEAD & FACE: SAINA NEHWAL
+  // REAL HUMAN HEAD & FACE (World-Class Sculpt)
   // ==========================================
   const neck = joint(chest, 0, 0.27);
 
-  // Athletic neck column
-  addMesh(neck, new CylinderGeometry(0.038, 0.044, 0.08, radial), skinMat, [0, 0.035, 0]);
-  // Trapezius slope connecting neck into shoulders
-  addMesh(neck, new ConeGeometry(0.068, 0.05, radial), skinMat, [0, 0.01, 0]);
+  // Muscular neck column
+  addMesh(neck, new CylinderGeometry(0.043, 0.049, 0.085, radial), skinMat, [0, 0.035, 0]);
+  // Sternocleidomastoid muscle cords angling down to sternum
+  addMesh(neck, new CylinderGeometry(0.009, 0.007, 0.08, 6), skinMat, [0.022, 0.038, 0.026], [0.2, 0, -0.18]);
+  addMesh(neck, new CylinderGeometry(0.009, 0.007, 0.08, 6), skinMat, [-0.022, 0.038, 0.026], [0.2, 0, 0.18]);
+  // Adam's apple
+  addMesh(neck, new SphereGeometry(0.008, 6, 6), skinMat, [0, 0.048, 0.044]);
+  // Trapezius muscle slope connecting neck into shoulders
+  addMesh(neck, new ConeGeometry(0.074, 0.055, radial), skinMat, [0, 0.01, 0]);
 
-  // Saina's signature necklaces:
-  // 1. Traditional gold chain
-  addMesh(neck, new TorusGeometry(0.044, 0.002, 8, radial), goldNecklaceMat, [0, 0.02, 0.005], [Math.PI / 2 + 0.18, 0, 0]);
-  // 2. Black beaded chain
-  addMesh(neck, new TorusGeometry(0.042, 0.0025, 8, radial), blackBeadsMat, [0, 0.028, 0.004], [Math.PI / 2 + 0.15, 0, 0]);
-  // 3. Yellow athletic necklace cord
-  addMesh(neck, new TorusGeometry(0.041, 0.002, 8, radial), wristbandYellowMat, [0, 0.036, 0.003], [Math.PI / 2 + 0.12, 0, 0]);
-
-  // Cranium (anatomical female proportions)
-  addMesh(neck, new SphereGeometry(0.085, 24, 16), skinMat, [0, 0.16, 0], [0, 0, 0], [0.88, 1.04, 0.94]);
-
-  // High-Fidelity Frontal Facial Projection Decal (Saina Nehwal photo likeness)
-  addMesh(neck, new CylinderGeometry(0.087, 0.081, 0.14, 16, 1, true, -Math.PI * 0.35, Math.PI * 0.7), faceDecalMat, [0, 0.156, 0.004]);
-
-  // Forehead & Brow Structure
-  addMesh(neck, new BoxGeometry(0.074, 0.014, 0.022), skinMat, [0, 0.184, 0.066]);
-
-  // Refined Athletic Nose Sculpt
-  addMesh(neck, new CylinderGeometry(0.005, 0.008, 0.026, 8), skinMat, [0, 0.154, 0.088], [-0.26, 0, 0]);
-  addMesh(neck, new SphereGeometry(0.0065, 8, 8), skinMat, [0, 0.143, 0.093]);
-  addMesh(neck, new SphereGeometry(0.004, 6, 6), skinMat, [0.008, 0.141, 0.088]);
-  addMesh(neck, new SphereGeometry(0.004, 6, 6), skinMat, [-0.008, 0.141, 0.088]);
-
-  // Smiling Lips with Visible Teeth
-  addMesh(neck, new BoxGeometry(0.022, 0.0045, 0.006), lipMat, [0, 0.13, 0.084]);
-  addMesh(neck, new BoxGeometry(0.015, 0.0035, 0.005), whiteMat, [0, 0.126, 0.085]);
-  addMesh(neck, new BoxGeometry(0.02, 0.0045, 0.006), lipMat, [0, 0.121, 0.083]);
-
-  // Saina's Signature Beauty Mark (Mole on Left Upper Cheek)
-  addMesh(neck, new SphereGeometry(0.0018, 6, 6), hairMat, [0.038, 0.152, 0.084]);
-
-  // Mandible, Chin & Cheeks
-  addMesh(neck, new BoxGeometry(0.048, 0.038, 0.055), skinMat, [0, 0.11, 0.038], [0.22, 0, 0]);
-  addMesh(neck, new SphereGeometry(0.011, 8, 8), skinMat, [0, 0.096, 0.062]);
-  addMesh(neck, new SphereGeometry(0.016, 8, 8), skinMat, [0.042, 0.152, 0.048], [0, 0, 0], [0.85, 1, 0.9]);
-  addMesh(neck, new SphereGeometry(0.016, 8, 8), skinMat, [-0.042, 0.152, 0.048], [0, 0, 0], [0.85, 1, 0.9]);
-
-  // Human Ears & Saina's Signature Silver Hoop Earrings
-  addMesh(neck, new CylinderGeometry(0.013, 0.015, 0.032, 8), skinMat, [0.075, 0.158, -0.005], [0, 0, 0.15], [0.35, 1, 0.7]);
-  addMesh(neck, new TorusGeometry(0.0075, 0.0018, 8, 16), silverMat, [0.077, 0.146, -0.004], [0, Math.PI / 2, 0]);
-  addMesh(neck, new CylinderGeometry(0.013, 0.015, 0.032, 8), skinMat, [-0.075, 0.158, -0.005], [0, 0, -0.15], [0.35, 1, 0.7]);
-  addMesh(neck, new TorusGeometry(0.0075, 0.0018, 8, 16), silverMat, [-0.077, 0.146, -0.004], [0, Math.PI / 2, 0]);
-
-  // Saina's Signature Hair Accessories (Yellow and Pink Hair Clips)
-  addMesh(neck, new BoxGeometry(0.02, 0.006, 0.004), clipYellowMat, [0.028, 0.232, 0.04], [0.3, 0.2, -0.3]);
-  addMesh(neck, new BoxGeometry(0.02, 0.006, 0.004), clipPinkMat, [0.055, 0.215, 0.028], [0.2, 0.4, -0.4]);
-  addMesh(neck, new BoxGeometry(0.02, 0.006, 0.004), clipYellowMat, [-0.028, 0.232, 0.04], [0.3, -0.2, 0.3]);
-  addMesh(neck, new BoxGeometry(0.02, 0.006, 0.004), clipPinkMat, [-0.055, 0.215, 0.028], [0.2, -0.4, 0.4]);
-
-  // Saina Nehwal's Signature Athletic Pulled-Back Ponytail Hairstyle
+  // Anatomical Head:
+  // 1. Cranium
   addMesh(
     neck,
-    new SphereGeometry(0.088, 24, 16, Math.PI * 0.2, Math.PI * 1.6, 0, Math.PI * 0.82),
-    hairMat,
-    [0, 0.161, -0.002],
+    new SphereGeometry(0.096, 24, 16),
+    skinMat,
+    [0, 0.165, 0],
     [0, 0, 0],
-    [0.91, 1.05, 0.97],
+    [0.88, 1.06, 0.98],
+  );
+
+  // 2. Forehead & Brow Ridge
+  addMesh(neck, new BoxGeometry(0.082, 0.016, 0.03), skinMat, [0, 0.188, 0.076]);
+
+  // 3. Eyebrows
+  addMesh(neck, new BoxGeometry(0.032, 0.007, 0.008), hairMat, [0.024, 0.192, 0.088], [0, 0, -0.12]);
+  addMesh(neck, new BoxGeometry(0.032, 0.007, 0.008), hairMat, [-0.024, 0.192, 0.088], [0, 0, 0.12]);
+
+  // 4. Realistic Human Eyes (Sclera + Dark Iris & Pupil)
+  // Left eye
+  addMesh(neck, new SphereGeometry(0.012, 10, 8), eyeWhiteMat, [0.024, 0.178, 0.082], [0, 0, 0], [1.3, 0.85, 0.7]);
+  addMesh(neck, new SphereGeometry(0.006, 8, 8), irisMat, [0.024, 0.178, 0.09]);
+  // Right eye
+  addMesh(neck, new SphereGeometry(0.012, 10, 8), eyeWhiteMat, [-0.024, 0.178, 0.082], [0, 0, 0], [1.3, 0.85, 0.7]);
+  addMesh(neck, new SphereGeometry(0.006, 8, 8), irisMat, [-0.024, 0.178, 0.09]);
+
+  // 5. Sculpted Human Nose (Bridge, Tip, Nostrils)
+  addMesh(neck, new CylinderGeometry(0.007, 0.012, 0.032, 8), skinMat, [0, 0.162, 0.092], [-0.32, 0, 0]);
+  addMesh(neck, new SphereGeometry(0.009, 8, 8), skinMat, [0, 0.148, 0.102]);
+  addMesh(neck, new SphereGeometry(0.0055, 6, 6), skinMat, [0.011, 0.146, 0.096]);
+  addMesh(neck, new SphereGeometry(0.0055, 6, 6), skinMat, [-0.011, 0.146, 0.096]);
+
+  // 6. Mouth & Expressive Athletic Lips
+  addMesh(neck, new BoxGeometry(0.028, 0.006, 0.008), lipMat, [0, 0.132, 0.09]);
+  addMesh(neck, new BoxGeometry(0.026, 0.007, 0.009), lipMat, [0, 0.123, 0.088]);
+
+  // 7. Sculpted Athletic Mandible, Chin & Cheekbones
+  addMesh(neck, new BoxGeometry(0.056, 0.045, 0.065), skinMat, [0, 0.11, 0.042], [0.26, 0, 0]);
+  addMesh(neck, new SphereGeometry(0.014, 8, 8), skinMat, [0, 0.096, 0.068]);
+  addMesh(neck, new SphereGeometry(0.022, 8, 8), skinMat, [0.052, 0.158, 0.052], [0, 0, 0], [0.8, 1, 0.9]);
+  addMesh(neck, new SphereGeometry(0.022, 8, 8), skinMat, [-0.052, 0.158, 0.052], [0, 0, 0], [0.8, 1, 0.9]);
+
+  // 8. Human Ears
+  addMesh(neck, new CylinderGeometry(0.016, 0.018, 0.038, 8), skinMat, [0.084, 0.165, -0.005], [0, 0, 0.15], [0.35, 1, 0.7]);
+  addMesh(neck, new CylinderGeometry(0.016, 0.018, 0.038, 8), skinMat, [-0.084, 0.165, -0.005], [0, 0, -0.15], [0.35, 1, 0.7]);
+
+  // 9. Modern Pro Badminton Fade Haircut (Loh Kean Yew / Lakshya Sen style)
+  // Crown and top volume
+  addMesh(
+    neck,
+    new SphereGeometry(0.101, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.52),
+    hairMat,
+    [0, 0.178, -0.006],
+    [0, 0, 0],
+    [0.92, 1.08, 0.98],
+  );
+  // Back & side tapered high fade
+  addMesh(neck, new CylinderGeometry(0.093, 0.084, 0.065, 18), hairMat, [0, 0.144, -0.016]);
+  // Textured athletic front locks & sweep
+  addMesh(
+    neck,
+    new CapsuleGeometry(0.038, 0.075, 4, 10),
+    hairMat,
+    [0.015, 0.224, 0.026],
+    [Math.PI / 2 - 0.25, 0.15, -0.1],
   );
   addMesh(
     neck,
-    new SphereGeometry(0.088, 24, 12, -Math.PI * 0.35, Math.PI * 0.7, 0, Math.PI * 0.26),
+    new CapsuleGeometry(0.028, 0.065, 4, 8),
     hairMat,
-    [0, 0.162, 0.002],
-    [0, 0, 0],
-    [0.91, 1.05, 0.97],
+    [-0.032, 0.22, 0.02],
+    [Math.PI / 2 - 0.2, -0.2, 0.15],
   );
-  addMesh(neck, new CapsuleGeometry(0.014, 0.055, 4, 8), hairMat, [0.071, 0.168, 0.008], [0.3, 0.15, -0.12]);
-  addMesh(neck, new CapsuleGeometry(0.014, 0.055, 4, 8), hairMat, [-0.071, 0.168, 0.008], [0.3, -0.15, 0.12]);
-
-  // Ponytail gathering cone & elastic tie band
-  addMesh(neck, new ConeGeometry(0.045, 0.065, 14), hairMat, [0, 0.148, -0.068], [-Math.PI * 0.38, 0, 0]);
-  addMesh(neck, new TorusGeometry(0.015, 0.004, 8, 16), clipYellowMat, [0, 0.142, -0.098], [Math.PI * 0.25, 0, 0]);
-  addMesh(neck, new CylinderGeometry(0.013, 0.01, 0.07, 10), hairMat, [0, 0.112, -0.116], [0.3, 0, 0]);
-  addMesh(neck, new CylinderGeometry(0.01, 0.007, 0.075, 10), hairMat, [0, 0.055, -0.13], [0.18, 0, 0]);
-  addMesh(neck, new ConeGeometry(0.007, 0.045, 8), hairMat, [0, 0.008, -0.138], [Math.PI, 0.05, 0]);
 
   // ==========================================
-  // ARMS, SLEEVES & HANDS
+  // ARMS, T-SHIRT SLEEVES & HANDS
   // ==========================================
   const arm = (side: 1 | -1, isRacketArm: boolean) => {
     const shoulder = joint(chest, side * SHOULDER_HALF_SPAN, 0.2);
 
     // Deltoid muscle base under sleeve
-    addMesh(shoulder, new SphereGeometry(0.054, 14, 12), skinMat, [0, -0.02, 0]);
+    addMesh(shoulder, new SphereGeometry(0.058, 14, 12), skinMat, [0, -0.02, 0]);
 
-    // Jersey Short Sleeve with white & purple trim
-    addMesh(shoulder, new CylinderGeometry(0.058, 0.052, 0.115, radial), jerseyBaseMat, [0, -0.055, 0]);
-    addMesh(shoulder, new TorusGeometry(0.053, 0.004, 6, radial), whiteMat, [0, -0.11, 0], [Math.PI / 2, 0, 0]);
-    addMesh(shoulder, new TorusGeometry(0.053, 0.003, 6, radial), jerseyPurpleMat, [0, -0.116, 0], [Math.PI / 2, 0, 0]);
+    // T-Shirt Short Sleeve (tailored athletic cut)
+    addMesh(shoulder, new CylinderGeometry(0.062, 0.056, 0.125, radial), jerseyBaseMat, [0, -0.06, 0]);
+    // Dual sleeve cuff stripes
+    addMesh(shoulder, new TorusGeometry(0.057, 0.005, 6, radial), jerseyCyanMat, [0, -0.118, 0], [Math.PI / 2, 0, 0]);
+    addMesh(shoulder, new TorusGeometry(0.057, 0.004, 6, radial), jerseyEmeraldMat, [0, -0.126, 0], [Math.PI / 2, 0, 0]);
 
-    // Toned Bicep & Tricep
+    // Muscular Bicep & Tricep
     addMesh(
       shoulder,
-      new CapsuleGeometry(0.042, UPPER_ARM - 0.12, capSeg, radial),
+      new CapsuleGeometry(0.046, UPPER_ARM - 0.13, capSeg, radial),
       skinMat,
-      [0, -UPPER_ARM / 2 - 0.015, 0],
+      [0, -UPPER_ARM / 2 - 0.02, 0],
     );
 
     const elbow = joint(shoulder, 0, -UPPER_ARM);
 
     // Anatomical Elbow Joint
-    addMesh(elbow, new SphereGeometry(0.036, 12, 8), skinMat, [0, 0, 0]);
+    addMesh(elbow, new SphereGeometry(0.038, 12, 8), skinMat, [0, 0, 0]);
 
-    // Muscular Forearm
-    addMesh(elbow, new CylinderGeometry(0.038, 0.028, FOREARM - 0.08, radial), skinMat, [0, -FOREARM / 2 + 0.01, 0]);
+    // Muscular Forearm (anatomical taper from brachioradialis to wrist)
+    addMesh(elbow, new CylinderGeometry(0.042, 0.031, FOREARM - 0.08, radial), skinMat, [0, -FOREARM / 2 + 0.01, 0]);
 
+    // Racket Arm: Pro Tournament Terrycloth Wristband
     if (isRacketArm) {
-      // Saina's signature yellow tournament wristband on right wrist
-      addMesh(elbow, new CylinderGeometry(0.033, 0.031, 0.048, radial), wristbandYellowMat, [0, -FOREARM + 0.026, 0]);
+      addMesh(elbow, new CylinderGeometry(0.036, 0.034, 0.052, radial), wristbandMat, [0, -FOREARM + 0.028, 0]);
+      addMesh(elbow, new TorusGeometry(0.0365, 0.004, 6, radial), jerseyCyanMat, [0, -FOREARM + 0.032, 0], [Math.PI / 2, 0, 0]);
+      addMesh(elbow, new TorusGeometry(0.0365, 0.004, 6, radial), jerseyEmeraldMat, [0, -FOREARM + 0.024, 0], [Math.PI / 2, 0, 0]);
     } else {
-      // White athletic tournament watch on left wrist
-      addMesh(elbow, new CylinderGeometry(0.031, 0.03, 0.026, radial), watchWhiteMat, [0, -FOREARM + 0.026, 0]);
+      // Off-arm athlete silicone tournament band
+      addMesh(elbow, new CylinderGeometry(0.033, 0.032, 0.016, radial), jerseyCyanMat, [0, -FOREARM + 0.025, 0]);
     }
 
-    // Anatomical 5-Digit Hand
-    const handY = -FOREARM - 0.015;
-    // Palm
-    addMesh(elbow, new BoxGeometry(0.044, 0.048, 0.022), skinMat, [0, handY, 0]);
+    // Anatomical Hand:
+    // Palm & Thenar muscle
+    addMesh(elbow, new BoxGeometry(0.056, 0.052, 0.026), skinMat, [0, -FOREARM - 0.024, 0]);
+    addMesh(elbow, new SphereGeometry(0.016, 6, 6), skinMat, [-side * 0.018, -FOREARM - 0.018, 0.012]);
 
+    // Opposed Thumb
+    addMesh(
+      elbow,
+      new CapsuleGeometry(0.011, 0.034, 4, 6),
+      skinMat,
+      [-side * 0.028, -FOREARM - 0.022, 0.016],
+      [0.35, 0, side * 0.4],
+    );
+
+    // 4 Articulated Fingers
     if (isRacketArm) {
       // Racket hand: curled tightly around the handle grip
-      for (let i = 0; i < 4; i++) {
-        const fx = (i - 1.5) * 0.01;
-        addMesh(elbow, new CapsuleGeometry(0.0055, 0.03, 4, 8), skinMat, [fx, handY - 0.03, 0.006], [0.65, 0, 0]);
-      }
-      addMesh(elbow, new CapsuleGeometry(0.006, 0.026, 4, 8), skinMat, [side * 0.022, handY - 0.01, 0.01], [0.3, side * 0.4, 0]);
+      addMesh(elbow, new CapsuleGeometry(0.01, 0.042, 4, 6), skinMat, [0, -FOREARM - 0.035, -0.012], [0, 0, Math.PI / 2]);
+      addMesh(elbow, new CapsuleGeometry(0.01, 0.042, 4, 6), skinMat, [0, -FOREARM - 0.043, -0.01], [0, 0, Math.PI / 2]);
+      addMesh(elbow, new CapsuleGeometry(0.009, 0.038, 4, 6), skinMat, [0, -FOREARM - 0.051, -0.008], [0, 0, Math.PI / 2]);
+      addMesh(elbow, new CapsuleGeometry(0.008, 0.034, 4, 6), skinMat, [0, -FOREARM - 0.058, -0.006], [0, 0, Math.PI / 2]);
     } else {
-      // Off-arm: athletic open counter-balance fingers
-      addMesh(elbow, new CapsuleGeometry(0.007, 0.042, 4, 6), skinMat, [0.016, handY - 0.032, 0.004], [0.1, 0, -0.15]);
-      addMesh(elbow, new CapsuleGeometry(0.007, 0.044, 4, 6), skinMat, [0.005, handY - 0.034, 0], [0.12, 0, 0]);
-      addMesh(elbow, new CapsuleGeometry(0.0065, 0.04, 4, 6), skinMat, [-0.005, handY - 0.032, -0.004], [0.14, 0, 0.1]);
-      addMesh(elbow, new CapsuleGeometry(0.006, 0.036, 4, 6), skinMat, [-0.016, handY - 0.028, -0.008], [0.18, 0, 0.22]);
-      addMesh(elbow, new CapsuleGeometry(0.0065, 0.026, 4, 8), skinMat, [side * 0.022, handY - 0.01, 0.01], [0.3, side * 0.4, 0]);
+      // Off-arm: natural athletic open counter-balance fingers
+      addMesh(elbow, new CapsuleGeometry(0.009, 0.046, 4, 6), skinMat, [0.018, -FOREARM - 0.05, 0.004], [0.1, 0, -0.15]);
+      addMesh(elbow, new CapsuleGeometry(0.009, 0.048, 4, 6), skinMat, [0.006, -FOREARM - 0.052, 0], [0.12, 0, 0]);
+      addMesh(elbow, new CapsuleGeometry(0.0085, 0.044, 4, 6), skinMat, [-0.006, -FOREARM - 0.05, -0.004], [0.14, 0, 0.1]);
+      addMesh(elbow, new CapsuleGeometry(0.008, 0.038, 4, 6), skinMat, [-0.018, -FOREARM - 0.046, -0.008], [0.18, 0, 0.22]);
     }
 
     return { shoulder, elbow };
@@ -627,80 +641,116 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   const left = arm(1, false);
 
   // ==========================================
-  // LEGS & YONEX POWER CUSHION COURT SHOES
+  // LEGS, MUSCULAR QUADS, CALVES & COURT SHOES
   // ==========================================
   const leg = (side: 1 | -1) => {
     const hip = joint(hips, side * HIP_HALF_SPAN, -0.03);
 
-    // Defined Vastus Medialis & Rectus Femoris Quadriceps
+    // Match Shorts Leg (athletic mid-thigh cut)
+    addMesh(hip, new CylinderGeometry(0.086, 0.08, 0.17, radial), shortsBaseMat, [0, -0.075, 0]);
+    // Dynamic Side Racing Chevrons (cyan + emerald + white as in reference photos)
+    addMesh(hip, new BoxGeometry(0.008, 0.16, 0.02), jerseyCyanMat, [side * 0.083, -0.075, -0.008]);
+    addMesh(hip, new BoxGeometry(0.006, 0.16, 0.016), jerseyEmeraldMat, [side * 0.083, -0.075, 0.012]);
+    addMesh(hip, new BoxGeometry(0.003, 0.16, 0.01), whiteMat, [side * 0.083, -0.075, 0.026]);
+    // Shorts hem piping rim
+    addMesh(hip, new TorusGeometry(0.081, 0.005, 6, radial), shortsWaistMat, [0, -0.158, 0], [Math.PI / 2, 0, 0]);
+
+    // Muscular Quadriceps (Explosive badminton power legs, inspired by Chou Tien-chen & Shi Yuqi)
     addMesh(
       hip,
-      new CapsuleGeometry(0.062, THIGH - 0.18, capSeg, radial),
+      new CapsuleGeometry(0.065, THIGH - 0.18, capSeg, radial),
       skinMat,
       [0, -THIGH / 2 - 0.025, 0],
     );
-    // Teardrop vastus medialis definition right above kneecap
-    addMesh(hip, new SphereGeometry(0.032, 10, 8), skinMat, [-side * 0.024, -THIGH + 0.06, 0.022]);
+    // Vastus Lateralis outer sweep
+    addMesh(hip, new CapsuleGeometry(0.035, 0.16, 4, 8), skinMat, [side * 0.034, -THIGH / 2 - 0.01, 0]);
+    // Vastus Medialis (prominent inner quad teardrop bulge right above kneecap)
+    addMesh(hip, new SphereGeometry(0.038, 10, 8), skinMat, [-side * 0.028, -THIGH + 0.06, 0.024]);
 
     const knee = joint(hip, 0, -THIGH);
 
     // Anatomical Patella (kneecap)
-    addMesh(knee, new BoxGeometry(0.04, 0.044, 0.022), skinMat, [0, 0, 0.036]);
-    addMesh(knee, new BoxGeometry(0.02, 0.036, 0.01), skinMat, [0, -0.03, 0.034]);
+    addMesh(knee, new BoxGeometry(0.044, 0.048, 0.024), skinMat, [0, 0, 0.038]);
+    // Patellar tendon
+    addMesh(knee, new BoxGeometry(0.022, 0.04, 0.01), skinMat, [0, -0.032, 0.036]);
 
-    // Athletic Badminton Calf (gastrocnemius diamond taper)
+    // Right Knee: Pro Athlete Kinesiology Support Tape (as seen on Loh Kean Yew in Photo 2)
+    if (side === -1) {
+      addMesh(knee, new BoxGeometry(0.026, 0.055, 0.004), kinesioTapeMat, [-0.015, -0.025, 0.042], [0, 0, -0.25]);
+    }
+
+    // Muscular Gastrocnemius (Diamond-shaped calf)
     addMesh(
       knee,
-      new CapsuleGeometry(0.05, 0.175, capSeg, radial),
+      new CapsuleGeometry(0.054, 0.185, capSeg, radial),
       skinMat,
-      [0, -0.11, -0.01],
+      [0, -0.11, -0.012],
       [0, 0, 0],
-      [0.95, 1, 1.1],
+      [0.95, 1, 1.12],
     );
+    // Medial calf belly bulge
+    addMesh(knee, new SphereGeometry(0.032, 8, 8), skinMat, [-side * 0.02, -0.1, -0.014]);
     // Achilles tendon
-    addMesh(knee, new CylinderGeometry(0.018, 0.022, 0.12, 8), skinMat, [0, -0.22, -0.02]);
+    addMesh(knee, new CylinderGeometry(0.018, 0.022, 0.12, 8), skinMat, [0, -0.22, -0.022]);
 
     // Ankle Malleolus (inner & outer ankle bones)
-    addMesh(knee, new SphereGeometry(0.015, 6, 6), skinMat, [side * 0.034, -SHIN + 0.05, 0]);
-    addMesh(knee, new SphereGeometry(0.015, 6, 6), skinMat, [-side * 0.034, -SHIN + 0.055, 0]);
+    addMesh(knee, new SphereGeometry(0.016, 6, 6), skinMat, [side * 0.036, -SHIN + 0.05, 0]);
+    addMesh(knee, new SphereGeometry(0.016, 6, 6), skinMat, [-side * 0.036, -SHIN + 0.055, 0]);
 
-    // Low-Cut White Athletic Court Socks
-    addMesh(knee, new CylinderGeometry(0.038, 0.035, 0.1, radial), sockMat, [0, -SHIN + 0.06, 0]);
+    // Technical Badminton Crew Sock
+    addMesh(knee, new CylinderGeometry(0.043, 0.038, 0.165, radial), sockMat, [0, -SHIN + 0.085, 0]);
+    // Sock cuff dual tournament stripes
+    addMesh(knee, new TorusGeometry(0.0435, 0.004, 6, radial), jerseyCyanMat, [0, -SHIN + 0.155, 0], [Math.PI / 2, 0, 0]);
+    addMesh(knee, new TorusGeometry(0.0435, 0.004, 6, radial), jerseyEmeraldMat, [0, -SHIN + 0.142, 0], [Math.PI / 2, 0, 0]);
 
     // ==========================================
-    // PRO YONEX POWER CUSHION COURT SHOES
+    // PRO BADMINTON TOURNAMENT COURT SHOE
+    // (Yonex Power Cushion 65Z3 / Li-Ning World Tour)
     // ==========================================
-    // 1. Synthetic white mesh upper body
-    addMesh(knee, new BoxGeometry(0.092, 0.058, 0.22), shoeUpperMat, [0, -SHIN + 0.005, 0.055]);
+    // 1. Synthetic white leather upper body
+    addMesh(knee, new BoxGeometry(0.096, 0.062, 0.23), shoeUpperMat, [0, -SHIN + 0.005, 0.055]);
+    // 2. Aerodynamic toe box curve
     addMesh(
       knee,
-      new CapsuleGeometry(0.044, 0.07, capSeg, radial),
+      new CapsuleGeometry(0.046, 0.072, capSeg, radial),
       shoeUpperMat,
-      [0, -SHIN + 0.005, 0.135],
+      [0, -SHIN + 0.005, 0.14],
       [Math.PI / 2, 0, 0],
     );
 
-    // 2. Magenta TPU Lateral Stability Claw
-    addMesh(knee, new BoxGeometry(0.015, 0.036, 0.085), shoeMagentaMat, [side * 0.048, -SHIN - 0.004, 0.075]);
-    addMesh(knee, new CylinderGeometry(0.044, 0.044, 0.02, radial), shoeMagentaMat, [0, -SHIN + 0.02, 0.04]);
+    // 3. Dark graphite carbon quarter panels (lateral & medial)
+    addMesh(knee, new BoxGeometry(0.098, 0.04, 0.12), shoeCarbonMat, [0, -SHIN + 0.01, 0.02]);
 
-    // 3. Carbon Graphite Shank Plate
-    addMesh(knee, new BoxGeometry(0.082, 0.015, 0.06), shoeCarbonMat, [0, -SHIN - 0.03, 0.03]);
+    // 4. Padded heel counter and ankle collar
+    addMesh(
+      knee,
+      new CylinderGeometry(0.046, 0.044, 0.046, radial, 1, false, Math.PI / 2, Math.PI),
+      shoeCarbonMat,
+      [0, -SHIN + 0.028, -0.04],
+    );
 
-    // 4. White Tournament Laces
+    // 5. Shoe Tongue & Lacing Throat
+    addMesh(knee, new BoxGeometry(0.042, 0.025, 0.12), shoeUpperMat, [0, -SHIN + 0.038, 0.065], [-0.22, 0, 0]);
+    // 4 Sets of Criss-Cross Tournament Laces
     for (let i = 0; i < 4; i++) {
-      const zOffset = 0.03 + i * 0.025;
-      const yOffset = 0.028 + (3 - i) * 0.005;
-      addMesh(knee, new BoxGeometry(0.044, 0.006, 0.012), whiteMat, [0, -SHIN + yOffset, zOffset]);
+      const zOffset = 0.03 + i * 0.026;
+      const yOffset = 0.03 + (3 - i) * 0.005;
+      addMesh(knee, new BoxGeometry(0.046, 0.006, 0.012), shoeLacesMat, [0, -SHIN + yOffset, zOffset]);
     }
 
-    // 5. Multi-Density EVA Midsole Cushion
-    addMesh(knee, new BoxGeometry(0.096, 0.026, 0.245), shoeMidsoleMat, [0, -SHIN - 0.026, 0.055]);
+    // 6. Lateral Claw / Power Cushion TPU Stability Wing (outer forefoot)
+    addMesh(knee, new BoxGeometry(0.016, 0.038, 0.09), shoeClawMat, [side * 0.05, -SHIN - 0.005, 0.075]);
 
-    // 6. Amber Gum Rubber Non-Marking Court Outsole
-    addMesh(knee, new BoxGeometry(0.098, 0.014, 0.25), shoeGumSoleMat, [0, -SHIN - 0.042, 0.055]);
-    // Outsole toe bumper for court drag
-    addMesh(knee, new BoxGeometry(0.082, 0.026, 0.024), shoeGumSoleMat, [0, -SHIN - 0.018, 0.17]);
+    // 7. Multi-Density Sculpted EVA Cushion Midsole
+    addMesh(knee, new BoxGeometry(0.1, 0.028, 0.25), shoeMidsoleMat, [0, -SHIN - 0.028, 0.055]);
+
+    // 8. Carbon Midfoot Drive Shank Plate (under arch)
+    addMesh(knee, new BoxGeometry(0.085, 0.015, 0.06), shoeCarbonMat, [0, -SHIN - 0.032, 0.03]);
+
+    // 9. Authentic Non-Marking Amber Gum Rubber Outsole
+    addMesh(knee, new BoxGeometry(0.102, 0.015, 0.255), shoeGumSoleMat, [0, -SHIN - 0.044, 0.055]);
+    // Outsole toe bumper wrapping over the front tip for court drag
+    addMesh(knee, new BoxGeometry(0.085, 0.028, 0.025), shoeGumSoleMat, [0, -SHIN - 0.02, 0.175]);
 
     return { hip, knee };
   };
@@ -734,95 +784,8 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
       kneeL: leftLeg.knee,
     },
     dispose: () => {
-      faceTexture?.dispose();
-      crestTexture?.dispose();
       geometries.forEach((g) => g.dispose());
       materials.forEach((m) => m.dispose());
-    },
-  };
-}
-
-/**
- * Creates an AthleteRig from a loaded GLTF/GLB scene (e.g. /models/saina-nehwal.glb).
- * Seamless drop-in replacement that maps all joints and handAnchor.
- */
-export function createAthleteRigFromGltf(scene: Object3D): AthleteRig | null {
-  const joints: Partial<Record<JointName, Object3D>> = {};
-  let handAnchor: Object3D | null = null;
-
-  scene.traverse((obj) => {
-    if (JOINT_NAMES.includes(obj.name as JointName)) {
-      joints[obj.name as JointName] = obj;
-    }
-    if (obj.name === "handAnchor") {
-      handAnchor = obj;
-    }
-    // Hide internal static racket so the website's animated flying racket docks cleanly
-    if (obj.name === "racket" || obj.name === "YonexRacket") {
-      obj.visible = false;
-    }
-    if (obj instanceof Mesh) {
-      obj.castShadow = true;
-      obj.receiveShadow = true;
-
-      // Enhance PBR materials loaded from GLB for studio lighting
-      if (obj.material) {
-        const mat = obj.material as MeshStandardMaterial;
-        if (mat.name === "M_SainaFaceDecal") {
-          mat.transparent = true;
-          mat.depthWrite = false;
-          mat.polygonOffset = true;
-          mat.polygonOffsetFactor = -2;
-          mat.polygonOffsetUnits = -2;
-          mat.roughness = 0.68;
-        } else if (mat.name === "M_ChestCrestDecal") {
-          mat.transparent = true;
-          mat.depthWrite = false;
-          mat.polygonOffset = true;
-          mat.polygonOffsetFactor = -1;
-          mat.polygonOffsetUnits = -1;
-        } else if (mat.name === "M_SainaSkin") {
-          mat.roughness = 0.62;
-          mat.metalness = 0.02;
-        } else if (mat.name === "M_HairBlack") {
-          mat.roughness = 0.58;
-          mat.metalness = 0.08;
-        } else if (mat.name === "M_JerseyObsidian" || mat.name === "M_MatchSkirt") {
-          mat.roughness = 0.68;
-          mat.metalness = 0.04;
-        }
-      }
-    }
-  });
-
-  // Verify all required joints exist
-  for (const name of JOINT_NAMES) {
-    if (!joints[name]) {
-      return null;
-    }
-  }
-
-  if (!handAnchor) {
-    handAnchor = joints.elbowR!;
-  }
-
-  const root = scene instanceof Group ? scene : new Group().add(scene);
-
-  return {
-    root,
-    handAnchor,
-    joints: joints as Record<JointName, Object3D>,
-    dispose: () => {
-      scene.traverse((child) => {
-        if (child instanceof Mesh) {
-          child.geometry?.dispose();
-          if (Array.isArray(child.material)) {
-            child.material.forEach((m) => m.dispose());
-          } else if (child.material) {
-            child.material.dispose();
-          }
-        }
-      });
     },
   };
 }
@@ -838,4 +801,3 @@ export function applyPoseBlend(rig: AthleteRig, a: Pose, b: Pose, f: number) {
     rig.joints[name].rotation.set(lerp(ra[0], rb[0]), lerp(ra[1], rb[1]), lerp(ra[2], rb[2]));
   }
 }
-

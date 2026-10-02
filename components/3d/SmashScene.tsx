@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import {
   AdditiveBlending,
@@ -20,15 +20,7 @@ import {
   type PointLight,
   type SpotLight,
 } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { ATHLETE_ASSETS, ATHLETE_SOURCE } from "@/lib/assets";
-import {
-  applyPoseBlend,
-  buildAthleteRig,
-  createAthleteRigFromGltf,
-  SMASH_POSES,
-  type AthleteRig,
-} from "@/lib/athleteRig";
+import { applyPoseBlend, buildAthleteRig, SMASH_POSES, type AthleteRig } from "@/lib/athleteRig";
 import { sceneState } from "@/lib/sceneState";
 import {
   ATHLETE_POSITION as ATHLETE_POSITION_TUPLE,
@@ -161,48 +153,15 @@ export default function SmashScene({ detail }: SmashSceneProps) {
   const athleteGroup = useRef<Group>(null);
   const keyLight = useRef<SpotLight>(null);
   const rimLight = useRef<SpotLight>(null);
-  const faceFillLight = useRef<SpotLight>(null);
   const impactLight = useRef<PointLight>(null);
   const blob = useRef<Mesh>(null);
 
-  const proceduralRig = useMemo(() => buildAthleteRig(detail), [detail]);
-  const [glbRig, setGlbRig] = useState<AthleteRig | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    if (ATHLETE_SOURCE === "gltf" && ATHLETE_ASSETS.gltf) {
-      const loader = new GLTFLoader();
-      loader.load(
-        ATHLETE_ASSETS.gltf,
-        (gltf) => {
-          if (!active) return;
-          const loadedRig = createAthleteRigFromGltf(gltf.scene);
-          if (loadedRig) {
-            setGlbRig(loadedRig);
-          }
-        },
-        undefined,
-        (err) => {
-          console.warn("[SmashScene] Falling back to procedural athlete rig:", err);
-        },
-      );
-    }
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const rig = glbRig ?? proceduralRig;
+  const rig = useMemo(() => buildAthleteRig(detail), [detail]);
   const contact = useMemo(() => computeContactPoint(rig), [rig]);
   const shuttle = useMemo(() => buildShuttle(), []);
   const lightTarget = useMemo(() => {
     const o = new Object3D();
     o.position.copy(ATHLETE_POSITION).setY(1.3);
-    return o;
-  }, []);
-  const faceTarget = useMemo(() => {
-    const o = new Object3D();
-    o.position.copy(ATHLETE_POSITION).setY(1.75);
     return o;
   }, []);
 
@@ -254,15 +213,9 @@ export default function SmashScene({ detail }: SmashSceneProps) {
     sceneState.handAnchor = rig.handAnchor;
     return () => {
       if (sceneState.handAnchor === rig.handAnchor) sceneState.handAnchor = null;
+      rig.dispose();
     };
   }, [rig]);
-
-  useEffect(() => {
-    return () => {
-      proceduralRig.dispose();
-      glbRig?.dispose();
-    };
-  }, [proceduralRig, glbRig]);
 
   useEffect(() => () => shuttle.dispose(), [shuttle]);
   useEffect(
@@ -290,23 +243,10 @@ export default function SmashScene({ detail }: SmashSceneProps) {
     applyPoseBlend(rig, SMASH_POSES[POSE_KEYS[pi].pose], SMASH_POSES[POSE_KEYS[pi + 1].pose], pf);
     if (athleteGroup.current) athleteGroup.current.visible = p > 0.001;
 
-    // Lights & targets follow athlete jump motion.
-    const jumpOffset = rig.joints.hips.position.y - SMASH_POSES.reach.rootY;
-    lightTarget.position.set(
-      ATHLETE_POSITION.x,
-      1.3 + jumpOffset,
-      ATHLETE_POSITION.z + rig.root.position.z,
-    );
-    faceTarget.position.set(
-      ATHLETE_POSITION.x,
-      1.75 + jumpOffset,
-      ATHLETE_POSITION.z + rig.root.position.z,
-    );
-
+    // Lights.
     const lit = ramp(p, M.athleteLightStart, M.athleteLightFull);
     if (keyLight.current) keyLight.current.intensity = ATHLETE_KEY_INTENSITY * lit;
     if (rimLight.current) rimLight.current.intensity = ATHLETE_RIM_INTENSITY * lit;
-    if (faceFillLight.current) faceFillLight.current.intensity = 36 * lit;
     if (impactLight.current) {
       const d = (p - M.contact) / IMPACT_WIDTH;
       impactLight.current.intensity = IMPACT_INTENSITY * Math.exp(-d * d);
@@ -366,7 +306,6 @@ export default function SmashScene({ detail }: SmashSceneProps) {
       </group>
 
       <primitive object={lightTarget} />
-      <primitive object={faceTarget} />
       <spotLight
         ref={keyLight}
         position={[ATHLETE_POSITION.x - 2.5, 7.5, ATHLETE_POSITION.z + 3.5]}
@@ -376,16 +315,6 @@ export default function SmashScene({ detail }: SmashSceneProps) {
         intensity={0}
         decay={2}
         color="#FFFDF8"
-      />
-      <spotLight
-        ref={faceFillLight}
-        position={[ATHLETE_POSITION.x + 0.8, 2.5, ATHLETE_POSITION.z + 2.6]}
-        target={faceTarget}
-        angle={0.48}
-        penumbra={0.9}
-        intensity={0}
-        decay={2}
-        color="#FFF7EE"
       />
       <spotLight
         ref={rimLight}
