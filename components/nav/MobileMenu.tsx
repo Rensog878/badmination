@@ -61,7 +61,7 @@ export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
       aria-modal="true"
       aria-label="Site menu"
       hidden={!open}
-      className="menu-in fixed inset-0 z-40 flex flex-col bg-charcoal px-4 pt-24 pb-10 sm:px-8 lg:hidden"
+      className="menu-in fixed inset-0 z-40 flex flex-col bg-charcoal px-4 pt-[calc(6rem+env(safe-area-inset-top))] pb-[calc(2.5rem+env(safe-area-inset-bottom))] sm:px-8 lg:hidden"
     >
       <nav aria-label="Mobile" className="flex-1">
         <ol className="flex flex-col gap-2">

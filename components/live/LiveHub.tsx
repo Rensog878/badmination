@@ -443,7 +443,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
           </div>
 
           {/* Quick Search */}
-          <div className="relative w-full sm:w-72">
+          <div className="relative w-full sm:w-72 shrink-0">
             <label htmlFor={searchInputId} className="sr-only">
               Search player or category
             </label>

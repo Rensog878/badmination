@@ -353,7 +353,7 @@ export default function MatchManager({
           onClick={() => setEditingMatchId(null)}
         >
           <div
-            className="w-full max-w-xl rounded-2xl border border-white/20 bg-charcoal p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
+            className="w-full max-w-xl max-h-[90svh] overflow-y-auto rounded-2xl border border-white/20 bg-charcoal p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-4">

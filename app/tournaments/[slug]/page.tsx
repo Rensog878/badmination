@@ -228,13 +228,13 @@ export default async function TournamentPage({ params }: PageProps) {
       )}
 
       {status === "open" && (
-        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-4 border-t border-off-white/10 bg-charcoal px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-8 lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-off-white/10 bg-charcoal/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:px-8 lg:hidden">
           <p className="font-display font-semibold">
             {formatInr(t.entryFee)} <span className="text-xs font-normal text-muted">/ event</span>
           </p>
           <Link
             href={registerHref(t)}
-            className="rounded-lg inline-flex items-center gap-2 bg-court-green px-5 py-3 font-display text-xs font-semibold tracking-[0.14em] text-black uppercase"
+            className="rounded-lg inline-flex shrink-0 items-center gap-2 bg-court-green px-5 py-3 font-display text-xs font-semibold tracking-[0.14em] text-black uppercase"
           >
             Register
             <ArrowRight aria-hidden="true" className="size-4" />

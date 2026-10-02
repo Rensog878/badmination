@@ -61,8 +61,8 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
         </p>
       )}
 
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <dl className="flex gap-10">
+      <div className="flex flex-wrap items-end justify-between gap-4 sm:gap-6">
+        <dl className="flex flex-wrap gap-6 sm:gap-10">
           {stats.map((s) => (
             <div key={s.label} className="flex flex-col-reverse">
               <dt className="mt-1 text-xs tracking-[0.15em] text-muted uppercase">{s.label}</dt>

@@ -88,7 +88,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
           <span aria-hidden="true" style={tabs.style} className="indicator absolute -bottom-px left-0 h-0.5 bg-court-green" />
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <label className="relative block sm:w-72">
             <span className="sr-only">Search tournaments</span>
             <Search

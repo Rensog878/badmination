@@ -154,7 +154,7 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
                       ]
                     : []),
                 ].map((row) => (
-                  <div key={row.label} className="grid grid-cols-[8rem_1fr] gap-4 py-3.5 text-sm">
+                  <div key={row.label} className="flex flex-col gap-0.5 py-3.5 text-sm sm:grid sm:grid-cols-[8rem_1fr] sm:gap-4">
                     <dt className="text-muted print:text-black/70">{row.label}</dt>
                     <dd className="break-words">{row.value}</dd>
                   </div>

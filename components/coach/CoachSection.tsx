@@ -38,7 +38,7 @@ export default function CoachSection() {
               </div>
             </Reveal>
 
-            <Reveal as="dl" stagger className="mt-14 grid grid-cols-3 border-y border-off-white/10">
+            <Reveal as="dl" stagger className="mt-14 grid grid-cols-2 border-y border-off-white/10 sm:grid-cols-3">
               {COACH.stats.map((stat) => (
                 <div
                   key={stat.label}

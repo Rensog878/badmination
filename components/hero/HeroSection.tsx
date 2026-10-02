@@ -40,10 +40,10 @@ export default function HeroSection() {
 
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted sm:text-lg">{HERO.subline}</p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 md:gap-4">
             <a
               href={HERO.primaryCta.href}
-              className="group relative inline-flex items-center justify-center gap-3 rounded-xl bg-court-green px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-black uppercase shadow-[0_0_25px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-[1.02] hover:bg-off-white hover:shadow-[0_0_35px_rgba(243,244,246,0.35)] active:scale-[0.98]"
+              className="group relative inline-flex w-full items-center justify-center gap-3 rounded-xl bg-court-green px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-black uppercase shadow-[0_0_25px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-[1.02] hover:bg-off-white hover:shadow-[0_0_35px_rgba(243,244,246,0.35)] active:scale-[0.98] sm:w-auto"
             >
               {HERO.primaryCta.label}
               <ArrowRight
@@ -55,7 +55,7 @@ export default function HeroSection() {
             <button
               type="button"
               onClick={() => setSpecsOpen(true)}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[0.04] px-6 py-4 font-display text-sm font-bold tracking-[0.14em] text-off-white uppercase backdrop-blur-md transition-all duration-300 hover:border-court-green hover:bg-court-green/10 hover:text-court-green active:scale-95"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[0.04] px-6 py-4 font-display text-sm font-bold tracking-[0.14em] text-off-white uppercase backdrop-blur-md transition-all duration-300 hover:border-court-green hover:bg-court-green/10 hover:text-court-green active:scale-95 sm:w-auto"
             >
               <Sliders className="size-4 text-court-green" />
               <span>Pro Specs</span>
@@ -64,7 +64,7 @@ export default function HeroSection() {
             {FEATURES.programs && (
             <a
               href={HERO.secondaryCta.href}
-              className="inline-flex items-center justify-center rounded-xl border border-off-white/20 bg-white/[0.03] px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-off-white uppercase backdrop-blur-sm transition-all duration-300 hover:border-court-green hover:bg-court-green/10 hover:text-court-green"
+              className="inline-flex w-full items-center justify-center rounded-xl border border-off-white/20 bg-white/[0.03] px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-off-white uppercase backdrop-blur-sm transition-all duration-300 hover:border-court-green hover:bg-court-green/10 hover:text-court-green sm:w-auto"
             >
               {HERO.secondaryCta.label}
             </a>

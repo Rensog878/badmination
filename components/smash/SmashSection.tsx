@@ -144,7 +144,7 @@ export default function SmashSection() {
         {cinematic && (
           <div
             ref={telemetry}
-            className="pointer-events-none absolute right-4 top-20 z-20 flex flex-col gap-3 rounded-2xl border border-white/[0.08] bg-black/75 p-4 backdrop-blur-xl opacity-0 shadow-2xl sm:right-8 sm:top-24 sm:p-5 lg:right-16"
+            className="pointer-events-none absolute right-3 top-20 z-20 flex max-w-[calc(100vw-1.5rem)] flex-col gap-3 rounded-2xl border border-white/[0.08] bg-black/75 p-4 backdrop-blur-xl opacity-0 shadow-2xl sm:right-8 sm:top-24 sm:p-5 lg:right-16"
           >
             <div className="flex items-center gap-2 border-b border-white/10 pb-2">
               <span className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />

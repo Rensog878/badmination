@@ -31,7 +31,7 @@ export default async function AllLivePage() {
   }));
 
   return (
-    <main id="main" className="min-h-svh bg-charcoal pt-24 pb-24 lg:pt-32">
+    <main id="main" className="min-h-svh bg-charcoal pt-28 pb-24 lg:pt-36">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-16">
         {items.length === 0 ? (
           <div className="mx-auto max-w-xl text-center py-20">
@@ -44,10 +44,10 @@ export default async function AllLivePage() {
             <p className="mt-3 text-muted text-sm sm:text-base">
               Courts are currently resting. Real-time scores and live court radar activate automatically as soon as play begins.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href="/#tournaments"
-                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white"
+                className="inline-flex w-full min-h-11 items-center justify-center gap-2 rounded-lg bg-court-green px-6 py-3 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase hover:bg-off-white sm:w-auto"
               >
                 Browse Upcoming Tournaments
                 <ArrowRight aria-hidden="true" className="size-4" />

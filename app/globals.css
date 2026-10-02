@@ -11,8 +11,7 @@
   --font-display: var(--font-outfit), var(--font-plus-jakarta-sans), ui-sans-serif, sans-serif;
 }
 
-html,
-body {
+html {
   overflow-x: clip;
 }
 
