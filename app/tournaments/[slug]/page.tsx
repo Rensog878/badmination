@@ -76,20 +76,25 @@ export default async function TournamentPage({ params }: PageProps) {
             <ArrowLeft aria-hidden="true" className="size-4" />
             All tournaments
           </Link>
-          <p className="mt-10 font-display text-xs tracking-[0.18em] text-court-green uppercase">{t.level} · {t.city}</p>
-          <h1 className="mt-4 max-w-4xl font-display text-[clamp(2.75rem,8vw,7rem)] leading-[0.9] font-bold tracking-[-0.03em] uppercase">
+          <div className="mt-10 inline-flex items-center gap-2.5 rounded-full border border-court-green/25 bg-court-green/10 px-4 py-1.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase backdrop-blur-md">
+            <span aria-hidden="true" className="size-1.5 rounded-full bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+            <span>{t.level}</span>
+            <span aria-hidden="true" className="text-off-white/30">·</span>
+            <span>{t.city}</span>
+          </div>
+          <h1 className="mt-4 max-w-4xl font-display text-[clamp(2.75rem,8vw,7rem)] leading-[0.9] font-black tracking-[-0.03em] uppercase">
             {t.name}
           </h1>
           <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
-            <p className="font-display text-lg font-semibold">{formatRange(t.startDate, t.endDate)}</p>
+            <p className="font-display text-lg font-bold">{formatRange(t.startDate, t.endDate)}</p>
             <p className="text-muted">{t.venue}</p>
             <StatusBadge tournament={t} status={status} now={now} />
             {liveAvailable(t, now).available && (
               <Link
                 href={`/tournaments/${t.slug}/live`}
-                className="rounded-lg inline-flex items-center gap-2 border border-court-green px-4 py-2 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase transition-colors hover:bg-court-green hover:text-black"
+                className="rounded-xl inline-flex items-center gap-2 border border-court-green/50 bg-court-green/10 px-5 py-2.5 font-display text-xs font-bold tracking-[0.2em] text-court-green uppercase shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all hover:bg-court-green hover:text-black hover:shadow-[0_0_25px_rgba(16,185,129,0.4)]"
               >
-                <Radio aria-hidden="true" className="size-4" />
+                <Radio aria-hidden="true" className="size-4 animate-pulse" />
                 Watch live
               </Link>
             )}

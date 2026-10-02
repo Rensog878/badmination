@@ -1,17 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import SiteHeader from "@/components/nav/SiteHeader";
 import { SITE } from "@/lib/content";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   display: "swap",
 });
@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" className={`${plusJakartaSans.variable} ${outfit.variable}`}>
       <body className="min-h-svh bg-charcoal font-sans text-off-white antialiased">
         <a
           href="#main"

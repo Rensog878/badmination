@@ -26,7 +26,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
   return (
     <article
       aria-label={`Court ${court}: ${sideName(match, "a")} versus ${sideName(match, "b")}, game ${gameNumber}, ${current.a}–${current.b}`}
-      className="group relative flex flex-col rounded-2xl border border-off-white/10 bg-black/60 p-5 transition-colors hover:border-court-green/50"
+      className="group relative flex flex-col rounded-2xl border border-white/[0.08] bg-black/70 backdrop-blur-md p-5 transition-all duration-300 hover:border-court-green/50 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
     >
       {href && (
         <Link href={href} className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-court-green">
@@ -34,11 +34,11 @@ export default function CourtCard({ court, match, href }: { court: number; match
         </Link>
       )}
       <header className="flex items-center justify-between gap-3">
-        <p className="flex shrink-0 items-center gap-2 font-display text-xs tracking-[0.18em] whitespace-nowrap uppercase">
-          <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-court-green motion-reduce:animate-none" />
+        <p className="flex shrink-0 items-center gap-2 font-display text-xs font-bold tracking-[0.18em] whitespace-nowrap uppercase text-off-white">
+          <span aria-hidden="true" className="size-2 animate-pulse rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] motion-reduce:animate-none" />
           Court {court}
         </p>
-        <p className="min-w-0 truncate text-xs tracking-[0.08em] text-muted uppercase">
+        <p className="min-w-0 truncate text-xs font-medium tracking-[0.08em] text-muted uppercase">
           {match.event} · {match.round}
         </p>
       </header>
@@ -51,13 +51,13 @@ export default function CourtCard({ court, match, href }: { court: number; match
               <p className="flex min-w-0 items-center gap-2">
                 <span
                   aria-label={serving ? "Serving" : undefined}
-                  className={`size-2 shrink-0 rounded-full transition-colors duration-300 ${serving ? "bg-court-green" : "bg-transparent"}`}
+                  className={`size-2 shrink-0 rounded-full transition-all duration-300 ${serving ? "bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.9)]" : "bg-transparent"}`}
                 />
-                <span className="truncate font-display font-semibold uppercase">{sideName(match, side)}</span>
+                <span className="truncate font-display font-bold uppercase">{sideName(match, side)}</span>
               </p>
-              <span className="flex gap-1.5 font-display text-sm tabular-nums text-muted">
+              <span className="flex gap-1.5 font-display text-sm font-semibold tabular-nums text-muted">
                 {completed.map((g, i) => (
-                  <span key={i} className={gameWinner(g) === side ? "text-off-white" : ""}>
+                  <span key={i} className={gameWinner(g) === side ? "text-off-white font-bold" : ""}>
                     {g[side]}
                   </span>
                 ))}
@@ -65,7 +65,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
               <RollingScore
                 value={current[side]}
                 game={gameNumber}
-                className="justify-end text-right font-display text-4xl leading-none font-bold tabular-nums"
+                className="justify-end text-right font-display text-4xl leading-none font-black tabular-nums"
               />
             </div>
           );
@@ -73,11 +73,11 @@ export default function CourtCard({ court, match, href }: { court: number; match
       </div>
 
       <footer className="mt-auto flex items-center justify-between pt-5 text-xs tracking-[0.18em] uppercase">
-        <span className="text-muted">
+        <span className="text-muted font-medium">
           Game {gameNumber} · Games {gamesWon(match.games, "a")}–{gamesWon(match.games, "b")}
         </span>
         {pressure && (
-          <span className="badge-pop rounded-lg bg-court-green px-2 py-0.5 font-display font-semibold text-black">
+          <span className="badge-pop rounded-full bg-court-green px-3 py-0.5 font-display text-[11px] font-bold text-black shadow-[0_0_12px_rgba(16,185,129,0.4)]">
             {pressure.kind === "match" ? "Match point" : "Game point"}
           </span>
         )}

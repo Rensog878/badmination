@@ -89,18 +89,18 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row">
-          <label className="relative block sm:w-64">
+          <label className="relative block sm:w-72">
             <span className="sr-only">Search tournaments</span>
             <Search
               aria-hidden="true"
-              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted"
+              className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted"
             />
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search name or city"
-              className="min-h-11 w-full rounded-lg border border-off-white/15 bg-transparent py-2.5 pr-3 pl-9 text-sm text-off-white placeholder:text-muted focus:border-court-green focus:outline-none"
+              placeholder="Search name, city or venue"
+              className="min-h-11 w-full rounded-xl border border-off-white/15 bg-black/10 py-2.5 pr-3 pl-10 text-sm text-off-white placeholder:text-muted focus:border-court-green focus:ring-1 focus:ring-court-green/50 focus:outline-none transition-all"
             />
           </label>
           <label className="block">
@@ -108,7 +108,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
             <select
               value={level}
               onChange={(e) => setLevel(e.target.value as TournamentLevel | "all")}
-              className="min-h-11 w-full rounded-lg border border-off-white/15 bg-charcoal px-3 py-2.5 text-sm text-off-white focus:border-court-green focus:outline-none sm:w-44"
+              className="min-h-11 w-full rounded-xl border border-off-white/15 bg-charcoal px-3.5 py-2.5 text-sm text-off-white focus:border-court-green focus:ring-1 focus:ring-court-green/50 focus:outline-none transition-all sm:w-44"
             >
               {LEVELS.map((l) => (
                 <option key={l} value={l}>
@@ -129,8 +129,8 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
             type="button"
             aria-pressed={age === a}
             onClick={() => setAge(a)}
-            className={`relative inline-flex min-h-11 items-center rounded-full border px-3.5 py-2 font-display text-xs font-semibold tracking-[0.12em] uppercase transition-[color,border-color,transform] duration-300 active:scale-95 ${
-              age === a ? "border-transparent text-black" : "border-off-white/15 text-muted hover:text-off-white"
+            className={`relative inline-flex min-h-11 items-center rounded-full border px-4 py-2 font-display text-xs font-bold tracking-[0.14em] uppercase transition-[color,border-color,transform] duration-300 active:scale-95 ${
+              age === a ? "border-transparent text-black" : "border-off-white/15 text-muted hover:border-off-white/35 hover:text-off-white"
             } ${age === a && !pills.ready ? "bg-off-white" : ""}`}
           >
             {a === "all" ? "All ages" : a}
@@ -138,7 +138,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
         ))}
       </div>
 
-      <p aria-live="polite" className="mt-8 font-display text-xs tracking-[0.18em] text-muted uppercase">
+      <p aria-live="polite" className="mt-8 font-display text-xs font-semibold tracking-[0.2em] text-muted uppercase">
         {`${results.length} tournament${results.length === 1 ? "" : "s"}`}
       </p>
 
@@ -151,13 +151,13 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
           ))}
         </ul>
       ) : (
-        <div className="mt-2 border border-dashed border-off-white/15 px-6 py-16 text-center">
-          <p className="font-display text-lg font-semibold uppercase">No tournaments match</p>
+        <div className="mt-4 rounded-2xl border border-dashed border-off-white/15 bg-off-white/[0.02] px-6 py-16 text-center">
+          <p className="font-display text-lg font-bold uppercase">No tournaments match</p>
           <p className="mt-2 text-sm text-muted">Try another age group or level, or clear your search.</p>
           <button
             type="button"
             onClick={reset}
-            className="rounded-lg mt-6 border border-court-green px-5 py-2.5 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase hover:bg-court-green hover:text-black"
+            className="rounded-xl mt-6 border border-court-green bg-court-green/10 px-6 py-3 font-display text-xs font-bold tracking-[0.2em] text-court-green uppercase transition-all hover:bg-court-green hover:text-black"
           >
             Clear filters
           </button>

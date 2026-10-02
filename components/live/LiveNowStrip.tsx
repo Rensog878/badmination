@@ -66,13 +66,13 @@ export default function LiveNowStrip() {
   return (
     <section
       aria-label="Live matches"
-      className="strip-in absolute inset-x-0 top-[calc(4rem+env(safe-area-inset-top))] z-30 border-y border-off-white/10 bg-black/85 lg:top-[calc(5rem+env(safe-area-inset-top))] print:hidden"
+      className="strip-in absolute inset-x-0 top-[calc(4rem+env(safe-area-inset-top))] z-30 border-y border-white/[0.08] bg-black/90 backdrop-blur-xl lg:top-[calc(5rem+env(safe-area-inset-top))] print:hidden"
     >
       <div className="mx-auto flex h-12 max-w-[1600px] items-center pr-[env(safe-area-inset-right)] pl-[max(1rem,env(safe-area-inset-left))] sm:pl-8 lg:pl-16">
-        <p className="flex shrink-0 items-center gap-2 border-r border-off-white/15 pr-3 font-display sm:pr-4 text-xs font-semibold tracking-[0.2em] uppercase">
+        <p className="flex shrink-0 items-center gap-2 border-r border-white/10 pr-3.5 font-display sm:pr-4 text-xs font-bold tracking-[0.2em] uppercase text-off-white">
           <span aria-hidden="true" className="relative flex size-2">
-            <span className="absolute inset-0 animate-ping rounded-full bg-court-green opacity-75 motion-reduce:animate-none" />
-            <span className="relative size-2 rounded-full bg-court-green" />
+            <span className="absolute inset-0 animate-ping rounded-full bg-court-green opacity-80 motion-reduce:animate-none" />
+            <span className="relative size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
           </span>
           {demo ? "Demo" : "Live"}
         </p>
@@ -80,13 +80,13 @@ export default function LiveNowStrip() {
         {/* One line per match, ticker style; scrolls sideways when there are more than fit. */}
         <ul className="flex h-full min-w-0 flex-1 snap-x overflow-x-auto [scrollbar-width:none]">
           {visible.map((m) => (
-            <li key={`${m.slug}-${m.id}`} className="shrink-0 snap-start border-r border-off-white/10">
+            <li key={`${m.slug}-${m.id}`} className="shrink-0 snap-start border-r border-white/[0.08]">
               <Link
                 href={`/tournaments/${m.slug}/live/${m.id}`}
                 aria-label={`${m.demo ? "Demo match. " : ""}${m.court ? `Court ${m.court}, ` : ""}${m.event}. ${m.names.a} ${m.points.a}, ${m.names.b} ${m.points.b}. Games ${m.games.a}–${m.games.b}. Open scoreboard`}
-                className="flex h-full items-center gap-2 px-3 text-sm whitespace-nowrap sm:gap-3 sm:px-4 transition-colors hover:bg-off-white/5"
+                className="flex h-full items-center gap-2.5 px-3.5 text-sm whitespace-nowrap sm:gap-3.5 sm:px-4 transition-colors hover:bg-white/[0.06]"
               >
-                <span className="font-display text-xs tracking-[0.12em] text-muted uppercase">
+                <span className="font-display text-xs font-medium tracking-[0.14em] text-muted uppercase">
                   {m.demo && !demo ? "Demo · " : ""}
                   {m.court ? `Ct ${m.court}` : m.event}
                 </span>
@@ -105,14 +105,14 @@ export default function LiveNowStrip() {
                 {/* Wider screens: one line, broadcast-ticker style. */}
                 <span className="hidden items-center gap-3 sm:flex">
                   <Name match={m} side="a" />
-                  <span className="flex items-center gap-1 rounded bg-off-white/10 px-2 py-0.5 font-display font-bold tabular-nums">
+                  <span className="flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.08] px-2.5 py-0.5 font-display font-bold tabular-nums shadow-xs">
                     <span key={`a${m.points.a}`} className="score-tick inline-block">{m.points.a}</span>
                     <span aria-hidden="true" className="text-muted">–</span>
                     <span key={`b${m.points.b}`} className="score-tick inline-block">{m.points.b}</span>
                   </span>
                   <Name match={m} side="b" />
                   {(m.games.a > 0 || m.games.b > 0) && (
-                    <span className="font-display text-xs text-muted tabular-nums">
+                    <span className="font-display text-xs font-medium text-muted tabular-nums">
                       G {m.games.a}–{m.games.b}
                     </span>
                   )}

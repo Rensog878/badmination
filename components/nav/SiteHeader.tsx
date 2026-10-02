@@ -34,12 +34,12 @@ export default function SiteHeader() {
       <header
         className={`${pathname === "/" ? "" : "theme-light"} fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] print:hidden transition-[transform,background-color,border-color] duration-500 ease-out motion-reduce:transition-none ${
           hidden ? "-translate-y-full" : "translate-y-0"
-        } ${backed && !menuOpen ? "border-b border-off-white/10 bg-charcoal/95" : "border-b border-transparent"}`}
+        } ${backed && !menuOpen ? "border-b border-off-white/10 bg-charcoal/85 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.4)]" : "border-b border-transparent"}`}
       >
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-8 lg:h-20 lg:px-16">
-          <Link href="/" className="font-display text-sm font-bold tracking-[0.15em] uppercase" onClick={closeMenu}>
-            {COACH_NAME}
-            <span aria-hidden="true" className="text-court-green">.</span>
+          <Link href="/" className="group flex items-center gap-2 font-display text-sm font-black tracking-[0.18em] uppercase transition-transform duration-200 active:scale-95" onClick={closeMenu}>
+            <span>{COACH_NAME}</span>
+            <span aria-hidden="true" className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
@@ -51,9 +51,9 @@ export default function SiteHeader() {
                     <a
                       href={link.href}
                       aria-current={current ? "true" : undefined}
-                      className={`relative py-2 font-display text-xs font-medium tracking-[0.15em] uppercase transition-colors hover:text-off-white ${
+                      className={`relative py-2 font-display text-xs font-semibold tracking-[0.16em] uppercase transition-colors hover:text-off-white ${
                         current ? "text-off-white" : "text-muted"
-                      } after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:bg-court-green after:transition-transform after:duration-300 hover:after:scale-x-100 ${
+                      } after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:bg-court-green after:shadow-[0_0_8px_rgba(16,185,129,0.8)] after:transition-transform after:duration-300 hover:after:scale-x-100 ${
                         current ? "after:scale-x-100" : "after:scale-x-0"
                       }`}
                     >
@@ -68,7 +68,7 @@ export default function SiteHeader() {
           <div className="flex items-center gap-3">
             <a
               href={NAV_CTA.href}
-              className={`${needsMenu ? "hidden sm:inline-flex" : "inline-flex"} min-h-11 items-center rounded-lg border border-court-green px-5 py-2.5 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase transition-[color,background-color,transform] duration-200 hover:bg-court-green hover:text-black active:scale-95 motion-reduce:active:scale-100`}
+              className={`${needsMenu ? "hidden sm:inline-flex" : "inline-flex"} min-h-11 items-center rounded-xl border border-court-green/50 bg-court-green/10 px-5 py-2.5 font-display text-xs font-bold tracking-[0.2em] text-court-green uppercase shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-300 hover:border-court-green hover:bg-court-green hover:text-black hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-95 motion-reduce:active:scale-100`}
             >
               {NAV_CTA.label}
             </a>

@@ -118,18 +118,19 @@ export default function SmashSection() {
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_55%_35%,rgba(243,244,246,0.9),rgba(16,185,129,0.25)_16%,transparent_42%)] opacity-0"
         />
 
-        <p
+        <div
           ref={chapter}
-          className="absolute top-8 left-4 font-display text-xs font-medium tracking-[0.18em] text-court-green uppercase opacity-0 sm:left-8 lg:left-16"
+          className="absolute top-8 left-4 inline-flex items-center gap-2.5 rounded-full border border-court-green/25 bg-court-green/10 px-4 py-1.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.12)] opacity-0 sm:left-8 lg:left-16"
         >
-          {SMASH.chapter}
-        </p>
+          <span aria-hidden="true" className="size-1.5 rounded-full bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+          <span>{SMASH.chapter}</span>
+        </div>
 
         <div className="relative mt-auto flex flex-col items-center px-4 pb-[8vh] text-center">
           <h2
             ref={headline}
             id="smash-heading"
-            className="font-display text-[clamp(3.25rem,13vw,11rem)] leading-[0.85] font-bold tracking-[-0.02em] uppercase will-change-transform"
+            className="font-display text-[clamp(3.25rem,13vw,11rem)] leading-[0.85] font-black tracking-[-0.02em] uppercase will-change-transform text-off-white"
           >
             {SMASH.headline}
           </h2>

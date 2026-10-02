@@ -25,25 +25,25 @@ export default function RegistrationCard({ tournament: t, status, now }: Registr
   const days = daysToClose(t, now);
 
   return (
-    <aside aria-label="Registration" className="rounded-2xl border border-off-white/10 bg-black p-6 sm:p-8">
+    <aside aria-label="Registration" className="rounded-2xl border border-off-white/15 bg-black/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl">
       <StatusBadge tournament={t} status={status} now={now} />
-      <p className="mt-6 font-display text-4xl font-bold">
+      <p className="mt-6 font-display text-4xl font-black tracking-tight">
         {formatInr(t.entryFee)}
         <span className="ml-2 text-sm font-normal text-muted">per event</span>
       </p>
 
-      <dl className="mt-6 space-y-3 border-t border-off-white/10 pt-6 text-sm">
+      <dl className="mt-6 space-y-3.5 border-t border-off-white/10 pt-6 text-sm">
         <div className="flex justify-between gap-4">
           <dt className="text-muted">Entries open</dt>
-          <dd>{fmt(t.registrationOpens)}</dd>
+          <dd className="font-semibold">{fmt(t.registrationOpens)}</dd>
         </div>
         <div className="flex justify-between gap-4">
           <dt className="text-muted">Entries close</dt>
-          <dd>{fmt(t.registrationCloses)}</dd>
+          <dd className="font-semibold">{fmt(t.registrationCloses)}</dd>
         </div>
         <div className="flex justify-between gap-4">
           <dt className="text-muted">Entries</dt>
-          <dd>
+          <dd className="font-semibold">
             {t.registered} / {t.capacity}
           </dd>
         </div>
@@ -54,9 +54,9 @@ export default function RegistrationCard({ tournament: t, status, now }: Registr
         aria-valuemin={0}
         aria-valuemax={t.capacity}
         aria-valuenow={t.registered}
-        className="mt-4 h-1 bg-off-white/10"
+        className="mt-5 h-1.5 rounded-full bg-off-white/10 overflow-hidden"
       >
-        <div className="h-full bg-court-green" style={{ width: `${Math.min(1, t.registered / t.capacity) * 100}%` }} />
+        <div className="h-full rounded-full bg-court-green transition-all duration-500" style={{ width: `${Math.min(1, t.registered / t.capacity) * 100}%` }} />
       </div>
 
       <div className="mt-8">
@@ -64,12 +64,12 @@ export default function RegistrationCard({ tournament: t, status, now }: Registr
           <>
             <Link
               href={registerHref(t)}
-              className="rounded-lg group flex items-center justify-between bg-court-green px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase transition-colors hover:bg-off-white"
+              className="rounded-xl group flex items-center justify-between bg-court-green px-6 py-4 font-display text-sm font-bold tracking-[0.14em] text-black uppercase shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-[1.02] hover:bg-off-white hover:shadow-[0_0_30px_rgba(243,244,246,0.35)] active:scale-[0.98]"
             >
               Register now
-              <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
+              <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1.5 motion-reduce:transition-none" />
             </Link>
-            <p className="mt-3 text-xs text-muted">
+            <p className="mt-3 text-xs font-medium text-muted">
               {spotsLeft} spots left · closes in {days} day{days === 1 ? "" : "s"}
             </p>
           </>

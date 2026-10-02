@@ -20,43 +20,39 @@ export default function HeroSection() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[62%] bg-linear-to-t from-charcoal via-charcoal/75 to-transparent lg:inset-y-0 lg:left-0 lg:right-auto lg:h-full lg:w-[62%] lg:bg-linear-to-r lg:via-charcoal/55"
       />
 
-      <div className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-end px-4 pb-14 sm:px-8 md:pb-20 lg:justify-center lg:px-16 lg:pb-0">
+      <div className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-end px-4 pt-36 pb-14 sm:px-8 sm:pt-40 md:pb-20 lg:justify-center lg:px-16 lg:pt-36 lg:pb-10">
         <div className="max-w-xl lg:max-w-2xl">
-          <p className="mb-5 flex items-start gap-3 font-display text-xs leading-relaxed font-medium tracking-[0.18em] text-court-green uppercase sm:items-center sm:text-xs">
-            <span aria-hidden="true" className="mt-[0.6em] h-px w-8 shrink-0 bg-court-green sm:mt-0" />
-            <span>
-              {HERO.eyebrow}
-              <span className="block text-muted sm:inline">
-                <span aria-hidden="true" className="hidden sm:inline"> · </span>
-                {COACH_NAME}
-              </span>
-            </span>
-          </p>
+          <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-court-green/25 bg-court-green/10 px-4 py-1.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.12)]">
+            <span aria-hidden="true" className="size-1.5 rounded-full bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+            <span>{HERO.eyebrow}</span>
+            <span aria-hidden="true" className="text-off-white/30">·</span>
+            <span className="text-off-white/80">{COACH_NAME}</span>
+          </div>
 
           <h1
             id="hero-heading"
-            className="font-display text-[clamp(3.1rem,11vw,8.75rem)] leading-[0.88] font-bold tracking-[-0.035em] uppercase"
+            className="font-display text-[clamp(2.75rem,8vw,6.75rem)] leading-[0.9] font-black tracking-[-0.035em] uppercase text-off-white"
           >
             {HERO.headline}
           </h1>
 
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted sm:text-lg">{HERO.subline}</p>
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4">
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
             <a
               href={HERO.primaryCta.href}
-              className="rounded-lg group inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase transition-colors hover:bg-off-white"
+              className="group relative inline-flex items-center justify-center gap-3 rounded-xl bg-court-green px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-black uppercase shadow-[0_0_25px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-[1.02] hover:bg-off-white hover:shadow-[0_0_35px_rgba(243,244,246,0.35)] active:scale-[0.98]"
             >
               {HERO.primaryCta.label}
               <ArrowRight
                 aria-hidden="true"
-                className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+                className="size-4 transition-transform group-hover:translate-x-1.5 motion-reduce:transition-none"
               />
             </a>
             {FEATURES.programs && (
             <a
               href={HERO.secondaryCta.href}
-              className="rounded-lg inline-flex items-center justify-center border border-off-white/25 px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-off-white uppercase transition-colors hover:border-court-green hover:text-court-green"
+              className="inline-flex items-center justify-center rounded-xl border border-off-white/20 bg-white/[0.03] px-8 py-4 font-display text-sm font-bold tracking-[0.14em] text-off-white uppercase backdrop-blur-sm transition-all duration-300 hover:border-court-green hover:bg-court-green/10 hover:text-court-green"
             >
               {HERO.secondaryCta.label}
             </a>
@@ -66,14 +62,14 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll cue: phones get a compact animated chevron below the CTAs; desktop the labelled line. */}
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 lg:hidden">
+      <div aria-hidden="true" className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 lg:hidden">
         <ChevronDown className="size-6 animate-bounce text-court-green motion-reduce:animate-none" />
       </div>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 lg:flex"
+        className="pointer-events-none absolute bottom-7 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2.5 lg:flex"
       >
-        <span className="font-display text-xs tracking-[0.2em] text-muted uppercase">Scroll</span>
+        <span className="font-display text-[11px] font-semibold tracking-[0.22em] text-muted/80 uppercase">Scroll to explore</span>
         <span className="h-10 w-px bg-linear-to-b from-court-green to-transparent" />
       </div>
     </section>

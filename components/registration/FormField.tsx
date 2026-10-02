@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { AlertCircle } from "lucide-react";
 
 export const inputClass =
-  "w-full rounded-lg border border-off-white/15 bg-black/40 px-4 py-3 text-off-white placeholder:text-muted/70 transition-colors focus:border-court-green focus:outline-none aria-invalid:border-off-white";
+  "w-full rounded-xl border border-off-white/15 bg-black/30 px-4 py-3 text-off-white placeholder:text-muted/70 transition-all focus:border-court-green focus:ring-1 focus:ring-court-green/50 focus:outline-none aria-invalid:border-off-white";
 
 interface FormFieldProps {
   id: string;
@@ -18,9 +18,9 @@ interface FormFieldProps {
 export default function FormField({ id, label, error, hint, optional, children, className = "" }: FormFieldProps) {
   return (
     <div className={className}>
-      <label htmlFor={id} className="mb-2 flex items-baseline justify-between font-display text-xs font-medium tracking-[0.18em] uppercase">
+      <label htmlFor={id} className="mb-2 flex items-baseline justify-between font-display text-xs font-bold tracking-[0.16em] uppercase">
         {label}
-        {optional && <span className="text-xs tracking-[0.15em] text-muted normal-case">Optional</span>}
+        {optional && <span className="text-xs font-normal tracking-[0.1em] text-muted normal-case">Optional</span>}
       </label>
       {children}
       {hint && !error && (
