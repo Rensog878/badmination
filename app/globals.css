@@ -109,7 +109,19 @@ body {
   animation: badge-pop 0.45s ease-out both;
 }
 
+/* Admin page change (app/admin/(panel)/template.tsx). */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.page-in {
+  animation: page-in 0.3s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .page-in,
   .rally-in,
   .badge-pop,
   .menu-in,
