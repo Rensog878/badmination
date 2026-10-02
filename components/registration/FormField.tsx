@@ -35,7 +35,7 @@ export default function FormField({ id, label, error, hint, optional, children, 
 
 export function FieldError({ id, message }: { id?: string; message: string }) {
   return (
-    <p id={id} className="mt-2 flex items-start gap-2 text-sm font-medium text-off-white">
+    <p id={id} className="field-error-in mt-2 flex items-start gap-2 text-sm font-medium text-off-white">
       <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-court-green" />
       {message}
     </p>

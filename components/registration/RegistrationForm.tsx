@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useForm, type FieldErrors, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight, Check, CircleCheck } from "lucide-react";
+import { AnimatePresence, m, type Variants } from "motion/react";
+import MotionProvider from "@/components/ui/MotionProvider";
 import FormField, { describedBy, FieldError, inputClass } from "@/components/registration/FormField";
 import PaymentPanel from "@/components/registration/PaymentPanel";
 import { submitRegistration, type RegistrationResult } from "@/app/tournaments/[slug]/register/actions";
@@ -36,6 +38,14 @@ const GENDERS = [
   { value: "male", label: "Male" },
   { value: "other", label: "Other / prefer not to say" },
 ] as const;
+
+// Step content slides in from the side you're heading to (direction: 1 forward, -1 back).
+const stepVariants: Variants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir * 32 }),
+  center: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 380, damping: 34 } },
+  exit: (dir: number) => ({ opacity: 0, x: dir * -32, transition: { duration: 0.15 } }),
+};
+const tap = { scale: 0.97 };
 
 /** Reads a nested error message by dotted path. */
 function errorAt(errors: FieldErrors<RegistrationValues>, path: string): string | undefined {
@@ -72,6 +82,11 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
   const formRef = useRef<HTMLFormElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
+  const prevStep = useRef(0);
+  const direction = step >= prevStep.current ? 1 : -1;
+  useEffect(() => {
+    prevStep.current = step;
+  }, [step]);
   const draftKey = `registration-draft:${t.slug}`;
 
   // Draft autosave: a refresh or accidental back-swipe on a phone shouldn't lose the form.
@@ -160,8 +175,11 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
 
   if (result) {
     return (
-      <section aria-labelledby="done-heading" className="rounded-2xl border border-court-green/50 bg-black p-8 sm:p-12">
-        <CircleCheck aria-hidden="true" className="size-10 text-court-green" />
+      <MotionProvider>
+      <m.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} aria-labelledby="done-heading" className="rounded-2xl border border-court-green/50 bg-black p-8 sm:p-12">
+        <m.span className="inline-block" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 500, damping: 18, delay: 0.1 }}>
+          <CircleCheck aria-hidden="true" className="size-10 text-court-green" />
+        </m.span>
         <h2 id="done-heading" ref={headingRef} tabIndex={-1} className="mt-6 font-display text-3xl font-bold uppercase focus:outline-none sm:text-4xl">
           Entry details confirmed
         </h2>
@@ -212,18 +230,22 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
             </p>
           )}
         </div>
-      </section>
+      </m.section>
+      </MotionProvider>
     );
   }
 
   const values = getValues();
 
   return (
+    <MotionProvider>
     <form ref={formRef} onSubmit={onSubmit} noValidate aria-describedby={formError ? "form-error" : undefined}>
       <ol className="mb-10 grid grid-cols-4 gap-2" aria-label="Registration steps">
         {STEPS.map((s, i) => (
           <li key={s.title} aria-current={i === step ? "step" : undefined}>
-            <span className={`block h-1 rounded-full ${i <= step ? "bg-court-green" : "bg-off-white/15"}`} />
+            <span className="block h-1 overflow-hidden rounded-full bg-off-white/15">
+              <m.span className="block h-full origin-left rounded-full bg-court-green" initial={false} animate={{ scaleX: i <= step ? 1 : 0 }} transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }} />
+            </span>
             {i < step ? (
               // Completed steps are tappable, so people can go back and fix something directly.
               <button
@@ -255,7 +277,9 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
         </div>
       )}
 
-      <div className="mt-8">
+      <div className="mt-8 overflow-x-clip">
+        <AnimatePresence mode="wait" initial={false} custom={direction}>
+        <m.div key={step} custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit">
         {step === 0 && (
           <div className="grid gap-6 sm:grid-cols-2">
             <FormField id="fullName" label="Full name" error={err("player.fullName")} className="sm:col-span-2">
@@ -312,6 +336,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
                       <span className="font-display text-sm">{formatInr(t.entryFee)}</span>
                     </label>
                     {checked && needsPartner(e) && (
+                      <m.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}>
                       <FormField id={`partner-${key}`} label={`${e.type} partner`} error={partnerError} className="mt-5 sm:ml-9">
                         <input
                           id={`partner-${key}`}
@@ -321,6 +346,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
                           {...register(`partners.${key}`)}
                         />
                       </FormField>
+                      </m.div>
                     )}
                   </li>
                 );
@@ -392,6 +418,8 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
             ))}
           </dl>
         )}
+        </m.div>
+        </AnimatePresence>
       </div>
 
       <div className="mt-10 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -404,14 +432,14 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
           <span />
         )}
         {step < STEPS.length - 1 ? (
-          <button type="button" onClick={next} className="rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white">
+          <m.button type="button" onClick={next} whileTap={tap} className="rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white">
             Continue
             <ArrowRight aria-hidden="true" className="size-4" />
-          </button>
+          </m.button>
         ) : (
-          <button type="submit" disabled={pending} aria-busy={pending} className="rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white disabled:opacity-60">
+          <m.button type="submit" disabled={pending} aria-busy={pending} whileTap={pending ? undefined : tap} className="rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white disabled:opacity-60">
             {pending ? "Checking…" : `Confirm entry · ${formatInr(total)}`}
-          </button>
+          </m.button>
         )}
       </div>
       <p className="sr-only" aria-live="polite">
@@ -421,5 +449,6 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
         {t.name} · {formatRange(t.startDate, t.endDate)}
       </p>
     </form>
+    </MotionProvider>
   );
 }

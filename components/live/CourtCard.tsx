@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch } from "@/lib/live/types";
+import RollingScore from "@/components/live/RollingScore";
 
 const SIDES: Side[] = ["a", "b"];
 
@@ -50,7 +51,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
               <p className="flex min-w-0 items-center gap-2">
                 <span
                   aria-label={serving ? "Serving" : undefined}
-                  className={`size-2 shrink-0 rounded-full ${serving ? "bg-court-green" : "bg-transparent"}`}
+                  className={`size-2 shrink-0 rounded-full transition-colors duration-300 ${serving ? "bg-court-green" : "bg-transparent"}`}
                 />
                 <span className="truncate font-display font-semibold uppercase">{sideName(match, side)}</span>
               </p>
@@ -61,12 +62,11 @@ export default function CourtCard({ court, match, href }: { court: number; match
                   </span>
                 ))}
               </span>
-              <span
-                key={`${side}-${current[side]}-${gameNumber}`}
-                className="animate-score-flash text-right font-display text-4xl leading-none font-bold tabular-nums"
-              >
-                {current[side]}
-              </span>
+              <RollingScore
+                value={current[side]}
+                game={gameNumber}
+                className="justify-end text-right font-display text-4xl leading-none font-bold tabular-nums"
+              />
             </div>
           );
         })}
@@ -77,7 +77,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
           Game {gameNumber} · Games {gamesWon(match.games, "a")}–{gamesWon(match.games, "b")}
         </span>
         {pressure && (
-          <span className="rounded-lg bg-court-green px-2 py-0.5 font-display font-semibold text-black">
+          <span className="badge-pop rounded-lg bg-court-green px-2 py-0.5 font-display font-semibold text-black">
             {pressure.kind === "match" ? "Match point" : "Game point"}
           </span>
         )}

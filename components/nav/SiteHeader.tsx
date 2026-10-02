@@ -68,7 +68,7 @@ export default function SiteHeader() {
           <div className="flex items-center gap-3">
             <a
               href={NAV_CTA.href}
-              className={`${needsMenu ? "hidden sm:inline-flex" : "inline-flex"} min-h-11 items-center rounded-lg border border-court-green px-5 py-2.5 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase transition-colors hover:bg-court-green hover:text-black`}
+              className={`${needsMenu ? "hidden sm:inline-flex" : "inline-flex"} min-h-11 items-center rounded-lg border border-court-green px-5 py-2.5 font-display text-xs font-semibold tracking-[0.2em] text-court-green uppercase transition-[color,background-color,transform] duration-200 hover:bg-court-green hover:text-black active:scale-95 motion-reduce:active:scale-100`}
             >
               {NAV_CTA.label}
             </a>

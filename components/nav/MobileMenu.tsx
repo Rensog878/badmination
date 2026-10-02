@@ -61,12 +61,12 @@ export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
       aria-modal="true"
       aria-label="Site menu"
       hidden={!open}
-      className="fixed inset-0 z-40 flex flex-col bg-charcoal px-4 pt-24 pb-10 sm:px-8 lg:hidden"
+      className="menu-in fixed inset-0 z-40 flex flex-col bg-charcoal px-4 pt-24 pb-10 sm:px-8 lg:hidden"
     >
       <nav aria-label="Mobile" className="flex-1">
         <ol className="flex flex-col gap-2">
           {VISIBLE_NAV_LINKS.map((link, i) => (
-            <li key={link.href} className="border-b border-off-white/10">
+            <li key={link.href} className="menu-item-in border-b border-off-white/10" style={{ animationDelay: `${60 + i * 50}ms` }}>
               <a
                 href={link.href}
                 onClick={onClose}
@@ -84,7 +84,8 @@ export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
       <a
         href={NAV_CTA.href}
         onClick={onClose}
-        className="rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase"
+        style={{ animationDelay: `${60 + VISIBLE_NAV_LINKS.length * 50}ms` }}
+        className="menu-item-in rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase"
       >
         {NAV_CTA.label}
         <ArrowRight aria-hidden="true" className="size-4" />

@@ -6,6 +6,7 @@ import { sideName } from "@/components/live/CourtCard";
 import { useLiveFeed } from "@/components/live/useLiveFeed";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
+import RollingScore from "@/components/live/RollingScore";
 
 const SIDES: Side[] = ["a", "b"];
 
@@ -114,7 +115,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             return (
               <div key={side} className="grid grid-cols-[1fr_auto] items-center gap-4 py-6 sm:grid-cols-[1fr_auto_auto] sm:gap-8 sm:py-8">
                 <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                  <span className={`size-3 shrink-0 rounded-full sm:size-4 ${serving ? "bg-court-green" : "bg-transparent"}`} />
+                  <span className={`size-3 shrink-0 rounded-full transition-colors duration-300 sm:size-4 ${serving ? "bg-court-green" : "bg-transparent"}`} />
                   <p className={`truncate font-display text-[clamp(1.5rem,4.5vw,4rem)] leading-none font-bold uppercase ${won ? "text-court-green" : ""}`}>
                     {sideName(match, side)}
                   </p>
@@ -127,12 +128,11 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
                   ))}
                 </div>
                 {!finished && (
-                  <span
-                    key={`${side}-${current[side]}-${match.games.length}`}
-                    className="animate-score-flash min-w-[2ch] text-right font-display text-[clamp(4rem,13vw,12rem)] leading-[0.85] font-bold tabular-nums"
-                  >
-                    {current[side]}
-                  </span>
+                  <RollingScore
+                    value={current[side]}
+                    game={match.games.length}
+                    className="min-w-[2ch] justify-end text-right font-display text-[clamp(4rem,13vw,12rem)] leading-[0.85] font-bold tabular-nums"
+                  />
                 )}
                 {finished && (
                   <span className="font-display text-[clamp(3rem,8vw,7rem)] leading-none font-bold tabular-nums">
@@ -147,11 +147,11 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
         <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-off-white/10 pt-5">
           <div aria-hidden="true" className="flex flex-wrap items-center gap-1" title="Rallies this game">
             {rallies.map((r, i) => (
-              <span key={i} className={`h-4 w-1.5 ${r.side === "a" ? "-translate-y-1 bg-court-green" : "translate-y-1 bg-off-white/50"}`} />
+              <span key={i} className={`rally-in h-4 w-1.5 ${r.side === "a" ? "-translate-y-1 bg-court-green" : "translate-y-1 bg-off-white/50"}`} />
             ))}
           </div>
           {pressure && !finished && (
-            <p className="rounded-lg bg-court-green px-3 py-1 font-display text-sm font-semibold tracking-[0.2em] text-black uppercase">
+            <p key={`${pressure.kind}-${pressure.side}`} className="badge-pop rounded-lg bg-court-green px-3 py-1 font-display text-sm font-semibold tracking-[0.2em] text-black uppercase">
               {pressure.kind === "match" ? "Match point" : "Game point"} · {sideName(match, pressure.side)}
             </p>
           )}
