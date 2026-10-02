@@ -36,8 +36,8 @@ import {
 const ATHLETE_POSITION = new Vector3(...ATHLETE_POSITION_TUPLE);
 const SHUTTLE_LANDING = new Vector3(...SHUTTLE_LANDING_TUPLE);
 
-const ATHLETE_KEY_INTENSITY = 280;
-const ATHLETE_RIM_INTENSITY = 135;
+const ATHLETE_KEY_INTENSITY = 220;
+const ATHLETE_RIM_INTENSITY = 120;
 const IMPACT_INTENSITY = 60;
 const IMPACT_WIDTH = 0.012; // progress units (gaussian width of the impact light)
 const GRIP_TO_HEAD_CENTRE = 0.5; // metres from the hand to the racket head centre
@@ -89,61 +89,27 @@ function computeContactPoint(rig: AthleteRig): Vector3 {
 
 function buildShuttle() {
   const group = new Group();
-  // 16-feather regulation skirt
-  const skirtGeo = new CylinderGeometry(0.034, 0.013, 0.072, 16, 1, true);
+  const skirtGeo = new CylinderGeometry(0.033, 0.012, 0.07, 18, 1, true);
   skirtGeo.rotateX(-Math.PI / 2);
   skirtGeo.translate(0, 0, -0.04);
-
-  // Natural cork base with leather wrap
   const corkGeo = new SphereGeometry(0.014, 16, 12);
-
-  // BWF tournament emerald ribbon collar
-  const bandGeo = new CylinderGeometry(0.0138, 0.0138, 0.007, 16, 1, true);
-  bandGeo.rotateX(-Math.PI / 2);
-  bandGeo.translate(0, 0, -0.005);
-
-  // Feather skirt binding thread ring
-  const threadGeo = new CylinderGeometry(0.025, 0.025, 0.003, 16, 1, true);
-  threadGeo.rotateX(-Math.PI / 2);
-  threadGeo.translate(0, 0, -0.038);
-
   const skirtMat = new MeshStandardMaterial({
-    color: "#F8FAFC",
-    roughness: 0.55,
+    color: "#F3F4F6",
+    roughness: 0.6,
     side: DoubleSide,
-    emissive: "#FFFFFF",
-    emissiveIntensity: 0.12,
+    emissive: "#F3F4F6",
+    emissiveIntensity: 0.15,
   });
-  const corkMat = new MeshStandardMaterial({ color: "#FAF5EE", roughness: 0.42 });
-  const bandMat = new MeshStandardMaterial({
-    color: "#10B981",
-    emissive: "#10B981",
-    emissiveIntensity: 0.35,
-    roughness: 0.3,
-  });
-  const threadMat = new MeshStandardMaterial({ color: "#CBD5E1", roughness: 0.6 });
-
-  const skirt = new Mesh(skirtGeo, skirtMat);
-  const cork = new Mesh(corkGeo, corkMat);
-  cork.position.set(0, 0, 0.002);
-  cork.scale.set(1, 1, 1.25);
-  const band = new Mesh(bandGeo, bandMat);
-  const thread = new Mesh(threadGeo, threadMat);
-
-  group.add(skirt, cork, band, thread);
+  const corkMat = new MeshStandardMaterial({ color: "#F3F4F6", roughness: 0.4 });
+  group.add(new Mesh(skirtGeo, skirtMat), new Mesh(corkGeo, corkMat));
   group.scale.setScalar(SHUTTLE_SCALE);
-
   return {
     group,
     dispose: () => {
       skirtGeo.dispose();
       corkGeo.dispose();
-      bandGeo.dispose();
-      threadGeo.dispose();
       skirtMat.dispose();
       corkMat.dispose();
-      bandMat.dispose();
-      threadMat.dispose();
     },
   };
 }
@@ -314,7 +280,7 @@ export default function SmashScene({ detail }: SmashSceneProps) {
         penumbra={0.8}
         intensity={0}
         decay={2}
-        color="#FFFDF8"
+        color="#F3F4F6"
       />
       <spotLight
         ref={rimLight}
