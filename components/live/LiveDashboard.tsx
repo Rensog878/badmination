@@ -48,6 +48,10 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
     { label: "Up next", value: scheduled.length },
   ];
 
+  const courtsHeadingId = `${snapshot.slug}-courts-heading`;
+  const nextHeadingId = `${snapshot.slug}-next-heading`;
+  const resultsHeadingId = `${snapshot.slug}-results-heading`;
+
   return (
     <div>
       {snapshot.demo && (
@@ -72,8 +76,8 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
         </p>
       </div>
 
-      <section aria-labelledby="courts-heading" className="mt-10">
-        <h2 id="courts-heading" className="sr-only">Courts</h2>
+      <section aria-labelledby={courtsHeadingId} className="mt-10">
+        <h2 id={courtsHeadingId} className="sr-only">Courts</h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: snapshot.courts }, (_, i) => i + 1).map((court) => {
             const match = live.find((m) => m.court === court);
@@ -90,8 +94,8 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
       </section>
 
       <div className="mt-14 grid gap-12 lg:grid-cols-2">
-        <section aria-labelledby="next-heading">
-          <h2 id="next-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
+        <section aria-labelledby={nextHeadingId}>
+          <h2 id={nextHeadingId} className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
             Up next
           </h2>
           {scheduled.length === 0 ? (
@@ -115,8 +119,8 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
           )}
         </section>
 
-        <section aria-labelledby="results-heading">
-          <h2 id="results-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
+        <section aria-labelledby={resultsHeadingId}>
+          <h2 id={resultsHeadingId} className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
             Latest results
           </h2>
           {finished.length === 0 ? (
