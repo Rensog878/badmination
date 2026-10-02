@@ -251,16 +251,16 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
               <button
                 type="button"
                 onClick={() => setStep(i)}
-                className="mt-2 flex min-h-11 items-center gap-1.5 font-display text-xs tracking-[0.12em] text-muted uppercase underline-offset-4 hover:text-off-white hover:underline"
+                className="mt-2 flex min-h-8 w-full items-center justify-center gap-1 font-display text-[10px] tracking-[0.06em] text-muted uppercase underline-offset-4 hover:text-off-white hover:underline sm:min-h-11 sm:justify-start sm:gap-1.5 sm:text-xs sm:tracking-[0.12em]"
               >
-                <Check aria-hidden="true" className="size-3.5 text-court-green" />
+                <Check aria-hidden="true" className="size-3 text-court-green shrink-0 sm:size-3.5" />
                 <span className="sr-only">Step {i + 1} of {STEPS.length}, completed, go back to: </span>
-                {s.title}
+                <span className="truncate">{s.title}</span>
               </button>
             ) : (
-              <span className={`mt-2 flex min-h-11 items-center gap-1.5 font-display text-xs tracking-[0.12em] uppercase ${i === step ? "text-off-white" : "text-muted"}`}>
+              <span className={`mt-2 flex min-h-8 w-full items-center justify-center gap-1 font-display text-[10px] tracking-[0.06em] uppercase sm:min-h-11 sm:justify-start sm:gap-1.5 sm:text-xs sm:tracking-[0.12em] ${i === step ? "font-bold text-off-white" : "text-muted"}`}>
                 <span className="sr-only">Step {i + 1} of {STEPS.length}: </span>
-                {s.title}
+                <span className="truncate">{s.title}</span>
               </span>
             )}
           </li>

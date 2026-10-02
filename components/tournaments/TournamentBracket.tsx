@@ -117,6 +117,7 @@ export default function TournamentBracket({
   liveMatches?: LiveMatch[];
 }) {
   const [category, setCategory] = useState<"singles" | "doubles">("singles");
+  const [mobileRound, setMobileRound] = useState<"quarters" | "semis" | "final">("final");
 
   // Check if live/stored matches exist for this tournament and category
   const categoryMatches = liveMatches.filter((m) => {
@@ -212,8 +213,71 @@ export default function TournamentBracket({
         </div>
       </div>
 
-      {/* Bracket Tree */}
-      <div className="mt-8 overflow-x-auto pb-4 [scrollbar-width:thin]">
+      {/* Mobile Round Selector (< md) so cards are 100% full-width and never cropped */}
+      <div className="mt-6 md:hidden">
+        <div className="grid grid-cols-3 gap-1 rounded-xl border border-off-white/15 bg-black/40 p-1 font-display text-xs font-bold uppercase">
+          <button
+            type="button"
+            onClick={() => setMobileRound("quarters")}
+            className={`rounded-lg py-2 text-center transition-all ${
+              mobileRound === "quarters" ? "bg-court-green text-black" : "text-muted"
+            }`}
+          >
+            Quarters
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileRound("semis")}
+            className={`rounded-lg py-2 text-center transition-all ${
+              mobileRound === "semis" ? "bg-court-green text-black" : "text-muted"
+            }`}
+          >
+            Semis
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileRound("final")}
+            className={`rounded-lg py-2 text-center transition-all ${
+              mobileRound === "final" ? "bg-court-green text-black" : "text-muted"
+            }`}
+          >
+            Final
+          </button>
+        </div>
+
+        <div className="mt-4 space-y-3">
+          {mobileRound === "quarters" && (
+            <>
+              <p className="text-xs font-semibold tracking-wider uppercase text-muted">Quarter-Finals · Best of 3</p>
+              {quarters.map((m) => (
+                <MatchCard key={m.id} match={m} />
+              ))}
+            </>
+          )}
+
+          {mobileRound === "semis" && (
+            <>
+              <p className="text-xs font-semibold tracking-wider uppercase text-muted">Semi-Finals · Penultimate</p>
+              {semis.map((m) => (
+                <MatchCard key={m.id} match={m} />
+              ))}
+            </>
+          )}
+
+          {mobileRound === "final" && finalMatch && (
+            <div className="space-y-3 pt-4">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-court-green/40 bg-court-green/15 px-3 py-1 font-display text-[10px] font-bold text-court-green uppercase shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+                <Trophy className="size-3" />
+                <span>Tournament Champion</span>
+              </div>
+              <MatchCard match={finalMatch} isFinal />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Desktop Bracket Tree (md+) */}
+      <div className="mt-8 hidden overflow-x-auto pb-4 md:block [scrollbar-width:thin]">
         <div className="grid min-w-[760px] grid-cols-3 gap-8">
           {/* Quarter Finals */}
           <div>

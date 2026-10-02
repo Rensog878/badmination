@@ -120,7 +120,12 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
         </div>
       </div>
 
-      <div ref={pills.ref} role="group" aria-label="Age group" className="relative mt-6 flex flex-wrap gap-2">
+      <div
+        ref={pills.ref}
+        role="group"
+        aria-label="Age group"
+        className="relative mt-6 flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap"
+      >
         <span aria-hidden="true" style={pills.style} className="indicator absolute top-0 left-0 rounded-full bg-off-white" />
         {AGE_GROUPS.map((a) => (
           <button
@@ -129,7 +134,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
             type="button"
             aria-pressed={age === a}
             onClick={() => setAge(a)}
-            className={`relative inline-flex min-h-11 items-center rounded-full border px-4 py-2 font-display text-xs font-bold tracking-[0.14em] uppercase transition-[color,border-color,transform] duration-300 active:scale-95 ${
+            className={`relative inline-flex shrink-0 min-h-11 items-center rounded-full border px-4 py-2 font-display text-xs font-bold tracking-[0.14em] uppercase transition-[color,border-color,transform] duration-300 active:scale-95 ${
               age === a ? "border-transparent text-black" : "border-off-white/15 text-muted hover:border-off-white/35 hover:text-off-white"
             } ${age === a && !pills.ready ? "bg-off-white" : ""}`}
           >
@@ -138,18 +143,32 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
         ))}
       </div>
 
-      <p aria-live="polite" className="mt-8 font-display text-xs font-semibold tracking-[0.2em] text-muted uppercase">
-        {`${results.length} tournament${results.length === 1 ? "" : "s"}`}
-      </p>
+      <div className="mt-8 flex items-center justify-between">
+        <p aria-live="polite" className="font-display text-xs font-semibold tracking-[0.2em] text-muted uppercase">
+          {`${results.length} tournament${results.length === 1 ? "" : "s"}`}
+        </p>
+      </div>
 
       {results.length > 0 ? (
-        <ul key={listKey} className="mt-2 border-t border-off-white/10">
-          {results.map(({ t, status }, i) => (
-            <li key={t.slug} className="row-in" style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}>
-              <TournamentRow tournament={t} status={status} now={now} />
-            </li>
-          ))}
-        </ul>
+        <div className="mt-4">
+          {/* Desktop Table Column Header for perfect alignment */}
+          <div className="hidden border-b border-off-white/10 px-4 pb-3 lg:grid lg:grid-cols-[5rem_minmax(0,1.6fr)_minmax(0,1fr)_10rem_11rem_2rem] lg:gap-x-8 font-display text-xs font-semibold tracking-[0.18em] text-muted uppercase">
+            <span>Date</span>
+            <span>Tournament · Venue</span>
+            <span>Events</span>
+            <span>Entry Fee</span>
+            <span>Status</span>
+            <span className="sr-only">Action</span>
+          </div>
+
+          <ul key={listKey} className="divide-y divide-transparent lg:divide-none">
+            {results.map(({ t, status }, i) => (
+              <li key={t.slug} className="row-in" style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}>
+                <TournamentRow tournament={t} status={status} now={now} />
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : (
         <div className="mt-4 rounded-2xl border border-dashed border-off-white/15 bg-off-white/[0.02] px-6 py-16 text-center">
           <p className="font-display text-lg font-bold uppercase">No tournaments match</p>

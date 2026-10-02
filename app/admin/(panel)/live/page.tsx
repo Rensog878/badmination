@@ -42,11 +42,11 @@ export default async function AdminLive({ searchParams }: PageProps) {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full sm:w-auto items-center gap-2">
           <Link
             href={`/tournaments/${selected.slug}/live`}
             target="_blank"
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 font-display text-xs font-bold tracking-[0.12em] text-off-white uppercase hover:border-court-green/50 hover:bg-court-green/10"
+            className="flex-1 sm:flex-initial inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 font-display text-xs font-bold tracking-[0.12em] text-off-white uppercase hover:border-court-green/50 hover:bg-court-green/10"
           >
             <span>Public Scoreboard</span>
             <ExternalLink className="size-3.5" />
@@ -54,7 +54,7 @@ export default async function AdminLive({ searchParams }: PageProps) {
           <Link
             href={`/umpire/${selected.slug}`}
             target="_blank"
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-court-green/40 bg-court-green/10 px-3.5 py-2 font-display text-xs font-bold tracking-[0.12em] text-court-green uppercase hover:bg-court-green hover:text-black"
+            className="flex-1 sm:flex-initial inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-court-green/40 bg-court-green/10 px-3.5 py-2 font-display text-xs font-bold tracking-[0.12em] text-court-green uppercase hover:bg-court-green hover:text-black"
           >
             <span>Umpire Pad</span>
             <ExternalLink className="size-3.5" />

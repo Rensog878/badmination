@@ -19,11 +19,15 @@ export default async function AdminOverview() {
   return (
     <div>
       <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">Overview</h1>
-      <dl className="mt-8 grid gap-px border border-off-white/10 bg-off-white/10 grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
+      <dl className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-off-white/10 bg-off-white/10 grid-cols-2 lg:grid-cols-5">
         {tiles.map((t) => (
-          <Link key={t.label} href={t.href} className="flex flex-col-reverse bg-charcoal p-6 hover:bg-off-white/[0.03]">
+          <Link
+            key={t.label}
+            href={t.href}
+            className="flex flex-col-reverse bg-charcoal p-5 sm:p-6 transition-colors hover:bg-off-white/[0.04] last:col-span-2 lg:last:col-span-1"
+          >
             <dt className="mt-1 text-xs tracking-[0.15em] text-muted uppercase">{t.label}</dt>
-            <dd className="font-display text-3xl font-bold tabular-nums">{t.value}</dd>
+            <dd className="font-display text-2xl sm:text-3xl font-bold tabular-nums text-off-white">{t.value}</dd>
           </Link>
         ))}
       </dl>

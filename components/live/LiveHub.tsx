@@ -235,7 +235,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
           </div>
 
           {/* Quick Metrics Ribbon */}
-          <dl className="grid grid-cols-2 gap-px rounded-xl border border-off-white/10 bg-off-white/10 sm:grid-cols-4">
+          <dl className="grid grid-cols-2 gap-px rounded-xl border border-off-white/10 bg-off-white/10 overflow-hidden sm:grid-cols-4">
             {[
               { label: "Courts live", value: liveMatches.length, color: "text-court-green" },
               { label: "Pressure pts", value: pressureMatches.length, color: pressureMatches.length ? "text-court-green" : "text-off-white" },
@@ -320,7 +320,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
 
           <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center">
             {/* Side A */}
-            <div className={`space-y-1.5 sm:space-y-2 ${spotlight.match.server === "a" ? "border-l-2 border-court-green pl-3.5 sm:pl-4" : "pl-3.5 sm:pl-4"}`}>
+            <div className={`space-y-1.5 sm:space-y-2 border-l-2 pl-3.5 sm:pl-4 transition-colors ${spotlight.match.server === "a" ? "border-court-green" : "border-transparent"}`}>
               <div className="flex items-center gap-2">
                 <span className={`size-2 rounded-full ${spotlight.match.server === "a" ? "bg-court-green" : "bg-transparent"}`} />
                 <p className="font-display text-xs tracking-[0.18em] text-muted uppercase">
@@ -377,7 +377,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
             </div>
 
             {/* Side B */}
-            <div className={`space-y-1.5 sm:space-y-2 ${spotlight.match.server === "b" ? "border-l-2 lg:border-l-0 lg:border-r-2 border-court-green pl-3.5 lg:pl-0 lg:pr-4" : "pl-3.5 lg:pl-0 lg:pr-4"} lg:text-right`}>
+            <div className={`space-y-1.5 sm:space-y-2 border-l-2 pl-3.5 transition-colors lg:border-l-0 lg:border-r-2 lg:pl-0 lg:pr-4 lg:text-right ${spotlight.match.server === "b" ? "border-court-green" : "border-transparent"}`}>
               <div className="flex items-center lg:justify-end gap-2">
                 <span className={`size-2 rounded-full lg:order-2 ${spotlight.match.server === "b" ? "bg-court-green" : "bg-transparent"}`} />
                 <p className="font-display text-xs tracking-[0.18em] text-muted uppercase lg:order-1">

@@ -39,15 +39,14 @@ export interface NavLink {
   label: string;
   /** Hidden unless this feature is on (lib/features.ts). */
   feature?: "coachProfile" | "programs" | "showcase";
-  /** Root-relative so links work from sub-pages (e.g. /tournaments/[slug]). */
-  href: `/#${string}`;
+  href: string;
 }
 
-// Anchors point at sections built in later phases (placeholders exist in app/page.tsx).
 export const NAV_LINKS: readonly NavLink[] = [
+  { label: "Tournaments", href: "/#tournaments" },
+  { label: "Live Hub", href: "/live" },
   { label: "Coach", href: "/#coach", feature: "coachProfile" },
   { label: "Programs", href: "/#programs", feature: "programs" },
-  { label: "Tournaments", href: "/#tournaments" },
 ] as const;
 
 /** Navigation after applying feature flags. */

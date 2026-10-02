@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useIndicator } from "@/components/ui/useIndicator";
@@ -18,6 +19,14 @@ export default function AdminNav({ items }: { items: AdminNavItem[] }) {
   const isActive = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
   const activeHref = items.find((n) => isActive(n.href))?.href ?? "";
   const highlight = useIndicator<HTMLUListElement>(activeHref, true);
+
+  useEffect(() => {
+    if (!highlight.ref.current) return;
+    const activeEl = highlight.ref.current.querySelector('[aria-current="page"]');
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [activeHref, highlight.ref]);
 
   return (
     <nav aria-label="Admin">

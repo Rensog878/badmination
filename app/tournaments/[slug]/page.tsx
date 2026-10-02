@@ -68,8 +68,8 @@ export default async function TournamentPage({ params }: PageProps) {
       <header className="relative overflow-hidden border-b border-off-white/10 pt-28 pb-14 lg:pt-36 lg:pb-20">
         <CourtLines
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 -right-40 w-[900px] max-w-none -translate-y-1/2 text-off-white/[0.06]"
-          strokeWidth={0.3}
+          className="pointer-events-none absolute top-1/2 -right-10 hidden w-[700px] max-w-none -translate-y-1/2 opacity-20 [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)] sm:block text-off-white/20"
+          strokeWidth={0.25}
         />
         <div className="relative mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-16">
           <Link
@@ -79,13 +79,13 @@ export default async function TournamentPage({ params }: PageProps) {
             <ArrowLeft aria-hidden="true" className="size-4" />
             All tournaments
           </Link>
-          <div className="mt-10 inline-flex items-center gap-2.5 rounded-full border border-court-green/25 bg-court-green/10 px-4 py-1.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase backdrop-blur-md">
+          <div className="mt-8 inline-flex items-center gap-2.5 rounded-full border border-court-green/25 bg-court-green/10 px-4 py-1.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase backdrop-blur-md">
             <span aria-hidden="true" className="size-1.5 rounded-full bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
             <span>{t.level}</span>
             <span aria-hidden="true" className="text-off-white/30">·</span>
             <span>{t.city}</span>
           </div>
-          <h1 className="mt-4 max-w-4xl font-display text-[clamp(2.75rem,8vw,7rem)] leading-[0.9] font-black tracking-[-0.03em] uppercase">
+          <h1 className="mt-4 max-w-4xl font-display text-[clamp(2.5rem,7vw,6.5rem)] leading-[0.92] font-black tracking-[-0.03em] uppercase">
             {t.name}
           </h1>
           <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
@@ -114,7 +114,7 @@ export default async function TournamentPage({ params }: PageProps) {
             <p className="mt-4 max-w-2xl text-lg leading-relaxed">{describeTournament(t)}</p>
             <dl className="mt-8 grid grid-cols-2 border-t border-l border-off-white/10 sm:grid-cols-3">
               {facts.map((f) => (
-                <div key={f.label} className="flex flex-col-reverse border-r border-b border-off-white/10 p-5">
+                <div key={f.label} className="flex flex-col-reverse border-r border-b border-off-white/10 p-5 col-span-1 odd:last:col-span-2 sm:odd:last:col-span-1">
                   <dt className="mt-1 text-xs tracking-[0.2em] text-muted uppercase">{f.label}</dt>
                   <dd className="font-display font-semibold">{f.value}</dd>
                 </div>
@@ -126,7 +126,21 @@ export default async function TournamentPage({ params }: PageProps) {
             <h2 id="events-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
               Events
             </h2>
-            <div className="mt-4 overflow-x-auto">
+            {/* Phones: clean responsive card list without horizontal scroll */}
+            <div className="mt-4 space-y-2.5 md:hidden">
+              {t.events.map((e) => (
+                <div key={eventLabel(e)} className="flex items-center justify-between rounded-xl border border-off-white/10 bg-off-white/[0.03] p-4">
+                  <div>
+                    <p className="font-display font-bold uppercase">{e.type}</p>
+                    <p className="text-xs text-muted">{e.ageGroup} · Knockout</p>
+                  </div>
+                  <p className="font-display font-bold text-court-green">{formatInr(t.entryFee)}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: standard tabular view */}
+            <div className="mt-4 hidden overflow-x-auto md:block">
               <table className="w-full min-w-[28rem] text-left text-sm">
                 <thead className="font-display text-xs tracking-[0.2em] text-muted uppercase">
                   <tr className="border-b border-off-white/10">

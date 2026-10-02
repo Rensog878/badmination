@@ -24,19 +24,38 @@ export default function TournamentRow({ tournament: t, status, now }: Tournament
   const showCapacity = status === "open" || status === "full";
 
   return (
-    <article className="group relative grid grid-cols-[4.5rem_1fr] gap-x-5 gap-y-4 border-b border-off-white/10 py-7 transition-all duration-300 hover:bg-off-white/[0.04] sm:grid-cols-[5.5rem_1fr] lg:grid-cols-[6rem_minmax(0,1.4fr)_minmax(0,1fr)_11rem_11rem_2rem] lg:items-center lg:gap-x-8 lg:px-4 lg:rounded-2xl">
-      <div className="row-span-2 border-r border-off-white/10 pr-4 lg:row-span-1 lg:border-r-0 lg:pr-0">
+    <article className="group relative border-b border-off-white/10 py-6 transition-all duration-300 hover:bg-off-white/[0.03] lg:grid lg:grid-cols-[5rem_minmax(0,1.6fr)_minmax(0,1fr)_10rem_11rem_2rem] lg:items-center lg:gap-x-8 lg:px-4 lg:py-6 lg:rounded-2xl">
+      {/* Mobile Header: Date badge + Level + Arrow */}
+      <div className="flex items-center justify-between gap-3 lg:hidden">
+        <div className="flex items-center gap-2.5">
+          <span className="inline-flex items-center gap-1 rounded-lg border border-off-white/15 bg-off-white/5 px-2.5 py-1 font-display text-xs font-bold text-off-white">
+            <span className="text-sm font-black text-court-green">{date.day}</span>
+            <span className="text-[10px] tracking-wider uppercase text-muted">{date.month}</span>
+          </span>
+          <span className="font-display text-[11px] font-bold tracking-[0.18em] text-court-green uppercase">
+            {t.level}
+          </span>
+        </div>
+        <ArrowUpRight
+          aria-hidden="true"
+          className="size-4 text-muted transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-court-green"
+        />
+      </div>
+
+      {/* Desktop Col 1: Date block */}
+      <div className="hidden lg:block">
         <p className="font-display text-4xl leading-none font-black tracking-[-0.03em] sm:text-5xl">{date.day}</p>
         <p className="mt-1 font-display text-xs font-semibold tracking-[0.16em] text-muted uppercase">
           {date.month} {date.year}
         </p>
       </div>
 
-      <div className="min-w-0">
-        <span className="inline-block font-display text-[11px] font-bold tracking-[0.18em] text-court-green uppercase">
+      {/* Title & Venue */}
+      <div className="mt-3 min-w-0 lg:mt-0">
+        <span className="hidden lg:inline-block font-display text-[11px] font-bold tracking-[0.18em] text-court-green uppercase">
           {t.level}
         </span>
-        <h3 className="mt-1 font-display text-xl leading-tight font-extrabold tracking-[-0.01em] uppercase sm:text-2xl transition-colors group-hover:text-court-green">
+        <h3 className="font-display text-lg leading-snug font-extrabold tracking-[-0.01em] uppercase sm:text-xl lg:mt-1 lg:text-2xl transition-colors group-hover:text-court-green">
           <Link
             href={`/tournaments/${t.slug}`}
             className="after:absolute after:inset-0 focus-visible:outline-none after:focus-visible:outline-2 after:focus-visible:outline-court-green"
@@ -44,51 +63,68 @@ export default function TournamentRow({ tournament: t, status, now }: Tournament
             {t.name}
           </Link>
         </h3>
-        <p className="mt-2 flex items-center gap-1.5 text-sm text-muted">
+        <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted sm:text-sm">
           <MapPin aria-hidden="true" className="size-3.5 shrink-0 text-court-green/80" />
-          <span>
+          <span className="truncate">
             {t.venue}, {t.city} <span className="whitespace-nowrap">· {formatRange(t.startDate, t.endDate)}</span>
           </span>
         </p>
       </div>
 
-      <ul aria-label="Events" className="col-start-2 flex flex-wrap gap-1.5 lg:col-start-auto">
-        {t.events.map((e) => (
-          <li key={eventLabel(e)} className="rounded-md border border-off-white/15 bg-off-white/[0.04] px-2.5 py-1 text-xs font-semibold tracking-[0.08em] text-off-white/85 uppercase">
-            {eventLabel(e)}
-          </li>
-        ))}
-      </ul>
-
-      <div className="col-start-2 lg:col-start-auto">
-        <p className="font-display text-lg font-bold">
-          {formatInr(t.entryFee)}
-          <span className="ml-1 text-xs font-normal text-muted">/ event</span>
-        </p>
-        {showCapacity && (
-          <div className="mt-2">
-            <div
-              role="meter"
-              aria-label="Entries filled"
-              aria-valuemin={0}
-              aria-valuemax={t.capacity}
-              aria-valuenow={t.registered}
-              className="h-1.5 w-full max-w-40 rounded-full bg-off-white/10 overflow-hidden"
-            >
-              <div className="h-full rounded-full bg-court-green transition-all duration-500" style={{ width: `${fill * 100}%` }} />
-            </div>
-            <p className="mt-1.5 text-xs font-medium text-muted">{spotsLeft > 0 ? `${spotsLeft} spots left` : `${t.capacity} / ${t.capacity} entries`}</p>
-          </div>
-        )}
-        {t.prizePool && !showCapacity && <p className="mt-1 text-xs font-medium text-muted">Prize pool {formatInr(t.prizePool)}</p>}
+      {/* Events tags */}
+      <div className="mt-3 lg:mt-0">
+        <ul aria-label="Events" className="flex flex-wrap gap-1.5">
+          {t.events.map((e) => (
+            <li key={eventLabel(e)} className="rounded-md border border-off-white/15 bg-off-white/[0.04] px-2.5 py-0.5 text-xs font-semibold tracking-[0.08em] text-off-white/85 uppercase">
+              {eventLabel(e)}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <StatusBadge tournament={t} status={status} now={now} className="col-start-2 lg:col-start-auto" />
+      {/* Fee & Capacity */}
+      <div className="mt-3 flex items-center justify-between gap-4 lg:mt-0 lg:block">
+        <div>
+          <p className="font-display text-base font-bold lg:text-lg">
+            {formatInr(t.entryFee)}
+            <span className="ml-1 text-xs font-normal text-muted">/ event</span>
+          </p>
+          {showCapacity && (
+            <div className="mt-1.5">
+              <div
+                role="meter"
+                aria-label="Entries filled"
+                aria-valuemin={0}
+                aria-valuemax={t.capacity}
+                aria-valuenow={t.registered}
+                className="h-1.5 w-28 sm:w-36 rounded-full bg-off-white/10 overflow-hidden"
+              >
+                <div className="h-full rounded-full bg-court-green transition-all duration-500" style={{ width: `${fill * 100}%` }} />
+              </div>
+              <p className="mt-1 text-[11px] font-medium text-muted">{spotsLeft > 0 ? `${spotsLeft} spots left` : `${t.capacity} / ${t.capacity} entries`}</p>
+            </div>
+          )}
+          {t.prizePool && !showCapacity && <p className="mt-1 text-xs font-medium text-muted">Prize pool {formatInr(t.prizePool)}</p>}
+        </div>
 
-      <ArrowUpRight
-        aria-hidden="true"
-        className="absolute top-7 right-0 size-5 text-muted transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-court-green lg:static motion-reduce:transition-none"
-      />
+        {/* Mobile Status badge on the right of fee */}
+        <div className="lg:hidden">
+          <StatusBadge tournament={t} status={status} now={now} className="w-fit" />
+        </div>
+      </div>
+
+      {/* Desktop Col 5: StatusBadge */}
+      <div className="hidden lg:block">
+        <StatusBadge tournament={t} status={status} now={now} className="w-fit" />
+      </div>
+
+      {/* Desktop Col 6: Arrow */}
+      <div className="hidden lg:flex lg:justify-end">
+        <ArrowUpRight
+          aria-hidden="true"
+          className="size-5 text-muted transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-court-green motion-reduce:transition-none"
+        />
+      </div>
     </article>
   );
 }

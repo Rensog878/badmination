@@ -68,8 +68,8 @@ export default function LiveNowStrip() {
       aria-label="Live matches"
       className="strip-in absolute inset-x-0 top-[calc(4rem+env(safe-area-inset-top))] z-30 border-y border-white/[0.08] bg-black/90 backdrop-blur-xl lg:top-[calc(5rem+env(safe-area-inset-top))] print:hidden"
     >
-      <div className="mx-auto flex h-12 max-w-[1600px] items-center pr-[env(safe-area-inset-right)] pl-[max(1rem,env(safe-area-inset-left))] sm:pl-8 lg:pl-16">
-        <p className="flex shrink-0 items-center gap-2 border-r border-white/10 pr-3.5 font-display sm:pr-4 text-xs font-bold tracking-[0.2em] uppercase text-off-white">
+      <div className="mx-auto flex h-12 max-w-[1600px] items-center px-4 sm:px-8 lg:px-16">
+        <p className="flex shrink-0 items-center gap-2 border-r border-white/10 pr-3.5 font-display text-xs font-bold tracking-[0.2em] uppercase text-off-white sm:pr-4">
           <span aria-hidden="true" className="relative flex size-2">
             <span className="absolute inset-0 animate-ping rounded-full bg-court-green opacity-80 motion-reduce:animate-none" />
             <span className="relative size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
