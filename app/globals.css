@@ -120,7 +120,30 @@ body {
   animation: page-in 0.3s ease-out both;
 }
 
+/* Home "Live now" strip (components/live/LiveNowStrip.tsx). */
+@keyframes strip-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+.strip-in {
+  animation: strip-in 0.4s ease-out both;
+}
+@keyframes score-tick {
+  from {
+    color: var(--color-court-green);
+    transform: translateY(40%);
+    opacity: 0;
+  }
+}
+.score-tick {
+  animation: score-tick 0.5s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .strip-in,
+  .score-tick,
   .page-in,
   .rally-in,
   .badge-pop,
