@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { removeMatchAction } from "@/app/admin/live-actions";
-import MatchForm from "@/components/admin/MatchForm";
-import { sideName } from "@/components/live/CourtCard";
+import MatchManager from "@/components/admin/MatchManager";
 import { listTournaments } from "@/lib/data/tournaments";
 import { ensureFeed, getSnapshot } from "@/lib/live/store";
 import { eventLabel, getStatus } from "@/lib/tournaments";
+import { ExternalLink, Radio } from "lucide-react";
 
 type PageProps = { searchParams: Promise<{ t?: string }> };
 
@@ -12,70 +11,91 @@ export default async function AdminLive({ searchParams }: PageProps) {
   const tournaments = await listTournaments();
   const now = Date.now();
   const { t: slug } = await searchParams;
+
   // Default to a live tournament, else the next one that isn't finished.
   const selected =
     tournaments.find((t) => t.slug === slug) ??
     tournaments.find((t) => getStatus(t, now) === "live") ??
-    tournaments.find((t) => getStatus(t, now) !== "completed");
+    tournaments.find((t) => getStatus(t, now) !== "completed") ??
+    tournaments[0];
 
   if (!selected) return <p className="text-muted">No upcoming tournaments.</p>;
-  await ensureFeed(selected);
+
+  // Ensure real feed is loaded so all admin actions persist directly to database
+  await ensureFeed(selected, { forceReal: true });
   const snapshot = getSnapshot(selected);
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">Live matches</h1>
-      <form className="mt-6 flex items-end gap-3">
-        <label className="flex-1 text-sm sm:flex-none">
-          <span className="mb-1 block text-xs tracking-[0.18em] text-muted uppercase">Tournament</span>
-          <select name="t" defaultValue={selected.slug} className="min-h-11 w-full rounded-lg border border-off-white/15 bg-charcoal px-3 py-2.5 sm:w-auto">
+    <div className="max-w-5xl space-y-8">
+      {/* Header & Quick Links */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-court-green/30 bg-court-green/10 px-3 py-1 text-xs font-bold tracking-[0.16em] text-court-green uppercase">
+            <Radio className="size-3 animate-pulse" />
+            <span>Tournament Operations Console</span>
+          </div>
+          <h1 className="mt-3 font-display text-3xl font-black tracking-tight uppercase sm:text-4xl">
+            Live Matches & Draws
+          </h1>
+          <p className="mt-1 text-sm text-muted">
+            Manage real-time matches, court assignments, point-by-point scores, and championship brackets.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href={`/tournaments/${selected.slug}/live`}
+            target="_blank"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 font-display text-xs font-bold tracking-[0.12em] text-off-white uppercase hover:border-court-green/50 hover:bg-court-green/10"
+          >
+            <span>Public Scoreboard</span>
+            <ExternalLink className="size-3.5" />
+          </Link>
+          <Link
+            href={`/umpire/${selected.slug}`}
+            target="_blank"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-court-green/40 bg-court-green/10 px-3.5 py-2 font-display text-xs font-bold tracking-[0.12em] text-court-green uppercase hover:bg-court-green hover:text-black"
+          >
+            <span>Umpire Pad</span>
+            <ExternalLink className="size-3.5" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Tournament Selector */}
+      <form className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:flex-row sm:items-end">
+        <label className="flex-1 text-sm">
+          <span className="mb-1 block font-display text-xs font-bold tracking-[0.16em] text-muted uppercase">
+            Active Tournament
+          </span>
+          <select
+            name="t"
+            defaultValue={selected.slug}
+            className="min-h-11 w-full rounded-xl border border-white/15 bg-charcoal px-3 py-2.5 text-sm font-medium text-off-white focus:border-court-green focus:outline-none"
+          >
             {tournaments.map((t) => (
-              <option key={t.slug} value={t.slug}>{t.name}</option>
+              <option key={t.slug} value={t.slug}>
+                {t.name} ({t.city})
+              </option>
             ))}
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-lg bg-off-white px-4 py-2.5 font-display text-xs font-semibold tracking-[0.18em] text-black uppercase">Show</button>
+        <button
+          type="submit"
+          className="min-h-11 rounded-xl bg-off-white px-6 py-2.5 font-display text-xs font-bold tracking-[0.16em] text-black uppercase transition-all hover:bg-court-green"
+        >
+          Switch Tournament
+        </button>
       </form>
 
-      {snapshot.demo && (
-        <p className="mt-6 border border-dashed border-court-green/50 px-4 py-3 text-sm">
-          This tournament isn&apos;t live yet, so the public page shows the simulated demo feed. Matches added here belong to the real feed, which takes over once play starts.
-        </p>
-      )}
-
-      <ul className="mt-8 divide-y divide-off-white/10 border-y border-off-white/10">
-        {snapshot.matches.map((m) => (
-          <li key={m.id} className="flex items-center justify-between gap-4 py-4 text-sm">
-            <span>
-              <span className="font-semibold">{sideName(m, "a")} <span className="text-muted">vs</span> {sideName(m, "b")}</span>
-              <span className="block text-xs text-muted">
-                {m.event} · {m.round} · {m.status}
-                {m.court ? ` · court ${m.court}` : ""}
-              </span>
-            </span>
-            {m.status === "scheduled" && !snapshot.demo && (
-              <form action={removeMatchAction}>
-                <input type="hidden" name="slug" value={selected.slug} />
-                <input type="hidden" name="id" value={m.id} />
-                <button type="submit" className="min-h-11 px-2 text-xs tracking-[0.18em] text-muted uppercase hover:text-off-white">Remove</button>
-              </form>
-            )}
-          </li>
-        ))}
-        {snapshot.matches.length === 0 && <li className="py-4 text-sm text-muted">No matches yet.</li>}
-      </ul>
-
-      {!snapshot.demo && (
-        <>
-          <h2 className="mt-12 font-display text-xl font-bold uppercase">Add a match</h2>
-          <div className="mt-6">
-            <MatchForm slug={selected.slug} events={selected.events.map(eventLabel)} />
-          </div>
-        </>
-      )}
-      <p className="mt-10 text-sm text-muted">
-        Umpires score from <Link href={`/umpire/${selected.slug}`} className="text-court-green underline underline-offset-4">/umpire/{selected.slug}</Link>.
-      </p>
+      {/* Complete Match & Bracket Manager */}
+      <MatchManager
+        slug={selected.slug}
+        tournamentName={selected.name}
+        events={selected.events.map(eventLabel)}
+        matches={snapshot.matches}
+        isDemo={snapshot.demo}
+      />
     </div>
   );
 }

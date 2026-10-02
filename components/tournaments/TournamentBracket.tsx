@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Trophy } from "lucide-react";
 import type { Tournament } from "@/lib/tournaments";
+import type { LiveMatch } from "@/lib/live/types";
 
 interface MatchNode {
   id: string;
@@ -108,13 +109,65 @@ const SAMPLE_BRACKET: Record<string, MatchNode[]> = {
   ],
 };
 
-export default function TournamentBracket({ tournament }: { tournament: Tournament }) {
+export default function TournamentBracket({
+  tournament,
+  liveMatches = [],
+}: {
+  tournament: Tournament;
+  liveMatches?: LiveMatch[];
+}) {
   const [category, setCategory] = useState<"singles" | "doubles">("singles");
-  const matches = SAMPLE_BRACKET[category] ?? [];
 
-  const quarters = matches.filter((m) => m.round === "Quarter-Finals");
-  const semis = matches.filter((m) => m.round === "Semi-Finals");
-  const finalMatch = matches.find((m) => m.round === "Championship Final");
+  // Check if live/stored matches exist for this tournament and category
+  const categoryMatches = liveMatches.filter((m) => {
+    const isDoubles = m.event.toLowerCase().includes("doubles");
+    return category === "doubles" ? isDoubles : !isDoubles;
+  });
+
+  const hasRealBracket = categoryMatches.some((m) =>
+    ["quarter", "semi", "final"].some((r) => m.round.toLowerCase().includes(r))
+  );
+
+  let quarters: MatchNode[] = [];
+  let semis: MatchNode[] = [];
+  let finalMatch: MatchNode | undefined = undefined;
+
+  if (hasRealBracket) {
+    const mapMatch = (m: LiveMatch): MatchNode => ({
+      id: m.id,
+      round: m.round.toLowerCase().includes("quarter")
+        ? "Quarter-Finals"
+        : m.round.toLowerCase().includes("semi")
+        ? "Semi-Finals"
+        : "Championship Final",
+      playerA: {
+        name: m.sides.a.join(" / "),
+        score: m.games.map((g) => g.a),
+        winner: m.winner === "a",
+      },
+      playerB: {
+        name: m.sides.b.join(" / "),
+        score: m.games.map((g) => g.b),
+        winner: m.winner === "b",
+      },
+    });
+
+    quarters = categoryMatches
+      .filter((m) => m.round.toLowerCase().includes("quarter"))
+      .map(mapMatch);
+    semis = categoryMatches
+      .filter((m) => m.round.toLowerCase().includes("semi"))
+      .map(mapMatch);
+    finalMatch = categoryMatches
+      .filter((m) => m.round.toLowerCase().includes("final") && !m.round.toLowerCase().includes("semi") && !m.round.toLowerCase().includes("quarter"))
+      .map(mapMatch)[0];
+  }
+
+  // Fallback to SAMPLE_BRACKET for any missing rounds so draw is always populated
+  const fallbackMatches = SAMPLE_BRACKET[category] ?? [];
+  if (quarters.length === 0) quarters = fallbackMatches.filter((m) => m.round === "Quarter-Finals");
+  if (semis.length === 0) semis = fallbackMatches.filter((m) => m.round === "Semi-Finals");
+  if (!finalMatch) finalMatch = fallbackMatches.find((m) => m.round === "Championship Final");
 
   return (
     <section aria-labelledby="bracket-heading" className="mt-16 border-t border-off-white/10 pt-16">

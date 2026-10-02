@@ -190,17 +190,43 @@ function scheduleSave(feed: Feed) {
 }
 
 /** Call (await) before reading or changing a feed: loads saved real feeds once per process. */
-export async function ensureFeed(t: Tournament): Promise<void> {
+export async function ensureFeed(t: Tournament, options?: { forceReal?: boolean }): Promise<void> {
   const feed = getFeed(t);
-  if (feed.snapshot.demo || !dbConfigured()) return;
+  if (!dbConfigured()) {
+    if (options?.forceReal && feed.snapshot.demo) {
+      feed.snapshot.demo = false;
+      if (feed.timer) {
+        clearInterval(feed.timer);
+        feed.timer = null;
+      }
+    }
+    return;
+  }
   feed.hydrated ??= (async () => {
-    const saved = await (await collection<LiveSnapshot>("liveFeeds")).findOne({ slug: t.slug }, { projection: { _id: 0 } });
-    if (saved) feed.snapshot = { ...saved, demo: false };
-  })().catch((e) => {
-    feed.hydrated = null; // retry next time
-    throw e;
-  });
+    try {
+      const saved = await (await collection<LiveSnapshot>("liveFeeds")).findOne({ slug: t.slug }, { projection: { _id: 0 } });
+      if (saved && (saved.matches?.length > 0 || !saved.demo)) {
+        feed.snapshot = { ...saved, demo: false };
+        if (feed.timer) {
+          clearInterval(feed.timer);
+          feed.timer = null;
+        }
+      }
+    } catch (e) {
+      feed.hydrated = null;
+      console.error("[live] failed to load feed from DB", e);
+    }
+  })();
   await feed.hydrated;
+
+  if (options?.forceReal && feed.snapshot.demo) {
+    feed.snapshot.demo = false;
+    if (feed.timer) {
+      clearInterval(feed.timer);
+      feed.timer = null;
+    }
+    scheduleSave(feed);
+  }
 }
 
 export function getSnapshot(t: Tournament): LiveSnapshot {
@@ -300,7 +326,16 @@ export function umpireStart(t: Tournament, id: string): UmpireResult {
 
 export function addMatch(
   t: Tournament,
-  input: { event: string; round: string; a: string[]; b: string[] },
+  input: {
+    event: string;
+    round: string;
+    a: string[];
+    b: string[];
+    court?: number | null;
+    status?: LiveMatch["status"];
+    games?: LiveMatch["games"];
+    winner?: LiveMatch["winner"];
+  },
 ): LiveMatch {
   const feed = getFeed(t);
   serial += 1;
@@ -308,18 +343,79 @@ export function addMatch(
     id: `m${Date.now().toString(36)}${serial}`,
     event: input.event,
     round: input.round,
-    court: null,
+    court: input.court ?? null,
     sides: { a: input.a, b: input.b },
-    games: [],
+    games: input.games ?? [],
     server: "a",
-    status: "scheduled",
-    winner: null,
-    startedAt: null,
-    finishedAt: null,
+    status: input.status ?? "scheduled",
+    winner: input.winner ?? null,
+    startedAt: input.status === "live" ? Date.now() : null,
+    finishedAt: input.status === "finished" ? Date.now() : null,
     history: [],
     controlledBy: "umpire",
   };
+  feed.snapshot.demo = false;
+  if (feed.timer) {
+    clearInterval(feed.timer);
+    feed.timer = null;
+  }
   feed.snapshot.matches.push(match);
+  feed.snapshot.updatedAt = Date.now();
+  publish(feed);
+  return match;
+}
+
+export interface EditMatchInput {
+  id: string;
+  event?: string;
+  round?: string;
+  court?: number | null;
+  a?: string[];
+  b?: string[];
+  status?: LiveMatch["status"];
+  games?: LiveMatch["games"];
+  winner?: LiveMatch["winner"];
+}
+
+export function editMatch(t: Tournament, input: EditMatchInput): LiveMatch | null {
+  const feed = getFeed(t);
+  const match = feed.snapshot.matches.find((m) => m.id === input.id);
+  if (!match) return null;
+
+  if (input.event !== undefined) match.event = input.event;
+  if (input.round !== undefined) match.round = input.round;
+  if (input.court !== undefined) match.court = input.court;
+  if (input.a !== undefined && input.a.length > 0) match.sides.a = input.a;
+  if (input.b !== undefined && input.b.length > 0) match.sides.b = input.b;
+  if (input.games !== undefined) match.games = input.games;
+
+  if (input.status !== undefined) {
+    const prevStatus = match.status;
+    match.status = input.status;
+    if (input.status === "live" && prevStatus !== "live") {
+      match.startedAt ??= Date.now();
+      match.finishedAt = null;
+    } else if (input.status === "finished") {
+      match.finishedAt ??= Date.now();
+      match.winner = input.winner ?? matchWinner(match.games);
+    } else if (input.status === "scheduled") {
+      match.court = null;
+      match.startedAt = null;
+      match.finishedAt = null;
+      match.winner = null;
+    }
+  }
+
+  if (input.winner !== undefined) {
+    match.winner = input.winner;
+  }
+
+  match.controlledBy = "umpire";
+  feed.snapshot.demo = false;
+  if (feed.timer) {
+    clearInterval(feed.timer);
+    feed.timer = null;
+  }
   feed.snapshot.updatedAt = Date.now();
   publish(feed);
   return match;
@@ -333,4 +429,73 @@ export function removeMatch(t: Tournament, id: string): boolean {
   feed.snapshot.updatedAt = Date.now();
   publish(feed);
   return true;
+}
+
+export function seedTournamentDraw(t: Tournament, category: "singles" | "doubles" = "singles"): LiveMatch[] {
+  const feed = getFeed(t);
+  const event = category === "singles" ? "Open Singles" : "Open Doubles";
+  const seedPairs =
+    category === "singles"
+      ? [
+          { round: "Quarter-Finals", a: ["Viktor Axelsen"], b: ["Kidambi Srikanth"], games: [{ a: 21, b: 17 }, { a: 21, b: 19 }], winner: "a" as Side },
+          { round: "Quarter-Finals", a: ["Lakshya Sen"], b: ["Lee Zii Jia"], games: [{ a: 21, b: 19 }, { a: 18, b: 21 }, { a: 21, b: 16 }], winner: "a" as Side },
+          { round: "Quarter-Finals", a: ["Kodai Naraoka"], b: ["Prannoy H.S."], games: [{ a: 16, b: 21 }, { a: 21, b: 17 }, { a: 21, b: 18 }], winner: "a" as Side },
+          { round: "Quarter-Finals", a: ["Shi Yuqi"], b: ["Anders Antonsen"], games: [{ a: 21, b: 18 }, { a: 21, b: 15 }], winner: "a" as Side },
+          { round: "Semi-Finals", a: ["Viktor Axelsen"], b: ["Lakshya Sen"], games: [{ a: 21, b: 19 }, { a: 21, b: 18 }], winner: "a" as Side },
+          { round: "Semi-Finals", a: ["Shi Yuqi"], b: ["Kodai Naraoka"], games: [{ a: 21, b: 17 }, { a: 22, b: 20 }], winner: "a" as Side },
+          { round: "Championship Final", a: ["Viktor Axelsen"], b: ["Shi Yuqi"], games: [{ a: 21, b: 18 }, { a: 19, b: 21 }, { a: 21, b: 17 }], winner: "a" as Side },
+        ]
+      : [
+          { round: "Quarter-Finals", a: ["Rankireddy", "Shetty"], b: ["Hoki", "Kobayashi"], games: [{ a: 21, b: 18 }, { a: 21, b: 16 }], winner: "a" as Side },
+          { round: "Quarter-Finals", a: ["Astrup", "Rasmussen"], b: ["Chia", "Soh"], games: [{ a: 21, b: 19 }, { a: 19, b: 21 }, { a: 21, b: 17 }], winner: "a" as Side },
+          { round: "Quarter-Finals", a: ["Liang", "Wang"], b: ["Kang", "Seo"], games: [{ a: 21, b: 17 }, { a: 21, b: 15 }], winner: "a" as Side },
+          { round: "Quarter-Finals", a: ["Alfian", "Ardianto"], b: ["Carnando", "Marthin"], games: [{ a: 21, b: 16 }, { a: 21, b: 14 }], winner: "a" as Side },
+          { round: "Semi-Finals", a: ["Rankireddy", "Shetty"], b: ["Astrup", "Rasmussen"], games: [{ a: 21, b: 16 }, { a: 21, b: 17 }], winner: "a" as Side },
+          { round: "Semi-Finals", a: ["Liang", "Wang"], b: ["Alfian", "Ardianto"], games: [{ a: 21, b: 19 }, { a: 18, b: 21 }, { a: 21, b: 16 }], winner: "a" as Side },
+          { round: "Championship Final", a: ["Rankireddy", "Shetty"], b: ["Liang", "Wang"], games: [{ a: 21, b: 19 }, { a: 18, b: 21 }, { a: 21, b: 18 }], winner: "a" as Side },
+        ];
+
+  feed.snapshot.matches = feed.snapshot.matches.filter((m) => m.event !== event);
+
+  const created: LiveMatch[] = [];
+  for (const s of seedPairs) {
+    serial += 1;
+    const match: LiveMatch = {
+      id: `m${Date.now().toString(36)}${serial}`,
+      event,
+      round: s.round,
+      court: s.round === "Championship Final" ? 1 : null,
+      sides: { a: s.a, b: s.b },
+      games: s.games,
+      server: "a",
+      status: s.winner ? "finished" : "scheduled",
+      winner: s.winner,
+      startedAt: Date.now() - 3600000,
+      finishedAt: Date.now() - 1800000,
+      history: [],
+      controlledBy: "umpire",
+    };
+    feed.snapshot.matches.push(match);
+    created.push(match);
+  }
+  feed.snapshot.demo = false;
+  if (feed.timer) {
+    clearInterval(feed.timer);
+    feed.timer = null;
+  }
+  feed.snapshot.updatedAt = Date.now();
+  publish(feed);
+  return created;
+}
+
+export function clearMatches(t: Tournament): void {
+  const feed = getFeed(t);
+  feed.snapshot.matches = [];
+  feed.snapshot.demo = false;
+  if (feed.timer) {
+    clearInterval(feed.timer);
+    feed.timer = null;
+  }
+  feed.snapshot.updatedAt = Date.now();
+  publish(feed);
 }

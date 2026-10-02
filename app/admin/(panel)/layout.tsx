@@ -37,7 +37,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <main id="main" className="min-h-svh bg-charcoal">
       {/* Compact admin bar: always shows who is signed in and a way out (phones included). */}
-      <header className="sticky top-0 z-40 border-b border-off-white/10 bg-charcoal/95 pt-[env(safe-area-inset-top)]">
+      <header className="sticky top-0 z-40 border-b border-off-white/10 bg-charcoal/98 backdrop-blur-md pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex h-14 max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-8 lg:h-16 lg:px-16">
           <Link href="/admin" className="font-display text-sm font-bold tracking-[0.12em] uppercase">
             {COACH_NAME}
@@ -61,7 +61,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       </header>
 
       <div className="mx-auto grid max-w-[1600px] gap-6 px-4 pt-4 pb-20 sm:px-8 lg:grid-cols-[14rem_1fr] lg:gap-8 lg:px-16 lg:pt-10">
-        <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+        <aside className="min-w-0 border-b border-off-white/10 pb-3 lg:border-b-0 lg:pb-0 lg:sticky lg:top-24 lg:self-start">
           <AdminNav items={NAV} />
         </aside>
         <div className="min-w-0">{children}</div>

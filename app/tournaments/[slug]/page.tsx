@@ -9,7 +9,7 @@ import TournamentBracket from "@/components/tournaments/TournamentBracket";
 import TournamentRow from "@/components/tournaments/TournamentRow";
 import CourtLines from "@/components/ui/CourtLines";
 import { SITE } from "@/lib/content";
-import { liveAvailable } from "@/lib/live/store";
+import { ensureFeed, getSnapshot, liveAvailable } from "@/lib/live/store";
 import {
   dayStart,
   describeTournament,
@@ -48,6 +48,8 @@ export default async function TournamentPage({ params }: PageProps) {
   if (!t) notFound();
 
   const now = Date.now();
+  await ensureFeed(t);
+  const snapshot = getSnapshot(t);
   const status = getStatus(t, now);
   const related = (await listTournaments()).filter((o) => o.slug !== t.slug && getStatus(o, now) !== "completed")
     .sort((a, b) => dayStart(a.startDate) - dayStart(b.startDate))
@@ -148,7 +150,7 @@ export default async function TournamentPage({ params }: PageProps) {
             </div>
           </section>
 
-          <TournamentBracket tournament={t} />
+          <TournamentBracket tournament={t} liveMatches={snapshot.matches} />
 
           <section aria-labelledby="schedule-heading">
             <h2 id="schedule-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">
