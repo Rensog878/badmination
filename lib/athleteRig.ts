@@ -3,12 +3,16 @@ import {
   CapsuleGeometry,
   ConeGeometry,
   CylinderGeometry,
+  DoubleSide,
   Group,
   Mesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   Object3D,
   SphereGeometry,
+  SRGBColorSpace,
+  Texture,
+  TextureLoader,
   TorusGeometry,
   type BufferGeometry,
   type Material,
@@ -200,14 +204,14 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   // MATERIALS PALETTE (World Tour Standard)
   // ==========================================
 
-  // 1. Natural Athletic Human Skin (warm natural Asian/Indian athlete tone)
+  // 1. Saina Nehwal Authentic Skin Tone (sampled warm golden tan from reference photo)
   const skinMat = new MeshPhysicalMaterial({
-    color: "#d09575",
-    roughness: 0.5,
-    metalness: 0.04,
-    sheen: 0.42,
-    sheenColor: "#ffc2a8",
-    sheenRoughness: 0.35,
+    color: "#b98469",
+    roughness: 0.7,
+    metalness: 0.02,
+    sheen: 0.22,
+    sheenColor: "#cb8868",
+    sheenRoughness: 0.45,
   });
   materials.push(skinMat);
 
@@ -219,7 +223,7 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   });
   materials.push(eyeWhiteMat);
 
-  // 3. Dark Iris & Pupil (focused tournament intensity)
+  // 3. Dark Iris & Pupil
   const irisMat = new MeshStandardMaterial({
     color: "#1c1410",
     roughness: 0.2,
@@ -227,19 +231,47 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   });
   materials.push(irisMat);
 
-  // 4. Natural Lips
+  // 4. Natural Lips & Smile Contour
   const lipMat = new MeshStandardMaterial({
-    color: "#b87060",
-    roughness: 0.55,
+    color: "#b86a58",
+    roughness: 0.52,
     metalness: 0.02,
   });
   materials.push(lipMat);
 
-  // 5. Pro Athlete Tapered Haircut (espresso/dark black)
+  // 5. Saina's Signature Silver Hoop Earrings
+  const silverMat = new MeshStandardMaterial({
+    color: "#f1f5f9",
+    roughness: 0.15,
+    metalness: 0.95,
+  });
+  materials.push(silverMat);
+
+  // 6. Photo-Accurate Facial Decal (Saina Nehwal: eyes, brows, nose, smile, teeth, left cheek mole)
+  let faceTexture: Texture | null = null;
+  if (typeof window !== "undefined") {
+    const loader = new TextureLoader();
+    faceTexture = loader.load("/textures/saina_face_seamless.png");
+    faceTexture.colorSpace = SRGBColorSpace;
+  }
+  const faceDecalMat = new MeshStandardMaterial({
+    map: faceTexture,
+    transparent: true,
+    roughness: 0.82,
+    metalness: 0.0,
+    depthWrite: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -2,
+    polygonOffsetUnits: -2,
+    side: DoubleSide,
+  });
+  materials.push(faceDecalMat);
+
+  // 7. Sleek Pulled-Back Hair & Athletic Ponytail (deep espresso natural black)
   const hairMat = new MeshStandardMaterial({
-    color: "#161311",
-    roughness: 0.65,
-    metalness: 0.12,
+    color: "#141110",
+    roughness: 0.62,
+    metalness: 0.1,
   });
   materials.push(hairMat);
 
@@ -476,93 +508,112 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
   addMesh(chest, new BoxGeometry(0.12, 0.024, 0.006), jerseyCyanMat, [0, 0.125, -0.122]);
 
   // ==========================================
-  // REAL HUMAN HEAD & FACE (World-Class Sculpt)
+  // REAL HUMAN HEAD & FACE: SAINA NEHWAL
   // ==========================================
   const neck = joint(chest, 0, 0.27);
 
-  // Muscular neck column
-  addMesh(neck, new CylinderGeometry(0.043, 0.049, 0.085, radial), skinMat, [0, 0.035, 0]);
+  // Athletic neck column
+  addMesh(neck, new CylinderGeometry(0.04, 0.046, 0.082, radial), skinMat, [0, 0.035, 0]);
   // Sternocleidomastoid muscle cords angling down to sternum
-  addMesh(neck, new CylinderGeometry(0.009, 0.007, 0.08, 6), skinMat, [0.022, 0.038, 0.026], [0.2, 0, -0.18]);
-  addMesh(neck, new CylinderGeometry(0.009, 0.007, 0.08, 6), skinMat, [-0.022, 0.038, 0.026], [0.2, 0, 0.18]);
-  // Adam's apple
-  addMesh(neck, new SphereGeometry(0.008, 6, 6), skinMat, [0, 0.048, 0.044]);
+  addMesh(neck, new CylinderGeometry(0.008, 0.006, 0.08, 6), skinMat, [0.02, 0.038, 0.024], [0.2, 0, -0.16]);
+  addMesh(neck, new CylinderGeometry(0.008, 0.006, 0.08, 6), skinMat, [-0.02, 0.038, 0.024], [0.2, 0, 0.16]);
   // Trapezius muscle slope connecting neck into shoulders
-  addMesh(neck, new ConeGeometry(0.074, 0.055, radial), skinMat, [0, 0.01, 0]);
+  addMesh(neck, new ConeGeometry(0.072, 0.052, radial), skinMat, [0, 0.01, 0]);
 
   // Anatomical Head:
-  // 1. Cranium
+  // 1. Cranium (sculpted to Saina Nehwal's head proportions)
   addMesh(
     neck,
-    new SphereGeometry(0.096, 24, 16),
+    new SphereGeometry(0.086, 24, 16),
     skinMat,
-    [0, 0.165, 0],
+    [0, 0.16, 0],
     [0, 0, 0],
-    [0.88, 1.06, 0.98],
+    [0.88, 1.04, 0.94],
   );
 
-  // 2. Forehead & Brow Ridge
-  addMesh(neck, new BoxGeometry(0.082, 0.016, 0.03), skinMat, [0, 0.188, 0.076]);
-
-  // 3. Eyebrows
-  addMesh(neck, new BoxGeometry(0.032, 0.007, 0.008), hairMat, [0.024, 0.192, 0.088], [0, 0, -0.12]);
-  addMesh(neck, new BoxGeometry(0.032, 0.007, 0.008), hairMat, [-0.024, 0.192, 0.088], [0, 0, 0.12]);
-
-  // 4. Realistic Human Eyes (Sclera + Dark Iris & Pupil)
-  // Left eye
-  addMesh(neck, new SphereGeometry(0.012, 10, 8), eyeWhiteMat, [0.024, 0.178, 0.082], [0, 0, 0], [1.3, 0.85, 0.7]);
-  addMesh(neck, new SphereGeometry(0.006, 8, 8), irisMat, [0.024, 0.178, 0.09]);
-  // Right eye
-  addMesh(neck, new SphereGeometry(0.012, 10, 8), eyeWhiteMat, [-0.024, 0.178, 0.082], [0, 0, 0], [1.3, 0.85, 0.7]);
-  addMesh(neck, new SphereGeometry(0.006, 8, 8), irisMat, [-0.024, 0.178, 0.09]);
-
-  // 5. Sculpted Human Nose (Bridge, Tip, Nostrils)
-  addMesh(neck, new CylinderGeometry(0.007, 0.012, 0.032, 8), skinMat, [0, 0.162, 0.092], [-0.32, 0, 0]);
-  addMesh(neck, new SphereGeometry(0.009, 8, 8), skinMat, [0, 0.148, 0.102]);
-  addMesh(neck, new SphereGeometry(0.0055, 6, 6), skinMat, [0.011, 0.146, 0.096]);
-  addMesh(neck, new SphereGeometry(0.0055, 6, 6), skinMat, [-0.011, 0.146, 0.096]);
-
-  // 6. Mouth & Expressive Athletic Lips
-  addMesh(neck, new BoxGeometry(0.028, 0.006, 0.008), lipMat, [0, 0.132, 0.09]);
-  addMesh(neck, new BoxGeometry(0.026, 0.007, 0.009), lipMat, [0, 0.123, 0.088]);
-
-  // 7. Sculpted Athletic Mandible, Chin & Cheekbones
-  addMesh(neck, new BoxGeometry(0.056, 0.045, 0.065), skinMat, [0, 0.11, 0.042], [0.26, 0, 0]);
-  addMesh(neck, new SphereGeometry(0.014, 8, 8), skinMat, [0, 0.096, 0.068]);
-  addMesh(neck, new SphereGeometry(0.022, 8, 8), skinMat, [0.052, 0.158, 0.052], [0, 0, 0], [0.8, 1, 0.9]);
-  addMesh(neck, new SphereGeometry(0.022, 8, 8), skinMat, [-0.052, 0.158, 0.052], [0, 0, 0], [0.8, 1, 0.9]);
-
-  // 8. Human Ears
-  addMesh(neck, new CylinderGeometry(0.016, 0.018, 0.038, 8), skinMat, [0.084, 0.165, -0.005], [0, 0, 0.15], [0.35, 1, 0.7]);
-  addMesh(neck, new CylinderGeometry(0.016, 0.018, 0.038, 8), skinMat, [-0.084, 0.165, -0.005], [0, 0, -0.15], [0.35, 1, 0.7]);
-
-  // 9. Modern Pro Badminton Fade Haircut (Loh Kean Yew / Lakshya Sen style)
-  // Crown and top volume
+  // 2. High-Fidelity Facial Projection Decal (Saina Nehwal's eyes, brows, nose, champion smile, teeth, left cheek mole)
   addMesh(
     neck,
-    new SphereGeometry(0.101, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.52),
-    hairMat,
-    [0, 0.178, -0.006],
+    new CylinderGeometry(0.088, 0.082, 0.142, 16, 1, true, -Math.PI * 0.34, Math.PI * 0.68),
+    faceDecalMat,
+    [0, 0.158, 0.004],
     [0, 0, 0],
-    [0.92, 1.08, 0.98],
   );
-  // Back & side tapered high fade
-  addMesh(neck, new CylinderGeometry(0.093, 0.084, 0.065, 18), hairMat, [0, 0.144, -0.016]);
-  // Textured athletic front locks & sweep
+
+  // 3. Forehead & Subtle Brow Ridge
+  addMesh(neck, new BoxGeometry(0.076, 0.014, 0.024), skinMat, [0, 0.185, 0.066]);
+
+  // 4. Refined Athletic Nose Sculpt
+  addMesh(neck, new CylinderGeometry(0.005, 0.008, 0.026, 8), skinMat, [0, 0.154, 0.088], [-0.26, 0, 0]);
+  addMesh(neck, new SphereGeometry(0.0065, 8, 8), skinMat, [0, 0.143, 0.093]);
+  addMesh(neck, new SphereGeometry(0.004, 6, 6), skinMat, [0.0085, 0.141, 0.088]);
+  addMesh(neck, new SphereGeometry(0.004, 6, 6), skinMat, [-0.0085, 0.141, 0.088]);
+
+  // 5. Saina's Radiant Champion Smile (Lips + Visible White Teeth)
+  addMesh(neck, new BoxGeometry(0.022, 0.0045, 0.006), lipMat, [0, 0.13, 0.084]);
+  addMesh(neck, new BoxGeometry(0.015, 0.0035, 0.005), whiteMat, [0, 0.126, 0.085]);
+  addMesh(neck, new BoxGeometry(0.02, 0.0045, 0.006), lipMat, [0, 0.121, 0.083]);
+
+  // 6. Saina's Signature Beauty Mark (Mole on Left Upper Cheek)
+  addMesh(neck, new SphereGeometry(0.002, 6, 6), hairMat, [0.038, 0.152, 0.084]);
+
+  // 7. Sculpted Mandible, Tapered Chin & High Cheekbones
+  addMesh(neck, new BoxGeometry(0.05, 0.04, 0.058), skinMat, [0, 0.11, 0.038], [0.22, 0, 0]);
+  addMesh(neck, new SphereGeometry(0.012, 8, 8), skinMat, [0, 0.096, 0.062]);
+  addMesh(neck, new SphereGeometry(0.017, 8, 8), skinMat, [0.044, 0.152, 0.048], [0, 0, 0], [0.85, 1, 0.9]);
+  addMesh(neck, new SphereGeometry(0.017, 8, 8), skinMat, [-0.044, 0.152, 0.048], [0, 0, 0], [0.85, 1, 0.9]);
+
+  // 8. Human Ears & Saina's Signature Silver Hoop Earrings
+  // Left ear & silver hoop earring
+  addMesh(neck, new CylinderGeometry(0.013, 0.015, 0.032, 8), skinMat, [0.076, 0.158, -0.005], [0, 0, 0.15], [0.35, 1, 0.7]);
+  addMesh(neck, new TorusGeometry(0.0075, 0.0018, 8, 16), silverMat, [0.078, 0.146, -0.004], [0, Math.PI / 2, 0]);
+  // Right ear & silver hoop earring
+  addMesh(neck, new CylinderGeometry(0.013, 0.015, 0.032, 8), skinMat, [-0.076, 0.158, -0.005], [0, 0, -0.15], [0.35, 1, 0.7]);
+  addMesh(neck, new TorusGeometry(0.0075, 0.0018, 8, 16), silverMat, [-0.078, 0.146, -0.004], [0, Math.PI / 2, 0]);
+
+  // 9. Saina Nehwal's Signature Athletic Pulled-Back Ponytail Hairstyle
+  // Hair cranium wrapping seamlessly across temples, crown, back, and nape
   addMesh(
     neck,
-    new CapsuleGeometry(0.038, 0.075, 4, 10),
+    new SphereGeometry(0.089, 24, 16, Math.PI * 0.2, Math.PI * 1.6, 0, Math.PI * 0.82),
     hairMat,
-    [0.015, 0.224, 0.026],
-    [Math.PI / 2 - 0.25, 0.15, -0.1],
+    [0, 0.161, -0.002],
+    [0, 0, 0],
+    [0.91, 1.05, 0.97],
   );
+  // Neat athletic front hairline framing the forehead
   addMesh(
     neck,
-    new CapsuleGeometry(0.028, 0.065, 4, 8),
+    new SphereGeometry(0.089, 24, 12, -Math.PI * 0.35, Math.PI * 0.7, 0, Math.PI * 0.26),
     hairMat,
-    [-0.032, 0.22, 0.02],
-    [Math.PI / 2 - 0.2, -0.2, 0.15],
+    [0, 0.162, 0.002],
+    [0, 0, 0],
+    [0.91, 1.05, 0.97],
   );
+  // Sleek side sweeps pulling back above the ears
+  addMesh(neck, new CapsuleGeometry(0.014, 0.055, 4, 8), hairMat, [0.072, 0.168, 0.008], [0.3, 0.15, -0.12]);
+  addMesh(neck, new CapsuleGeometry(0.014, 0.055, 4, 8), hairMat, [-0.072, 0.168, 0.008], [0.3, -0.15, 0.12]);
+
+  // Gathering hair cone pulling towards the ponytail tie
+  addMesh(
+    neck,
+    new ConeGeometry(0.046, 0.065, 14),
+    hairMat,
+    [0, 0.148, -0.068],
+    [-Math.PI * 0.38, 0, 0],
+  );
+  // Elastic ponytail hair tie band
+  addMesh(
+    neck,
+    new TorusGeometry(0.015, 0.004, 8, 16),
+    shortsBaseMat,
+    [0, 0.142, -0.098],
+    [Math.PI * 0.25, 0, 0],
+  );
+  // Sleek athletic ponytail extending downwards
+  addMesh(neck, new CylinderGeometry(0.013, 0.01, 0.07, 10), hairMat, [0, 0.112, -0.116], [0.3, 0, 0]);
+  addMesh(neck, new CylinderGeometry(0.01, 0.007, 0.075, 10), hairMat, [0, 0.055, -0.13], [0.18, 0, 0]);
+  addMesh(neck, new ConeGeometry(0.007, 0.045, 8), hairMat, [0, 0.008, -0.138], [Math.PI, 0.05, 0]);
 
   // ==========================================
   // ARMS, T-SHIRT SLEEVES & HANDS
@@ -784,6 +835,7 @@ export function buildAthleteRig(detail: "high" | "low"): AthleteRig {
       kneeL: leftLeg.knee,
     },
     dispose: () => {
+      faceTexture?.dispose();
       geometries.forEach((g) => g.dispose());
       materials.forEach((m) => m.dispose());
     },

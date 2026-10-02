@@ -153,6 +153,7 @@ export default function SmashScene({ detail }: SmashSceneProps) {
   const athleteGroup = useRef<Group>(null);
   const keyLight = useRef<SpotLight>(null);
   const rimLight = useRef<SpotLight>(null);
+  const faceFillLight = useRef<SpotLight>(null);
   const impactLight = useRef<PointLight>(null);
   const blob = useRef<Mesh>(null);
 
@@ -162,6 +163,11 @@ export default function SmashScene({ detail }: SmashSceneProps) {
   const lightTarget = useMemo(() => {
     const o = new Object3D();
     o.position.copy(ATHLETE_POSITION).setY(1.3);
+    return o;
+  }, []);
+  const faceTarget = useMemo(() => {
+    const o = new Object3D();
+    o.position.copy(ATHLETE_POSITION).setY(1.75);
     return o;
   }, []);
 
@@ -247,6 +253,7 @@ export default function SmashScene({ detail }: SmashSceneProps) {
     const lit = ramp(p, M.athleteLightStart, M.athleteLightFull);
     if (keyLight.current) keyLight.current.intensity = ATHLETE_KEY_INTENSITY * lit;
     if (rimLight.current) rimLight.current.intensity = ATHLETE_RIM_INTENSITY * lit;
+    if (faceFillLight.current) faceFillLight.current.intensity = 55 * lit;
     if (impactLight.current) {
       const d = (p - M.contact) / IMPACT_WIDTH;
       impactLight.current.intensity = IMPACT_INTENSITY * Math.exp(-d * d);
@@ -306,6 +313,7 @@ export default function SmashScene({ detail }: SmashSceneProps) {
       </group>
 
       <primitive object={lightTarget} />
+      <primitive object={faceTarget} />
       <spotLight
         ref={keyLight}
         position={[ATHLETE_POSITION.x - 2.5, 7.5, ATHLETE_POSITION.z + 3.5]}
@@ -315,6 +323,16 @@ export default function SmashScene({ detail }: SmashSceneProps) {
         intensity={0}
         decay={2}
         color="#FFFDF8"
+      />
+      <spotLight
+        ref={faceFillLight}
+        position={[ATHLETE_POSITION.x + 0.8, 2.5, ATHLETE_POSITION.z + 2.6]}
+        target={faceTarget}
+        angle={0.48}
+        penumbra={0.9}
+        intensity={0}
+        decay={2}
+        color="#FFF7EE"
       />
       <spotLight
         ref={rimLight}
