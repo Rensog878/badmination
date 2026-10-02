@@ -8,11 +8,11 @@ export const DRACO_DECODER_PATH = "/draco/";
 
 /** How the Phase 3 athlete is rendered. Unused in Phase 2. */
 export type AthleteSource = "procedural" | "image-sequence" | "gltf";
-export const ATHLETE_SOURCE: AthleteSource = "procedural";
+export const ATHLETE_SOURCE: AthleteSource = "gltf";
 
 /** Placeholder paths for later phases (files do not exist yet). */
 export const ATHLETE_ASSETS = {
-  gltf: "/models/athlete.glb",
+  gltf: "/models/saina-nehwal.glb",
   imageSequence: {
     basePath: "/sequences/smash/",
     frameCount: 0,
