@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { findTournament, listTournaments } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, ExternalLink, Radio } from "lucide-react";
+import BackButton from "@/components/ui/BackButton";
+import { ArrowRight, ExternalLink, Radio } from "lucide-react";
 import RegistrationCard from "@/components/tournaments/RegistrationCard";
 import StatusBadge from "@/components/tournaments/StatusBadge";
 import TournamentBracket from "@/components/tournaments/TournamentBracket";
@@ -72,13 +73,7 @@ export default async function TournamentPage({ params }: PageProps) {
           strokeWidth={0.25}
         />
         <div className="relative mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-16">
-          <Link
-            href="/#tournaments"
-            className="inline-flex items-center gap-2 font-display text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-off-white"
-          >
-            <ArrowLeft aria-hidden="true" className="size-4" />
-            All tournaments
-          </Link>
+          <BackButton fallbackHref="/#tournaments" label="All tournaments" />
           <div className="mt-8 inline-flex items-center gap-2.5 rounded-full border border-court-green/25 bg-court-green/10 px-4 py-1.5 font-display text-xs font-semibold tracking-[0.18em] text-court-green uppercase backdrop-blur-md">
             <span aria-hidden="true" className="size-1.5 rounded-full bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
             <span>{t.level}</span>

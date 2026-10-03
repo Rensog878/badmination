@@ -15,8 +15,8 @@ const HEARTBEAT_MS = 15_000;
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const t = await findTournament((await params).slug);
   if (!t) return new Response("Not found", { status: 404 });
-  if (!liveAvailable(t, Date.now()).available) return new Response("Live coverage is not running", { status: 404 });
   await ensureFeed(t);
+  if (!liveAvailable(t, Date.now()).available) return new Response("Live coverage is not running", { status: 404 });
 
   const encoder = new TextEncoder();
   let cleanup = () => {};

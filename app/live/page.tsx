@@ -16,13 +16,13 @@ export default async function AllLivePage() {
   const now = Date.now();
   const allTournaments = await listTournaments();
 
+  // Ensure all tournament feeds are loaded from DB or inited in memory
+  await Promise.all(allTournaments.map((t) => ensureFeed(t)));
+
   const live = allTournaments
     .map((t) => ({ t, ...liveAvailable(t, now) }))
     .filter((x) => x.available)
     .sort((x, y) => Number(x.demo) - Number(y.demo));
-
-  // Ensure all live feeds are loaded from DB or inited in memory
-  await Promise.all(live.map(({ t }) => ensureFeed(t)));
 
   const items: LiveTournamentItem[] = live.map(({ t, demo }) => ({
     tournament: t,

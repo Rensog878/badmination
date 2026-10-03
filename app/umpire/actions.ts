@@ -1,8 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { findTournament } from "@/lib/data/tournaments";
-import { ensureFeed, liveAvailable, umpireScore, umpireStart, umpireUndo, type UmpireResult } from "@/lib/live/store";
+import { ensureFeed, flushFeed, umpireScore, umpireStart, umpireUndo, type UmpireResult } from "@/lib/live/store";
 import type { Side } from "@/lib/live/scoring";
 import type { Tournament } from "@/lib/tournaments";
 import { logout } from "@/lib/auth/session";
@@ -32,8 +33,8 @@ export async function logoutUmpire(formData: FormData) {
 async function guard(slug: string): Promise<{ error: string } | { t: Tournament }> {
   if (!(await isUmpire())) return { error: "Your umpire session has expired. Sign in again." };
   const t = await findTournament(slug);
-  if (!t || !liveAvailable(t, Date.now()).available) return { error: "Live scoring isn't open for this tournament." };
-  await ensureFeed(t);
+  if (!t) return { error: "Tournament not found." };
+  await ensureFeed(t, { forceReal: true });
   return { t };
 }
 
@@ -43,7 +44,13 @@ export async function scoreRally(slug: string, matchId: string, side: Side): Pro
   const g = await guard(slug);
   if ("error" in g) return { ok: false, error: g.error };
   if (!isSide(side)) return { ok: false, error: "Invalid side." };
-  return umpireScore(g.t, matchId, side);
+  const res = umpireScore(g.t, matchId, side);
+  if (res.ok && res.match.status === "finished") {
+    await flushFeed(g.t);
+    revalidatePath(`/umpire/${slug}`);
+    revalidatePath(`/tournaments/${slug}/live`);
+  }
+  return res;
 }
 
 export async function undoRally(slug: string, matchId: string): Promise<UmpireResult> {
@@ -55,5 +62,12 @@ export async function undoRally(slug: string, matchId: string): Promise<UmpireRe
 export async function startMatch(slug: string, matchId: string): Promise<UmpireResult> {
   const g = await guard(slug);
   if ("error" in g) return { ok: false, error: g.error };
-  return umpireStart(g.t, matchId);
+  const res = umpireStart(g.t, matchId);
+  if (res.ok) {
+    await flushFeed(g.t);
+    revalidatePath(`/umpire/${slug}`);
+    revalidatePath(`/umpire/${slug}/${matchId}`);
+    revalidatePath(`/tournaments/${slug}/live`);
+  }
+  return res;
 }

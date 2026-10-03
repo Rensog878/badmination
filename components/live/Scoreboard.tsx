@@ -42,7 +42,9 @@ function elapsed(from: number | null, to: number | null) {
 
 export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot; matchId: string }) {
   const { snapshot, connection } = useLiveFeed(initial.slug, initial);
-  const match = snapshot.matches.find((m) => m.id === matchId);
+  const [activeMatchId, setActiveMatchId] = useState(matchId);
+  const match = snapshot.matches.find((m) => m.id === activeMatchId) ?? snapshot.matches.find((m) => m.id === matchId);
+  const liveMatches = snapshot.matches.filter((m) => m.status === "live");
   const frame = useRef<HTMLDivElement>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const now = useNow();
@@ -79,6 +81,48 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             <span className="font-display font-semibold tracking-[0.15em] text-court-green uppercase">Demo feed · </span>
             simulated match.
           </p>
+        )}
+
+        {/* Top-Platform Live Court Quick Switcher */}
+        {liveMatches.length > 1 && !fullscreen && (
+          <nav aria-label="Switch court" className="mb-6 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <span className="font-display text-[10px] font-bold tracking-[0.16em] uppercase text-muted shrink-0 mr-1">
+              Live Courts:
+            </span>
+            {liveMatches.map((m) => {
+              const isActive = m.id === match?.id;
+              const curScore = m.games[m.games.length - 1] ?? { a: 0, b: 0 };
+              const sideASurname = m.sides.a[0]?.split(" ").pop() ?? "A";
+              const sideBSurname = m.sides.b[0]?.split(" ").pop() ?? "B";
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveMatchId(m.id);
+                    if (typeof window !== "undefined") {
+                      window.history.replaceState(null, "", `/tournaments/${snapshot.slug}/live/${m.id}`);
+                    }
+                  }}
+                  className={`group flex items-center gap-2 rounded-xl px-3.5 py-2 font-display text-xs font-bold uppercase transition-all shrink-0 ${
+                    isActive
+                      ? "bg-court-green text-black shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                      : "border border-white/10 bg-white/5 text-muted hover:border-court-green/40 hover:bg-white/10 hover:text-off-white"
+                  }`}
+                >
+                  <span
+                    className={`size-2 rounded-full ${
+                      isActive ? "bg-black" : "bg-court-green animate-pulse"
+                    }`}
+                  />
+                  <span>Court {m.court ?? 1}</span>
+                  <span className={`text-[10px] font-medium opacity-80 ${isActive ? "text-black" : "text-off-white"}`}>
+                    {sideASurname} {curScore.a}–{curScore.b} {sideBSurname}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
         )}
 
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-off-white/10 pb-5">

@@ -124,6 +124,22 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
     headingRef.current?.focus();
   }, [step, result]);
 
+  // Synchronize form steps with browser history and phone back gestures
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.history.replaceState({ regStep: 0 }, "");
+    }
+    const onPop = (e: PopStateEvent) => {
+      if (e.state && typeof e.state.regStep === "number") {
+        setStep(e.state.regStep);
+      } else {
+        setStep(0);
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   const focusFirstInvalid = () =>
     requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
 
@@ -132,8 +148,23 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
     const ok = await trigger(fields, { shouldFocus: false });
     const crossIssues = crossFieldIssues(getValues(), t).filter((i) => fields.includes(i.path[0] as Path));
     crossIssues.forEach((i) => setError(i.path.join(".") as Path, { message: i.message }));
-    if (ok && crossIssues.length === 0) setStep((s) => Math.min(s + 1, STEPS.length - 1));
-    else focusFirstInvalid();
+    if (ok && crossIssues.length === 0) {
+      const nextStep = Math.min(step + 1, STEPS.length - 1);
+      if (typeof window !== "undefined") {
+        window.history.pushState({ regStep: nextStep }, "");
+      }
+      setStep(nextStep);
+    } else {
+      focusFirstInvalid();
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (step > 0 && typeof window !== "undefined") {
+      window.history.back();
+    } else {
+      setStep((s) => Math.max(0, s - 1));
+    }
   };
 
   const onSubmit = handleSubmit(
@@ -424,7 +455,11 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
 
       <div className="mt-10 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
         {step > 0 ? (
-          <button type="button" onClick={() => setStep((s) => s - 1)} className="inline-flex items-center justify-center gap-2 px-2 py-3 font-display text-xs font-semibold tracking-[0.2em] text-muted uppercase hover:text-off-white">
+          <button
+            type="button"
+            onClick={handlePrevStep}
+            className="inline-flex min-h-11 items-center justify-center gap-2 px-3 py-3 font-display text-xs font-semibold tracking-[0.2em] text-muted uppercase hover:text-off-white"
+          >
             <ArrowLeft aria-hidden="true" className="size-4" />
             Back
           </button>

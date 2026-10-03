@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Plus, Edit2, Play, CheckCircle2, Trash2, Trophy, Flame, Clock, X } from "lucide-react";
 import type { FormState } from "@/app/admin/actions";
 import {
@@ -59,6 +59,21 @@ export default function MatchManager({
     },
     {}
   );
+
+  // Synchronize modal state with phone & browser back button
+  useEffect(() => {
+    if (editingMatchId || showAddForm) {
+      if (typeof window !== "undefined") {
+        window.history.pushState({ adminModal: true }, "");
+      }
+      const onPop = () => {
+        setEditingMatchId(null);
+        setShowAddForm(false);
+      };
+      window.addEventListener("popstate", onPop);
+      return () => window.removeEventListener("popstate", onPop);
+    }
+  }, [editingMatchId, showAddForm]);
 
   const filteredMatches = matches.filter((m) => {
     if (filter === "all") return true;

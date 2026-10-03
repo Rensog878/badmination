@@ -9,6 +9,8 @@ import {
   clearMatches,
   editMatch,
   ensureFeed,
+  flushFeed,
+  getSnapshot,
   removeMatch,
   seedTournamentDraw,
 } from "@/lib/live/store";
@@ -44,6 +46,10 @@ function revalidateAll(slug: string) {
   revalidatePath("/admin/live");
   revalidatePath(`/tournaments/${slug}`);
   revalidatePath(`/tournaments/${slug}/live`);
+  revalidatePath(`/tournaments/${slug}/live/[matchId]`, "page");
+  revalidatePath(`/umpire/${slug}`);
+  revalidatePath(`/umpire/${slug}/[matchId]`, "page");
+  revalidatePath("/umpire");
   revalidatePath("/live");
   revalidatePath("/");
 }
@@ -83,6 +89,7 @@ export async function addMatchAction(_prev: FormState, fd: FormData): Promise<Fo
     games,
     winner,
   });
+  await flushFeed(t);
   revalidateAll(slug);
   return { ok: "Match successfully added." };
 }
@@ -121,6 +128,7 @@ export async function editMatchAction(_prev: FormState, fd: FormData): Promise<F
   });
 
   if (!updated) return { error: "Match not found or could not be updated." };
+  await flushFeed(t);
   revalidateAll(slug);
   return { ok: "Match updated successfully." };
 }
@@ -133,6 +141,7 @@ export async function removeMatchAction(fd: FormData) {
   if (!t) return;
   await ensureFeed(t, { forceReal: true });
   removeMatch(t, String(fd.get("id") ?? ""));
+  await flushFeed(t);
   revalidateAll(slug);
 }
 
@@ -145,6 +154,7 @@ export async function seedDrawAction(fd: FormData) {
   if (!t) return;
   await ensureFeed(t, { forceReal: true });
   seedTournamentDraw(t, category);
+  await flushFeed(t);
   revalidateAll(slug);
 }
 
@@ -156,6 +166,7 @@ export async function clearAllMatchesAction(fd: FormData) {
   if (!t) return;
   await ensureFeed(t, { forceReal: true });
   clearMatches(t);
+  await flushFeed(t);
   revalidateAll(slug);
 }
 
@@ -167,12 +178,18 @@ export async function quickStartMatchAction(fd: FormData) {
   const t = await findTournament(slug);
   if (!t) return;
   await ensureFeed(t, { forceReal: true });
+  const snap = getSnapshot(t);
+  const busy = new Set(
+    snap.matches.filter((m) => m.status === "live" && m.court !== null).map((m) => m.court as number),
+  );
+  const court = Array.from({ length: snap.courts }, (_, i) => i + 1).find((c) => !busy.has(c)) ?? 1;
   editMatch(t, {
     id,
     status: "live",
-    court: 1,
+    court,
     games: [{ a: 0, b: 0 }],
   });
+  await flushFeed(t);
   revalidateAll(slug);
 }
 
@@ -188,5 +205,6 @@ export async function quickFinishMatchAction(fd: FormData) {
     id,
     status: "finished",
   });
+  await flushFeed(t);
   revalidateAll(slug);
 }

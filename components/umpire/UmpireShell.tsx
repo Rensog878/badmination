@@ -3,7 +3,6 @@ import { findTournament } from "@/lib/data/tournaments";
 import type { ReactNode } from "react";
 import { logoutUmpire } from "@/app/umpire/actions";
 import UmpireLogin from "@/components/umpire/UmpireLogin";
-import { liveAvailable } from "@/lib/live/store";
 import Link from "next/link";
 import { isUmpire, umpireEnabled, usesAccounts } from "@/lib/umpire-auth";
 
@@ -32,8 +31,6 @@ export default async function UmpireShell({ slug, next, children }: { slug: stri
         <div className="mt-10">
           {!umpireEnabled() ? (
             <p className="border border-off-white/15 p-6 text-muted">The umpire console is disabled. Configure the database (MONGODB_URI) or set UMPIRE_TOKEN.</p>
-          ) : !liveAvailable(t, Date.now()).available ? (
-            <p className="border border-off-white/15 p-6 text-muted">Live scoring opens when the tournament starts.</p>
           ) : !signedIn ? (
             usesAccounts() ? (
               <Link

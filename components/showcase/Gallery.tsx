@@ -38,7 +38,22 @@ export default function Gallery({ images }: { images: GalleryImage[] }) {
   useEffect(() => {
     const d = dialog.current;
     if (!d) return;
-    if (open !== null && !d.open) d.showModal();
+    if (open !== null && !d.open) {
+      d.showModal();
+      if (typeof window !== "undefined") {
+        window.history.pushState({ galleryOpen: true }, "");
+      }
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const onPop = () => {
+      if (open !== null && dialog.current?.open) {
+        dialog.current.close();
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
   }, [open]);
 
   useEffect(() => {
@@ -47,6 +62,9 @@ export default function Gallery({ images }: { images: GalleryImage[] }) {
     const onClose = () => {
       setOpen(null);
       opener.current?.focus();
+      if (typeof window !== "undefined" && window.history.state?.galleryOpen) {
+        window.history.back();
+      }
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") step(1);

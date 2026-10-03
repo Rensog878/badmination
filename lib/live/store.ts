@@ -39,9 +39,15 @@ export function isDemoEnabled(): boolean {
   return process.env.NODE_ENV !== "production";
 }
 
-/** The live page is available while a tournament is actually live, or in demo mode. */
+/** The live page is available while a tournament is actually live, or has matches scheduled/live, or in demo mode. */
 export function liveAvailable(t: Tournament, now: number): { available: boolean; demo: boolean } {
-  if (getStatus(t, now) === "live") return { available: true, demo: false };
+  const feed = feeds.get(t.slug);
+  const hasRealMatches = Boolean(feed && !feed.snapshot.demo && feed.snapshot.matches.length > 0);
+  const hasLiveMatch = Boolean(feed && feed.snapshot.matches.some((m) => m.status === "live"));
+
+  if (getStatus(t, now) === "live" || hasLiveMatch || hasRealMatches) {
+    return { available: true, demo: false };
+  }
   return isDemoEnabled() ? { available: true, demo: true } : { available: false, demo: false };
 }
 
@@ -187,6 +193,22 @@ function scheduleSave(feed: Feed) {
       console.error("[live] failed to save feed", feed.snapshot.slug, e);
     }
   }, SAVE_DEBOUNCE_MS);
+}
+
+/** Flushes in-memory feed immediately to MongoDB so upcoming server reads and actions see the latest state. */
+export async function flushFeed(t: Tournament): Promise<void> {
+  const feed = feeds.get(t.slug);
+  if (!feed || !dbConfigured() || feed.snapshot.demo) return;
+  if (feed.saveTimer) {
+    clearTimeout(feed.saveTimer);
+    feed.saveTimer = null;
+  }
+  try {
+    const col = await collection<LiveSnapshot>("liveFeeds");
+    await col.replaceOne({ slug: feed.snapshot.slug }, feed.snapshot, { upsert: true });
+  } catch (e) {
+    console.error("[live] failed to flush feed to DB", feed.snapshot.slug, e);
+  }
 }
 
 /** Call (await) before reading or changing a feed: loads saved real feeds once per process. */
@@ -339,18 +361,35 @@ export function addMatch(
 ): LiveMatch {
   const feed = getFeed(t);
   serial += 1;
+  const status = input.status ?? "scheduled";
+  let court = input.court ?? null;
+  let games = input.games && input.games.length > 0 ? input.games : [];
+
+  if (status === "live") {
+    if (court === null) {
+      const busyCourts = new Set(
+        feed.snapshot.matches.filter((m) => m.status === "live" && m.court !== null).map((m) => m.court as number),
+      );
+      const freeCourt = Array.from({ length: feed.snapshot.courts }, (_, i) => i + 1).find((c) => !busyCourts.has(c));
+      court = freeCourt ?? 1;
+    }
+    if (games.length === 0) {
+      games = [{ a: 0, b: 0 }];
+    }
+  }
+
   const match: LiveMatch = {
     id: `m${Date.now().toString(36)}${serial}`,
     event: input.event,
     round: input.round,
-    court: input.court ?? null,
+    court,
     sides: { a: input.a, b: input.b },
-    games: input.games ?? [],
+    games,
     server: "a",
-    status: input.status ?? "scheduled",
+    status,
     winner: input.winner ?? null,
-    startedAt: input.status === "live" ? Date.now() : null,
-    finishedAt: input.status === "finished" ? Date.now() : null,
+    startedAt: status === "live" ? Date.now() : null,
+    finishedAt: status === "finished" ? Date.now() : null,
     history: [],
     controlledBy: "umpire",
   };
@@ -390,11 +429,24 @@ export function editMatch(t: Tournament, input: EditMatchInput): LiveMatch | nul
   if (input.games !== undefined) match.games = input.games;
 
   if (input.status !== undefined) {
-    const prevStatus = match.status;
     match.status = input.status;
-    if (input.status === "live" && prevStatus !== "live") {
+    if (input.status === "live") {
       match.startedAt ??= Date.now();
       match.finishedAt = null;
+      // Auto-assign court if still unassigned
+      if (match.court === null) {
+        const busyCourts = new Set(
+          feed.snapshot.matches
+            .filter((m) => m.id !== match.id && m.status === "live" && m.court !== null)
+            .map((m) => m.court as number),
+        );
+        const freeCourt = Array.from({ length: feed.snapshot.courts }, (_, i) => i + 1).find((c) => !busyCourts.has(c));
+        match.court = freeCourt ?? 1;
+      }
+      // Ensure games array has at least one active game
+      if (!match.games || match.games.length === 0) {
+        match.games = [{ a: 0, b: 0 }];
+      }
     } else if (input.status === "finished") {
       match.finishedAt ??= Date.now();
       match.winner = input.winner ?? matchWinner(match.games);
