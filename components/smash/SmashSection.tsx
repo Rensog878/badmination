@@ -23,7 +23,7 @@ const REDUCED_TRIGGER_START = "top 60%";
  * (low-end phones, no WebGL) never downloads it and has no long scroll.
  */
 export default function SmashSection() {
-  const { mode, reducedMotion, stageView } = useStage();
+  const { mode, reducedMotion } = useStage();
   const root = useRef<HTMLElement>(null);
   const flash = useRef<HTMLDivElement>(null);
   const chapter = useRef<HTMLParagraphElement>(null);
@@ -150,7 +150,7 @@ export default function SmashSection() {
               <span className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
               <span className="font-display text-[11px] font-bold tracking-[0.2em] uppercase text-off-white">SMASH TELEMETRY</span>
               <span className="ml-auto font-mono text-[10px] text-court-green tracking-wider uppercase">
-                {stageView === "video" ? "CINEMATIC VIDEO" : "3D WEBGL"}
+                PV SINDHU · 4K REPLAY
               </span>
             </div>
             <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-left">

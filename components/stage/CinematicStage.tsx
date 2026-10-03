@@ -45,8 +45,14 @@ function useIdle(enabled: boolean): boolean {
 }
 
 /**
+ * Flag to re-enable 3D WebGL scene when desired in the future.
+ * Currently set to false to prioritize the 4K Cinematic Video stage.
+ */
+const ENABLE_3D_WEBGL = false;
+
+/**
  * Owns the fixed background stage behind the hero and smash scroll sequences.
- * Supports both Apple-style Cinematic Video/Canvas Scrubbing and 3D WebGL Racket Model.
+ * Drives the 4K Cinematic Video stage of PV Sindhu's jump smash.
  */
 export default function CinematicStage({ children }: { children: ReactNode }) {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -60,31 +66,17 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
   const [inView, setInView] = useState(true);
   const [stageView, setStageViewState] = useState<StageView>("video");
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("badmination_stage_view") as StageView | null;
-      if (saved === "3d" || saved === "video") {
-        setStageViewState(saved);
-      }
-    } catch {}
-  }, []);
-
   const setStageView = useCallback((nextView: StageView) => {
     setStageViewState(nextView);
-    try {
-      localStorage.setItem("badmination_stage_view", nextView);
-    } catch {}
   }, []);
 
-  // Every device with WebGL gets the 3D story; the tier only sets its quality.
-  // The static fallback is reserved for no-WebGL and render/model errors.
   const mode: StageMode = webgl === null || tier === null ? "pending" : webgl && !sceneFailed ? "3d" : "fallback";
   const status = useMemo(
     () => ({ mode, reducedMotion, stageView, setStageView }),
     [mode, reducedMotion, stageView, setStageView]
   );
-  const idle = useIdle(stageView === "3d" && mode === "3d");
-  const showLoader = stageView === "3d" && mode === "3d" && tier === "high" && !sceneReady;
+  const idle = useIdle(ENABLE_3D_WEBGL && stageView === "3d" && mode === "3d");
+  const showLoader = ENABLE_3D_WEBGL && stageView === "3d" && mode === "3d" && tier === "high" && !sceneReady;
 
   useEffect(() => {
     const el = stageRef.current;
@@ -97,7 +89,7 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (stageView !== "3d" || mode !== "3d") return;
+    if (!ENABLE_3D_WEBGL || stageView !== "3d" || mode !== "3d") return;
     const timer = window.setTimeout(() => setSceneReady(true), LOADER_TIMEOUT_MS);
     return () => window.clearTimeout(timer);
   }, [stageView, mode]);
@@ -108,18 +100,16 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
   return (
     <StageContext.Provider value={status}>
       <div ref={stageRef} className="relative isolate">
-        {/* Cinematic Video / Frame-Scrubbed Stage */}
-        {stageView === "video" && (
-          <CinematicVideoStage
-            inView={inView}
-            active={inView && pageVisible}
-            reducedMotion={reducedMotion}
-            onReady={handleReady}
-          />
-        )}
+        {/* 4K Cinematic Video / Frame-Scrubbed Stage of PV Sindhu */}
+        <CinematicVideoStage
+          inView={inView}
+          active={inView && pageVisible}
+          reducedMotion={reducedMotion}
+          onReady={handleReady}
+        />
 
-        {/* 3D WebGL Three.js Scene */}
-        {stageView === "3d" && mode === "3d" && idle && tier && (
+        {/* 3D WebGL Three.js Scene (preserved for future reuse) */}
+        {ENABLE_3D_WEBGL && stageView === "3d" && mode === "3d" && idle && tier && (
           <div
             className="fixed inset-x-0 top-0 -z-10 h-lvh transition-opacity duration-700 motion-reduce:duration-0"
             style={{ opacity: inView && sceneReady ? 1 : 0 }}

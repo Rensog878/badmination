@@ -10,8 +10,8 @@ interface CinematicVideoStageProps {
   onReady?: () => void;
 }
 
-const TOTAL_FRAMES = 60;
-const HERO_IMAGE_SRC = "/images/smash-hero.jpg";
+const TOTAL_FRAMES = 80;
+const HERO_IMAGE_SRC = "/images/sindhu-phase-1.jpg";
 
 export default function CinematicVideoStage({
   inView,
