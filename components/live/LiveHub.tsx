@@ -9,8 +9,10 @@ import {
   Radio,
   Search,
   Trophy,
+  Tv,
 } from "lucide-react";
 import RollingScore from "@/components/live/RollingScore";
+import LiveStreamPlayer from "@/components/live/LiveStreamPlayer";
 import { sideName } from "@/components/live/CourtCard";
 import { useIndicator } from "@/components/ui/useIndicator";
 import {
@@ -318,6 +320,21 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
             )}
           </div>
 
+          {/* Spotlight Live Broadcast Stream */}
+          {spotlight.match.streamUrl && (
+            <div className="mt-6">
+              <LiveStreamPlayer
+                key={spotlight.match.id}
+                streamUrl={spotlight.match.streamUrl}
+                court={spotlight.match.court}
+                event={spotlight.match.event}
+                round={spotlight.match.round}
+                status={spotlight.match.status}
+                sides={spotlight.match.sides}
+              />
+            </div>
+          )}
+
           <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center">
             {/* Side A */}
             <div className={`space-y-1.5 sm:space-y-2 border-l-2 pl-3.5 sm:pl-4 transition-colors ${spotlight.match.server === "a" ? "border-court-green" : "border-transparent"}`}>
@@ -543,6 +560,15 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                         <span className="font-display text-xs font-bold tracking-[0.15em] uppercase text-off-white">
                           {match.court ? `Court ${match.court}` : "Upcoming"}
                         </span>
+                        {match.streamUrl && (
+                          <span
+                            title="Live Stream Broadcast Available"
+                            className="inline-flex items-center gap-1 rounded-full bg-red-600/20 px-2 py-0.5 font-display text-[9px] font-bold text-red-400 border border-red-500/30 uppercase tracking-[0.1em]"
+                          >
+                            <Tv className="size-2.5" />
+                            <span>{isCourtLive ? "Live Stream" : "Video"}</span>
+                          </span>
+                        )}
                       </div>
                       <span className="max-w-[12rem] truncate font-display text-xs text-muted uppercase">
                         {match.event}

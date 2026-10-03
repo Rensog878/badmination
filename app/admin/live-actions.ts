@@ -70,6 +70,7 @@ export async function addMatchAction(_prev: FormState, fd: FormData): Promise<Fo
   const games = parseGames(fd);
   const winnerRaw = fd.get("winner");
   const winner = winnerRaw === "a" || winnerRaw === "b" ? (winnerRaw as Side) : null;
+  const streamUrl = String(fd.get("streamUrl") ?? "").trim() || null;
 
   const fieldErrors: Record<string, string> = {};
   if (!event) fieldErrors.event = "Choose an event";
@@ -88,6 +89,7 @@ export async function addMatchAction(_prev: FormState, fd: FormData): Promise<Fo
     status,
     games,
     winner,
+    streamUrl,
   });
   await flushFeed(t);
   revalidateAll(slug);
@@ -113,6 +115,8 @@ export async function editMatchAction(_prev: FormState, fd: FormData): Promise<F
   const games = parseGames(fd);
   const winnerRaw = fd.get("winner");
   const winner = winnerRaw === "a" || winnerRaw === "b" ? (winnerRaw as Side) : null;
+  const streamUrlRaw = fd.get("streamUrl");
+  const streamUrl = streamUrlRaw !== null ? String(streamUrlRaw).trim() || null : undefined;
 
   await ensureFeed(t, { forceReal: true });
   const updated = editMatch(t, {
@@ -125,6 +129,7 @@ export async function editMatchAction(_prev: FormState, fd: FormData): Promise<F
     status,
     games,
     winner,
+    streamUrl,
   });
 
   if (!updated) return { error: "Match not found or could not be updated." };

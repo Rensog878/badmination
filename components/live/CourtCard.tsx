@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Tv } from "lucide-react";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch } from "@/lib/live/types";
 import RollingScore from "@/components/live/RollingScore";
@@ -34,10 +35,21 @@ export default function CourtCard({ court, match, href }: { court: number; match
         </Link>
       )}
       <header className="flex items-center justify-between gap-3">
-        <p className="flex shrink-0 items-center gap-2 font-display text-xs font-bold tracking-[0.18em] whitespace-nowrap uppercase text-off-white">
-          <span aria-hidden="true" className="size-2 animate-pulse rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] motion-reduce:animate-none" />
-          Court {court}
-        </p>
+        <div className="flex shrink-0 items-center gap-2">
+          <p className="flex shrink-0 items-center gap-2 font-display text-xs font-bold tracking-[0.18em] whitespace-nowrap uppercase text-off-white">
+            <span aria-hidden="true" className="size-2 animate-pulse rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] motion-reduce:animate-none" />
+            Court {court}
+          </p>
+          {match.streamUrl && (
+            <span
+              title="Live Stream Broadcast Available"
+              className="inline-flex items-center gap-1 rounded-full bg-red-600/20 px-2 py-0.5 font-display text-[9px] font-bold text-red-400 border border-red-500/30 uppercase tracking-[0.1em]"
+            >
+              <Tv className="size-2.5" />
+              <span>Stream</span>
+            </span>
+          )}
+        </div>
         <p className="min-w-0 truncate text-xs font-medium tracking-[0.08em] text-muted uppercase">
           {match.event} · {match.round}
         </p>

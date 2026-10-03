@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { Undo2, Volume2, VolumeX } from "lucide-react";
-import { scoreRally, undoRally } from "@/app/umpire/actions";
+import { Check, Tv, Undo2, Volume2, VolumeX, X } from "lucide-react";
+import { scoreRally, undoRally, updateCourtStreamAction } from "@/app/umpire/actions";
 import { sideName } from "@/components/live/CourtCard";
 import { FieldError } from "@/components/registration/FormField";
 import { useLiveFeed } from "@/components/live/useLiveFeed";
@@ -43,6 +43,10 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showStreamDrawer, setShowStreamDrawer] = useState(false);
+  const [streamInput, setStreamInput] = useState("");
+  const [streamSaving, setStreamSaving] = useState(false);
+  const [streamSavedMsg, setStreamSavedMsg] = useState<string | null>(null);
 
   const fromFeed = snapshot.matches.find((m) => m.id === matchId);
   // Prefer whichever copy has seen more rallies (action result can beat the feed).
@@ -82,6 +86,26 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
     return () => window.removeEventListener("keydown", onKey);
   }, [act]);
 
+  useEffect(() => {
+    if (match?.streamUrl !== undefined) {
+      setStreamInput(match.streamUrl ?? "");
+    }
+  }, [match?.streamUrl]);
+
+  const handleSaveStream = async (url: string | null) => {
+    setStreamSaving(true);
+    setStreamSavedMsg(null);
+    try {
+      const res = await updateCourtStreamAction(initial.slug, matchId, url);
+      if (res.ok) {
+        setStreamSavedMsg(url ? "Stream linked to court!" : "Stream removed.");
+        setTimeout(() => setStreamSavedMsg(null), 3000);
+      }
+    } finally {
+      setStreamSaving(false);
+    }
+  };
+
   if (!match) return <p className="text-lg">This match is no longer in the live feed.</p>;
 
   const finished = match.status === "finished";
@@ -111,25 +135,100 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setSoundEnabled(!soundEnabled)}
-          aria-label={soundEnabled ? "Mute scoring chimes" : "Enable scoring chimes"}
-          className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase text-muted hover:border-court-green/40 hover:text-off-white"
-        >
-          {soundEnabled ? (
-            <>
-              <Volume2 className="size-4 text-court-green" />
-              <span className="hidden sm:inline">Sound On</span>
-            </>
-          ) : (
-            <>
-              <VolumeX className="size-4 text-muted" />
-              <span className="hidden sm:inline">Muted</span>
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Umpire Court Live Stream Button */}
+          <button
+            type="button"
+            onClick={() => setShowStreamDrawer(!showStreamDrawer)}
+            aria-label="Court live stream settings"
+            className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
+              match.streamUrl
+                ? "border-red-500/40 bg-red-600/10 text-red-400 hover:border-red-500"
+                : "border-white/10 bg-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+            }`}
+          >
+            <Tv className="size-4" />
+            <span className="hidden sm:inline">{match.streamUrl ? "Stream Linked" : "Attach Stream"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            aria-label={soundEnabled ? "Mute scoring chimes" : "Enable scoring chimes"}
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase text-muted hover:border-court-green/40 hover:text-off-white"
+          >
+            {soundEnabled ? (
+              <>
+                <Volume2 className="size-4 text-court-green" />
+                <span className="hidden sm:inline">Sound On</span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="size-4 text-muted" />
+                <span className="hidden sm:inline">Muted</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Expandable Court Stream Drawer */}
+      {showStreamDrawer && (
+        <div className="mt-3 rounded-2xl border border-white/15 bg-black/80 p-4 backdrop-blur-md animate-fade-in">
+          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+            <div className="flex items-center gap-2">
+              <Tv className="size-4 text-court-green" />
+              <span className="font-display text-xs font-bold uppercase tracking-[0.14em] text-off-white">
+                Court Live Stream Link
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowStreamDrawer(false)}
+              className="rounded-lg p-1 text-muted hover:text-off-white"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+          <p className="mt-2 text-xs text-muted">
+            Streaming from your phone? Paste your YouTube Live stream link or video highlight URL here. It instantly broadcasts to all spectators on the website.
+          </p>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              type="url"
+              value={streamInput}
+              onChange={(e) => setStreamInput(e.target.value)}
+              placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/..."
+              className="min-h-11 flex-1 rounded-xl border border-white/15 bg-charcoal px-3 py-2 text-sm text-off-white placeholder:text-muted/60 focus:border-court-green focus:outline-none"
+            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                disabled={streamSaving || !streamInput.trim()}
+                onClick={() => handleSaveStream(streamInput.trim() || null)}
+                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-court-green px-4 py-2 font-display text-xs font-bold tracking-[0.12em] text-black uppercase hover:bg-off-white disabled:opacity-50"
+              >
+                <Check className="size-4" />
+                <span>Save</span>
+              </button>
+              {match.streamUrl && (
+                <button
+                  type="button"
+                  disabled={streamSaving}
+                  onClick={() => {
+                    setStreamInput("");
+                    void handleSaveStream(null);
+                  }}
+                  className="min-h-11 rounded-xl border border-red-500/30 px-3 py-2 font-display text-xs font-bold text-red-400 hover:bg-red-500/10"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+          {streamSavedMsg && <p className="mt-2 text-xs text-court-green font-medium">{streamSavedMsg}</p>}
+        </div>
+      )}
 
       {pressure && !finished && (
         <div className="mt-4 rounded-xl border border-court-green/40 bg-court-green/10 p-3 text-center animate-pulse">

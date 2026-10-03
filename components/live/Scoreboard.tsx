@@ -7,6 +7,7 @@ import { useLiveFeed } from "@/components/live/useLiveFeed";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
 import RollingScore from "@/components/live/RollingScore";
+import LiveStreamPlayer from "@/components/live/LiveStreamPlayer";
 
 const SIDES: Side[] = ["a", "b"];
 
@@ -150,6 +151,21 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             )}
           </div>
         </header>
+
+        {/* Live Court Stream or Match Highlight Video Player */}
+        {match.streamUrl && !fullscreen && (
+          <div className="pt-6">
+            <LiveStreamPlayer
+              key={match.id}
+              streamUrl={match.streamUrl}
+              court={match.court}
+              event={match.event}
+              round={match.round}
+              status={match.status}
+              sides={match.sides}
+            />
+          </div>
+        )}
 
         {/* Visual scoreboard; the sr-only summary below carries the same information. */}
         <div aria-hidden="true" className="divide-y divide-off-white/10">

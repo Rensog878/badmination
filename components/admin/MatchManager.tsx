@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { Plus, Edit2, Play, CheckCircle2, Trash2, Trophy, Flame, Clock, X } from "lucide-react";
+import { Plus, Edit2, Play, CheckCircle2, Trash2, Trophy, Flame, Clock, X, Tv } from "lucide-react";
 import type { FormState } from "@/app/admin/actions";
 import {
   addMatchAction,
@@ -303,6 +303,22 @@ export default function MatchManager({
                   <option value="finished">Finished</option>
                 </select>
               </div>
+
+              {/* Live Stream / Highlight URL */}
+              <div className="sm:col-span-2">
+                <label className="mb-1 block font-display text-xs font-semibold tracking-[0.14em] text-muted uppercase">
+                  Live Stream or Video Highlight URL (Optional)
+                </label>
+                <input
+                  name="streamUrl"
+                  type="url"
+                  placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/... (Twitch / Vimeo / MP4)"
+                  className="min-h-11 w-full rounded-xl border border-white/15 bg-charcoal px-3 py-2 text-sm text-off-white placeholder:text-muted/60 focus:border-court-green focus:outline-none"
+                />
+                <p className="mt-1 text-[11px] text-muted">
+                  YouTube Live or highlight link. Synchronized live video plays directly on the court scoreboard with zero database storage cost.
+                </p>
+              </div>
             </div>
 
             {/* Optional initial scores */}
@@ -546,6 +562,23 @@ export default function MatchManager({
                 </select>
               </div>
 
+              {/* Live Stream / Highlight Video URL */}
+              <div>
+                <label className="mb-1 block font-display text-xs font-semibold tracking-[0.14em] text-muted uppercase">
+                  Live Stream or Video Highlight URL (Optional)
+                </label>
+                <input
+                  name="streamUrl"
+                  type="url"
+                  defaultValue={editingMatch.streamUrl ?? ""}
+                  placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/... (Twitch / Vimeo / MP4)"
+                  className="min-h-11 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-off-white placeholder:text-muted/60 focus:border-court-green focus:outline-none"
+                />
+                <p className="mt-1 text-[11px] text-muted">
+                  YouTube Live or recorded highlight link. Plays directly on the match scoreboard and live hub.
+                </p>
+              </div>
+
               {editState.error && <p className="text-xs text-red-400">{editState.error}</p>}
               {editState.ok && <p className="text-xs text-court-green">{editState.ok}</p>}
 
@@ -616,6 +649,14 @@ export default function MatchManager({
                   {m.court && (
                     <span className="rounded-md border border-white/15 bg-white/5 px-2 py-0.5 text-[11px] font-bold text-off-white">
                       CT {m.court}
+                    </span>
+                  )}
+
+                  {/* Stream Badge */}
+                  {m.streamUrl && (
+                    <span className="inline-flex items-center gap-1 rounded-md border border-red-500/30 bg-red-600/10 px-2 py-0.5 text-[10px] font-bold text-red-400">
+                      <Tv className="size-2.5" />
+                      <span>Stream Linked</span>
                     </span>
                   )}
 

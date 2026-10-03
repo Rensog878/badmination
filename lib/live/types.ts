@@ -20,6 +20,8 @@ export interface LiveMatch {
   history: { side: Side; previousServer: Side }[];
   /** Set when an umpire scores this match; the demo simulator then leaves it alone. */
   controlledBy: "umpire" | null;
+  /** Optional live stream or highlight replay URL (YouTube, Twitch, Vimeo, MP4, etc.) */
+  streamUrl?: string | null;
 }
 
 export interface LiveSnapshot {

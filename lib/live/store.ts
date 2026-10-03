@@ -122,6 +122,9 @@ function createDemoSnapshot(t: Tournament): LiveSnapshot {
     m.startedAt = now - Math.floor(Math.random() * 20 + 5) * 60_000;
     fastForward(m, Math.floor(Math.random() * 45) + 5);
     if (matchWinner(m.games)) m.games = [{ a: 3, b: 2 }];
+    if (court === 1) {
+      m.streamUrl = "https://www.youtube.com/watch?v=Gk74i1e2L18";
+    }
     matches.push(m);
   }
   for (let i = 0; i < 6; i++) matches.push(demoMatch(t, 2));
@@ -357,6 +360,7 @@ export function addMatch(
     status?: LiveMatch["status"];
     games?: LiveMatch["games"];
     winner?: LiveMatch["winner"];
+    streamUrl?: string | null;
   },
 ): LiveMatch {
   const feed = getFeed(t);
@@ -392,6 +396,7 @@ export function addMatch(
     finishedAt: status === "finished" ? Date.now() : null,
     history: [],
     controlledBy: "umpire",
+    streamUrl: input.streamUrl?.trim() || null,
   };
   feed.snapshot.demo = false;
   if (feed.timer) {
@@ -414,6 +419,7 @@ export interface EditMatchInput {
   status?: LiveMatch["status"];
   games?: LiveMatch["games"];
   winner?: LiveMatch["winner"];
+  streamUrl?: string | null;
 }
 
 export function editMatch(t: Tournament, input: EditMatchInput): LiveMatch | null {
@@ -427,6 +433,7 @@ export function editMatch(t: Tournament, input: EditMatchInput): LiveMatch | nul
   if (input.a !== undefined && input.a.length > 0) match.sides.a = input.a;
   if (input.b !== undefined && input.b.length > 0) match.sides.b = input.b;
   if (input.games !== undefined) match.games = input.games;
+  if (input.streamUrl !== undefined) match.streamUrl = input.streamUrl?.trim() || null;
 
   if (input.status !== undefined) {
     match.status = input.status;
