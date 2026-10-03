@@ -13,9 +13,7 @@
 
 html {
   overflow-x: clip;
-}
-
-html {
+  -webkit-overflow-scrolling: touch;
   color-scheme: dark;
   /* No global smooth scrolling: menu links would otherwise race through the whole 3D sequence. */
   background: var(--color-charcoal);
@@ -28,6 +26,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
 }
 
 /* Reveal (components/ui/Reveal.tsx): compositor-only, applied only to off-screen content. */

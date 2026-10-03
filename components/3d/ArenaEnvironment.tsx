@@ -135,9 +135,9 @@ export default function ArenaEnvironment({ config }: ArenaEnvironmentProps) {
         decay={2}
         color="#F3F4F6"
         castShadow={config.softShadows}
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={config.softShadows ? [1024, 1024] : [512, 512]}
         shadow-bias={-0.0002}
-        shadow-radius={6}
+        shadow-radius={3}
       />
 
       {full && (
@@ -184,11 +184,12 @@ export default function ArenaEnvironment({ config }: ArenaEnvironmentProps) {
           position={[racketPos.x, 0.004, racketPos.z]}
           scale={6}
           far={3.2}
-          blur={2.6}
-          opacity={0.7}
+          blur={2.4}
+          opacity={0.65}
           resolution={config.contactShadowResolution}
           color="#000000"
           renderOrder={2}
+          frames={1}
         />
       )}
 

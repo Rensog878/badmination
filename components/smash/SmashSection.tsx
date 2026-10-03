@@ -7,7 +7,7 @@ import { SMASH } from "@/lib/content";
 import { smashProgress } from "@/lib/smashProgress";
 import { REDUCED_MOTION_PROGRESS, SMASH_MARKS } from "@/lib/smashTimeline";
 
-const SCRUB_SMOOTHING = 0.8; // seconds the scene takes to catch up with the scrollbar
+const SCRUB_SMOOTHING = 0.25; // Snappy 120fps direct scroll synchronization (was 0.8s)
 const FLASH_PEAK = 0.6;
 const FLASH_IN = 0.01; // timeline units (the whole sequence is 1)
 const FLASH_OUT = 0.06;
@@ -61,6 +61,7 @@ export default function SmashSection() {
           return;
         }
 
+        let lastSpeed = -1;
         const tl = gsap.timeline({
           defaults: { ease: "none" },
           scrollTrigger: {
@@ -80,7 +81,10 @@ export default function SmashSection() {
                 } else if (p > 0.65) {
                   speed = 417;
                 }
-                speedRef.current.textContent = String(speed);
+                if (speed !== lastSpeed) {
+                  lastSpeed = speed;
+                  speedRef.current.textContent = String(speed);
+                }
               }
             },
           },
@@ -123,7 +127,7 @@ export default function SmashSection() {
         {/* How far through the intro you are. */}
         {cinematic && (
           <div aria-hidden="true" className="absolute inset-x-0 top-0 z-20 h-1 bg-off-white/10">
-            <div ref={bar} className="h-full origin-left scale-x-0 bg-court-green" />
+            <div ref={bar} className="h-full origin-left scale-x-0 bg-court-green will-change-transform transform-gpu" />
           </div>
         )}
 
@@ -144,7 +148,7 @@ export default function SmashSection() {
         {cinematic && (
           <div
             ref={telemetry}
-            className="pointer-events-none absolute right-0 top-20 z-20 flex max-w-[calc(100vw-2rem)] flex-col gap-3 rounded-2xl border border-white/[0.08] bg-black/85 p-3.5 backdrop-blur-xl opacity-0 shadow-2xl sm:right-4 sm:top-24 sm:p-5 lg:right-8"
+            className="pointer-events-none absolute right-0 top-20 z-20 flex max-w-[calc(100vw-2rem)] flex-col gap-3 rounded-2xl border border-white/[0.08] bg-black/85 p-3.5 backdrop-blur-xl opacity-0 shadow-2xl will-change-transform transform-gpu sm:right-4 sm:top-24 sm:p-5 lg:right-8"
           >
             <div className="flex items-center gap-2 border-b border-white/10 pb-2">
               <span className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />

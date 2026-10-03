@@ -59,7 +59,14 @@ export default function HeroScene({ active, reducedMotion, initialTier, onReady,
       shadows={config.softShadows ? "percentage" : false}
       camera={{ fov: CAMERA_FOV, near: 0.1, far: 80, position: [0, 2.5, 8] }}
       // MSAA is expensive on weak GPUs; the low tier renders without it. (Fixed at creation.)
-      gl={{ antialias: initialTier !== "low", powerPreference: "high-performance" }}
+      gl={{
+        antialias: initialTier !== "low",
+        powerPreference: "high-performance",
+        alpha: false,
+        stencil: false,
+        depth: true,
+        preserveDrawingBuffer: false,
+      }}
     >
       <color attach="background" args={[BACKGROUND]} />
       <ProgressBridge onProgress={onProgress} />

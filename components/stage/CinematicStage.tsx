@@ -91,8 +91,12 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
       <div ref={stageRef} className="relative isolate">
         {mode === "3d" && idle && tier && (
           <div
-            className="fixed inset-x-0 top-0 -z-10 h-lvh transition-opacity duration-700 motion-reduce:duration-0"
-            style={{ opacity: inView && sceneReady ? 1 : 0 }}
+            className="fixed inset-x-0 top-0 -z-10 h-lvh will-change-transform transform-gpu transition-opacity duration-700 motion-reduce:duration-0"
+            style={{
+              opacity: inView && sceneReady ? 1 : 0,
+              transform: "translate3d(0,0,0)",
+              contain: "strict",
+            }}
           >
             <SceneErrorBoundary fallback={null} onError={handleFailure}>
               <Suspense fallback={null}>
