@@ -133,10 +133,10 @@ export default function HeroSection() {
               <div className="flex items-center gap-2">
                 <span className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
                 <span className="font-display text-xs font-bold tracking-[0.12em] text-court-green uppercase">
-                  Tournament Match Grade
+                  Interactive 3D Stage Active
                 </span>
               </div>
-              <span className="font-mono text-[10px] text-muted">Engineered for Jump Smash Attacks</span>
+              <span className="font-mono text-[10px] text-muted">Drag to Rotate in Canvas</span>
             </div>
           </div>
         </div>

@@ -150,7 +150,7 @@ export default function SmashSection() {
               <span className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
               <span className="font-display text-[11px] font-bold tracking-[0.2em] uppercase text-off-white">SMASH TELEMETRY</span>
               <span className="ml-auto font-mono text-[10px] text-court-green tracking-wider uppercase">
-                PV SINDHU · 4K REPLAY
+                LIVE HUD
               </span>
             </div>
             <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-left">

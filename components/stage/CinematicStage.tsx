@@ -4,8 +4,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExt
 import dynamic from "next/dynamic";
 import SceneErrorBoundary from "@/components/3d/SceneErrorBoundary";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import CinematicVideoStage from "@/components/stage/CinematicVideoStage";
-import { StageContext, type StageMode, type StageView } from "@/components/stage/StageContext";
+import { StageContext, type StageMode } from "@/components/stage/StageContext";
 import {
   startTier,
   usePageVisible,
@@ -45,14 +44,9 @@ function useIdle(enabled: boolean): boolean {
 }
 
 /**
- * Flag to re-enable 3D WebGL scene when desired in the future.
- * Currently set to false to prioritize the 4K Cinematic Video stage.
- */
-const ENABLE_3D_WEBGL = false;
-
-/**
- * Owns the fixed background stage behind the hero and smash scroll sequences.
- * Drives the 4K Cinematic Video stage of PV Sindhu's jump smash.
+ * Owns the one persistent Canvas (fixed behind the content) for every cinematic
+ * section inside it, plus device tiering, WebGL detection, error fallback and the loader.
+ * All WebGL devices get 3D; low-end devices get the lightest tier. three.js loads after idle.
  */
 export default function CinematicStage({ children }: { children: ReactNode }) {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -64,19 +58,14 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
   const [sceneReady, setSceneReady] = useState(false);
   const [progress, setProgress] = useState(0);
   const [inView, setInView] = useState(true);
-  const [stageView, setStageViewState] = useState<StageView>("video");
 
-  const setStageView = useCallback((nextView: StageView) => {
-    setStageViewState(nextView);
-  }, []);
-
+  // Every device with WebGL gets the 3D story; the tier only sets its quality.
+  // The static fallback is reserved for no-WebGL and render/model errors.
   const mode: StageMode = webgl === null || tier === null ? "pending" : webgl && !sceneFailed ? "3d" : "fallback";
-  const status = useMemo(
-    () => ({ mode, reducedMotion, stageView, setStageView }),
-    [mode, reducedMotion, stageView, setStageView]
-  );
-  const idle = useIdle(ENABLE_3D_WEBGL && stageView === "3d" && mode === "3d");
-  const showLoader = ENABLE_3D_WEBGL && stageView === "3d" && mode === "3d" && tier === "high" && !sceneReady;
+  const status = useMemo(() => ({ mode, reducedMotion }), [mode, reducedMotion]);
+  const idle = useIdle(mode === "3d");
+  // Full-screen loader only where it reads as cinematic (capable desktops); elsewhere the scene fades in behind live text.
+  const showLoader = mode === "3d" && tier === "high" && !sceneReady;
 
   useEffect(() => {
     const el = stageRef.current;
@@ -89,10 +78,10 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!ENABLE_3D_WEBGL || stageView !== "3d" || mode !== "3d") return;
+    if (mode !== "3d") return;
     const timer = window.setTimeout(() => setSceneReady(true), LOADER_TIMEOUT_MS);
     return () => window.clearTimeout(timer);
-  }, [stageView, mode]);
+  }, [mode]);
 
   const handleReady = useCallback(() => setSceneReady(true), []);
   const handleFailure = useCallback(() => setSceneFailed(true), []);
@@ -100,16 +89,7 @@ export default function CinematicStage({ children }: { children: ReactNode }) {
   return (
     <StageContext.Provider value={status}>
       <div ref={stageRef} className="relative isolate">
-        {/* 4K Cinematic Video / Frame-Scrubbed Stage of PV Sindhu */}
-        <CinematicVideoStage
-          inView={inView}
-          active={inView && pageVisible}
-          reducedMotion={reducedMotion}
-          onReady={handleReady}
-        />
-
-        {/* 3D WebGL Three.js Scene (preserved for future reuse) */}
-        {ENABLE_3D_WEBGL && stageView === "3d" && mode === "3d" && idle && tier && (
+        {mode === "3d" && idle && tier && (
           <div
             className="fixed inset-x-0 top-0 -z-10 h-lvh transition-opacity duration-700 motion-reduce:duration-0"
             style={{ opacity: inView && sceneReady ? 1 : 0 }}
