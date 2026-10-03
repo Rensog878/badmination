@@ -262,14 +262,14 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
             <span
               aria-hidden="true"
               style={tourneyIndicator.style}
-              className="indicator absolute top-6 left-0 rounded-full bg-off-white"
+              className="indicator pointer-events-none absolute top-0 left-0 z-0 rounded-full bg-off-white"
             />
             <button
               type="button"
               data-indicator="all"
               onClick={() => setSelectedTournament("all")}
               aria-pressed={selectedTournament === "all"}
-              className={`relative inline-flex min-h-11 items-center rounded-full border px-4 font-display text-xs font-semibold tracking-[0.15em] uppercase transition-colors ${
+              className={`relative z-10 inline-flex min-h-11 items-center rounded-full border px-4 font-display text-xs font-semibold tracking-[0.15em] uppercase transition-colors ${
                 selectedTournament === "all"
                   ? "border-transparent text-black"
                   : "border-off-white/15 text-muted hover:text-off-white"
@@ -284,7 +284,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                 data-indicator={tournament.slug}
                 onClick={() => setSelectedTournament(tournament.slug)}
                 aria-pressed={selectedTournament === tournament.slug}
-                className={`relative inline-flex min-h-11 items-center rounded-full border px-4 font-display text-xs font-semibold tracking-[0.15em] uppercase transition-colors ${
+                className={`relative z-10 inline-flex min-h-11 items-center rounded-full border px-4 font-display text-xs font-semibold tracking-[0.15em] uppercase transition-colors ${
                   selectedTournament === tournament.slug
                     ? "border-transparent text-black"
                     : "border-off-white/15 text-muted hover:text-off-white"
@@ -416,12 +416,12 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
             ref={filterIndicator.ref}
             role="group"
             aria-label="Filter court status"
-            className="relative flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap"
+            className="relative flex flex-wrap items-center gap-2"
           >
             <span
               aria-hidden="true"
               style={filterIndicator.style}
-              className="indicator absolute top-0 left-0 rounded-full bg-off-white"
+              className="indicator pointer-events-none absolute top-0 left-0 z-0 rounded-full bg-off-white"
             />
             {FILTERS.map((f) => (
               <button
@@ -430,7 +430,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                 type="button"
                 onClick={() => setFilter(f.value)}
                 aria-pressed={filter === f.value}
-                className={`relative inline-flex shrink-0 min-h-11 items-center gap-1.5 rounded-full border px-4 py-2 font-display text-xs font-semibold tracking-[0.12em] uppercase transition-colors ${
+                className={`relative z-10 inline-flex shrink-0 min-h-11 items-center gap-1.5 rounded-full border px-4 py-2 font-display text-xs font-semibold tracking-[0.12em] uppercase transition-colors ${
                   filter === f.value
                     ? "border-transparent text-black"
                     : "border-off-white/15 text-muted hover:text-off-white"

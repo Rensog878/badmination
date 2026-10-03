@@ -68,8 +68,8 @@ export default function LiveNowStrip() {
       aria-label="Live matches"
       className="strip-in absolute inset-x-0 top-[calc(4rem+env(safe-area-inset-top))] z-30 border-y border-white/[0.08] bg-black/90 backdrop-blur-xl lg:top-[calc(5rem+env(safe-area-inset-top))] print:hidden"
     >
-      <div className="mx-auto flex h-12 max-w-[1600px] items-center px-4 sm:px-8 lg:px-16">
-        <p className="flex shrink-0 items-center gap-2 border-r border-white/10 pr-3.5 font-display text-xs font-bold tracking-[0.2em] uppercase text-off-white sm:pr-4">
+      <div className="mx-auto flex h-12 max-w-[1600px] items-center px-3 sm:px-8 lg:px-16">
+        <p className="flex shrink-0 items-center gap-1.5 border-r border-white/10 pr-2.5 font-display text-xs font-bold tracking-[0.18em] sm:tracking-[0.2em] uppercase text-off-white sm:gap-2 sm:pr-4">
           <span aria-hidden="true" className="relative flex size-2">
             <span className="absolute inset-0 animate-ping rounded-full bg-court-green opacity-80 motion-reduce:animate-none" />
             <span className="relative size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
@@ -77,16 +77,16 @@ export default function LiveNowStrip() {
           {demo ? "Demo" : "Live"}
         </p>
 
-        {/* One line per match, ticker style; scrolls sideways when there are more than fit. */}
-        <ul className="flex h-full min-w-0 flex-1 snap-x overflow-x-auto [scrollbar-width:none]">
+        {/* Center matches ticker: horizontally scrollable when there are multiple matches */}
+        <ul className="flex h-full min-w-0 flex-1 snap-x overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain">
           {visible.map((m) => (
             <li key={`${m.slug}-${m.id}`} className="shrink-0 snap-start border-r border-white/[0.08]">
               <Link
                 href={`/tournaments/${m.slug}/live/${m.id}`}
                 aria-label={`${m.demo ? "Demo match. " : ""}${m.court ? `Court ${m.court}, ` : ""}${m.event}. ${m.names.a} ${m.points.a}, ${m.names.b} ${m.points.b}. Games ${m.games.a}–${m.games.b}. Open scoreboard`}
-                className="flex h-full items-center gap-2.5 px-3.5 text-sm whitespace-nowrap sm:gap-3.5 sm:px-4 transition-colors hover:bg-white/[0.06]"
+                className="flex h-full items-center gap-2 px-2.5 text-sm whitespace-nowrap sm:gap-3.5 sm:px-4 transition-colors hover:bg-white/[0.06]"
               >
-                <span className="font-display text-xs font-medium tracking-[0.14em] text-muted uppercase">
+                <span className="font-display text-xs font-medium tracking-[0.12em] sm:tracking-[0.14em] text-muted uppercase">
                   {m.demo && !demo ? "Demo · " : ""}
                   {m.court ? `Ct ${m.court}` : m.event}
                 </span>
@@ -95,8 +95,8 @@ export default function LiveNowStrip() {
                   {(["a", "b"] as const).map((side) => (
                     <Fragment key={side}>
                       <Serve on={m.server === side} />
-                      <span className="max-w-[12rem] truncate font-display font-semibold uppercase">{m.names[side]}</span>
-                      <span key={`${side}${m.points[side]}`} className="score-tick pl-2 text-right font-display font-bold tabular-nums">
+                      <span className="max-w-[7rem] truncate font-display font-semibold uppercase">{m.names[side]}</span>
+                      <span key={`${side}${m.points[side]}`} className="score-tick pl-1.5 text-right font-display font-bold tabular-nums">
                         {m.points[side]}
                       </span>
                     </Fragment>
@@ -120,16 +120,18 @@ export default function LiveNowStrip() {
               </Link>
             </li>
           ))}
-          <li className="shrink-0 snap-start">
-            <Link
-              href={allHref}
-              className="flex h-full items-center gap-2 px-3 font-display text-xs font-semibold sm:px-4 tracking-[0.15em] whitespace-nowrap text-court-green uppercase hover:text-off-white"
-            >
-              {hidden > 0 ? `+${hidden} more` : "All courts"}
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </Link>
-          </li>
         </ul>
+
+        {/* Pinned "All courts" button: ALWAYS docked on the right, NEVER cropped, NO swipe needed! */}
+        <div className="flex shrink-0 h-full items-center border-l border-white/10 pl-1.5 sm:pl-3">
+          <Link
+            href={allHref}
+            className="flex h-full items-center gap-1 sm:gap-1.5 px-2 font-display text-xs font-semibold sm:px-3 tracking-[0.12em] sm:tracking-[0.15em] whitespace-nowrap text-court-green uppercase hover:text-off-white transition-colors"
+          >
+            <span>{hidden > 0 ? `+${hidden} more` : "All courts"}</span>
+            <ArrowRight aria-hidden="true" className="size-3.5 sm:size-4 shrink-0" />
+          </Link>
+        </div>
       </div>
     </section>
   );

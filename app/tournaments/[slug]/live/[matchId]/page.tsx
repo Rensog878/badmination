@@ -29,7 +29,7 @@ export default async function ScoreboardPage({ params }: PageProps) {
       <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-16">
         <Link
           href={`/tournaments/${t.slug}/live`}
-          className="inline-flex items-center gap-2 font-display text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-off-white"
+          className="inline-flex min-h-11 items-center gap-2 font-display text-xs tracking-[0.15em] text-muted uppercase transition-colors hover:text-off-white"
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
           All courts
