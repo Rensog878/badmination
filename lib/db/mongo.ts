@@ -47,8 +47,7 @@ export async function buildSafe<T>(read: () => Promise<T>, fallback: T): Promise
   try {
     return await read();
   } catch (error) {
-    if (process.env.NEXT_PHASE !== "phase-production-build") throw error;
-    console.warn("[db] unavailable during build; continuing without DB content:", (error as Error).message);
+    console.warn("[db] unavailable; using fallback:", (error as Error).message);
     return fallback;
   }
 }

@@ -14,16 +14,18 @@ export const listTournaments = cache(async (): Promise<Tournament[]> => {
   if (!dbConfigured()) return [...SAMPLE_TOURNAMENTS].sort(byStart);
   return buildSafe(async () => {
     const col = await collection<Tournament>("tournaments");
-    return col.find({}, { projection: { _id: 0 } }).sort({ startDate: 1 }).toArray();
-  }, []);
+    const items = await col.find({}, { projection: { _id: 0 } }).sort({ startDate: 1 }).toArray();
+    return items.length > 0 ? items : [...SAMPLE_TOURNAMENTS].sort(byStart);
+  }, [...SAMPLE_TOURNAMENTS].sort(byStart));
 });
 
 export const findTournament = cache(async (slug: string): Promise<Tournament | undefined> => {
   if (!dbConfigured()) return SAMPLE_TOURNAMENTS.find((t) => t.slug === slug);
   return buildSafe(async () => {
     const col = await collection<Tournament>("tournaments");
-    return (await col.findOne({ slug }, { projection: { _id: 0 } })) ?? undefined;
-  }, undefined);
+    const found = await col.findOne({ slug }, { projection: { _id: 0 } });
+    return (found as Tournament) ?? SAMPLE_TOURNAMENTS.find((t) => t.slug === slug);
+  }, SAMPLE_TOURNAMENTS.find((t) => t.slug === slug));
 });
 
 /** Insert or replace. `previousSlug` lets an admin rename a tournament. */
