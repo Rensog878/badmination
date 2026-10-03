@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Expand, Minimize } from "lucide-react";
+import { Activity, Expand, Minimize, Trophy } from "lucide-react";
 import { sideName } from "@/components/live/CourtCard";
 import { useLiveFeed } from "@/components/live/useLiveFeed";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
 import RollingScore from "@/components/live/RollingScore";
 import LiveStreamPlayer from "@/components/live/LiveStreamPlayer";
+import MatchWinnerCardModal from "@/components/live/MatchWinnerCardModal";
+import MatchAnalytics from "@/components/live/MatchAnalytics";
 
 const SIDES: Side[] = ["a", "b"];
 
@@ -48,6 +50,8 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
   const liveMatches = snapshot.matches.filter((m) => m.status === "live");
   const frame = useRef<HTMLDivElement>(null);
   const [fullscreen, setFullscreen] = useState(false);
+  const [showVictoryModal, setShowVictoryModal] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const now = useNow();
   const canFullscreen = useFullscreenSupported();
 
@@ -205,22 +209,49 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
         </div>
 
         <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-off-white/10 pt-5">
-          <div aria-hidden="true" className="flex flex-wrap items-center gap-1" title="Rallies this game">
-            {rallies.map((r, i) => (
-              <span key={i} className={`rally-in h-4 w-1.5 ${r.side === "a" ? "-translate-y-1 bg-court-green" : "translate-y-1 bg-off-white/50"}`} />
-            ))}
+          <div className="flex flex-wrap items-center gap-3">
+            <div aria-hidden="true" className="flex flex-wrap items-center gap-1" title="Rallies this game">
+              {rallies.map((r, i) => (
+                <span key={i} className={`rally-in h-4 w-1.5 ${r.side === "a" ? "-translate-y-1 bg-court-green" : "translate-y-1 bg-off-white/50"}`} />
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowAnalytics(!showAnalytics)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-muted hover:border-court-green/40 hover:text-court-green transition-colors"
+            >
+              <Activity className="size-3 text-court-green" />
+              <span>{showAnalytics ? "Hide Stats" : "Match Stats"}</span>
+            </button>
           </div>
           {pressure && !finished && (
             <p key={`${pressure.kind}-${pressure.side}`} className="badge-pop rounded-lg bg-court-green px-3 py-1 font-display text-sm font-semibold tracking-[0.2em] text-black uppercase">
               {pressure.kind === "match" ? "Match point" : "Game point"} · {sideName(match, pressure.side)}
             </p>
           )}
-          {finished && match.winner && (
-            <p className="font-display text-sm font-semibold tracking-[0.2em] text-court-green uppercase">
-              {sideName(match, match.winner)} win
-            </p>
+          {finished && (
+            <div className="flex flex-wrap items-center gap-3">
+              {match.winner && (
+                <p className="font-display text-sm font-semibold tracking-[0.2em] text-court-green uppercase">
+                  {sideName(match, match.winner)} win
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={() => setShowVictoryModal(true)}
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-court-green px-3.5 py-1.5 font-display text-xs font-bold tracking-[0.14em] text-black uppercase hover:bg-off-white transition-all shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+              >
+                <Trophy className="size-3.5" />
+                <span>Share Story Card</span>
+              </button>
+            </div>
           )}
         </footer>
+
+        {/* BWF Match Analytics & Momentum Drawer */}
+        {showAnalytics && !fullscreen && (
+          <MatchAnalytics match={match} />
+        )}
 
         <p className="sr-only" aria-live="polite">
           {finished && match.winner
@@ -229,6 +260,14 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
                 pressure ? ` ${pressure.kind === "match" ? "Match" : "Game"} point ${sideName(match, pressure.side)}.` : ""
               }`}
         </p>
+
+        {showVictoryModal && (
+          <MatchWinnerCardModal
+            match={match}
+            tournamentName={initial.slug.replace(/-/g, " ")}
+            onClose={() => setShowVictoryModal(false)}
+          />
+        )}
       </div>
     </div>
   );

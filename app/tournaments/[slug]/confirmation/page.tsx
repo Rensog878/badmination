@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarPlus, CircleCheck, Clock } from "lucide-react";
 import PrintButton from "@/components/registration/PrintButton";
+import DigitalPlayerPass from "@/components/registration/DigitalPlayerPass";
 import { SITE, TRIAL } from "@/lib/content";
 import {
   fetchOrder,
@@ -180,6 +181,22 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
                 Directions<span className="sr-only"> (opens in a new tab)</span>
               </a>
             </div>
+
+            {/* Official Digital Player Pass with Scannable QR Code */}
+            {result.kind === "ok" && (
+              <DigitalPlayerPass
+                orderId={result.order.id}
+                tournamentName={t.name}
+                tournamentSlug={t.slug}
+                city={t.city}
+                venue={t.venue}
+                dates={formatRange(t.startDate, t.endDate)}
+                level={t.level}
+                events={eventNames(t, result.order.notes.events)}
+                paymentId={result.payment?.id}
+                email={result.order.notes.email}
+              />
+            )}
 
             {paid && (
               <section aria-labelledby="next-heading" className="mt-14">

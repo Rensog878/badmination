@@ -213,3 +213,60 @@ export async function quickFinishMatchAction(fd: FormData) {
   await flushFeed(t);
   revalidateAll(slug);
 }
+
+export async function advanceWinnerAction(fd: FormData): Promise<void> {
+  const auth = await adminOrError();
+  if ("error" in auth) return;
+  const slug = String(fd.get("slug") ?? "");
+  const id = String(fd.get("id") ?? "");
+  const t = await findTournament(slug);
+  if (!t) return;
+
+  await ensureFeed(t, { forceReal: true });
+  const snap = getSnapshot(t);
+  const match = snap.matches.find((m) => m.id === id);
+  if (!match || !match.winner) return;
+
+  const winnerNames = match.sides[match.winner];
+  if (!winnerNames || winnerNames.length === 0) return;
+
+  const rLower = match.round.toLowerCase();
+  let nextRound = "";
+  if (rLower.includes("32")) nextRound = "Round of 16";
+  else if (rLower.includes("16")) nextRound = "Quarter-Finals";
+  else if (rLower.includes("quarter")) nextRound = "Semi-Finals";
+  else if (rLower.includes("semi")) nextRound = "Championship Final";
+  else return;
+
+  const candidateMatch = snap.matches.find(
+    (m) =>
+      m.event === match.event &&
+      m.round.toLowerCase().includes(nextRound.toLowerCase().split("-")[0]) &&
+      m.status === "scheduled" &&
+      (m.sides.a.some((p) => p.toUpperCase().includes("TBD") || p.toUpperCase().includes("WINNER")) ||
+        m.sides.b.some((p) => p.toUpperCase().includes("TBD") || p.toUpperCase().includes("WINNER")) ||
+        m.sides.b.length === 0),
+  );
+
+  if (candidateMatch) {
+    if (candidateMatch.sides.a.some((p) => p.toUpperCase().includes("TBD") || p.toUpperCase().includes("WINNER"))) {
+      candidateMatch.sides.a = winnerNames;
+    } else {
+      candidateMatch.sides.b = winnerNames;
+    }
+  } else {
+    addMatch(t, {
+      event: match.event,
+      round: nextRound,
+      a: winnerNames,
+      b: ["TBD (Awaiting Match)"],
+      status: "scheduled",
+      court: null,
+      games: [],
+    });
+  }
+
+  await flushFeed(t);
+  revalidateAll(slug);
+}
+

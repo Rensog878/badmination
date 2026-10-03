@@ -1,10 +1,11 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { Plus, Edit2, Play, CheckCircle2, Trash2, Trophy, Flame, Clock, X, Tv } from "lucide-react";
+import { Plus, Edit2, Play, CheckCircle2, Trash2, Trophy, Flame, Clock, X, Tv, ArrowRight } from "lucide-react";
 import type { FormState } from "@/app/admin/actions";
 import {
   addMatchAction,
+  advanceWinnerAction,
   clearAllMatchesAction,
   editMatchAction,
   quickFinishMatchAction,
@@ -743,6 +744,22 @@ export default function MatchManager({
                     >
                       <CheckCircle2 className="size-3.5" />
                       <span>Finish</span>
+                    </button>
+                  </form>
+                )}
+
+                {/* 1-Tap Advance Winner to Next Round */}
+                {isFinished && m.winner && !m.round.toLowerCase().includes("final") && (
+                  <form action={advanceWinnerAction}>
+                    <input type="hidden" name="slug" value={slug} />
+                    <input type="hidden" name="id" value={m.id} />
+                    <button
+                      type="submit"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-court-green/40 bg-court-green/10 px-3 py-2 text-xs font-bold tracking-[0.12em] text-court-green uppercase transition-all hover:bg-court-green hover:text-black shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+                      title="Advance winner to next round bracket slot"
+                    >
+                      <ArrowRight className="size-3.5" />
+                      <span>Advance</span>
                     </button>
                   </form>
                 )}
