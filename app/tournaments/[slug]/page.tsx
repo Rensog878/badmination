@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { findTournament, listTournaments } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,6 +28,11 @@ import {
 
 /** Status depends on the date: re-render hourly. Unknown slugs 404. */
 export const revalidate = 3600;
+
+export const viewport: Viewport = {
+  themeColor: "#f4f6f9",
+  colorScheme: "light",
+};
 
 const RELATED_COUNT = 3;
 

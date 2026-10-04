@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { findTournament } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,6 +20,11 @@ import { eventKey } from "@/lib/registration";
 import { eventLabel, formatInr, formatRange, mapsUrl, type Tournament } from "@/lib/tournaments";
 
 export const metadata: Metadata = { title: `Entry confirmation | ${SITE.title}`, robots: { index: false, follow: false } };
+
+export const viewport: Viewport = {
+  themeColor: "#f4f6f9",
+  colorScheme: "light",
+};
 
 type PageProps = {
   params: Promise<{ slug: string }>;

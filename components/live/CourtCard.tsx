@@ -27,7 +27,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
   return (
     <article
       aria-label={`Court ${court}: ${sideName(match, "a")} versus ${sideName(match, "b")}, game ${gameNumber}, ${current.a}–${current.b}`}
-      className="group relative flex flex-col rounded-2xl border border-white/[0.1] bg-gradient-to-br from-black/80 via-black/70 to-court-green/[0.04] backdrop-blur-xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-court-green/60 hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)] active:scale-[0.985]"
+      className="group relative flex flex-col rounded-2xl border border-off-white/[0.1] bg-gradient-to-br from-black/80 via-black/70 to-court-green/[0.04] backdrop-blur-xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-court-green/60 hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)] active:scale-[0.985]"
     >
       {href && (
         <Link href={href} className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-court-green rounded-2xl">

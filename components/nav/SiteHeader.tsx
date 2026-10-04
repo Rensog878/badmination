@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+  import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -22,13 +22,21 @@ export default function SiteHeader() {
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const pathname = usePathname();
 
-  // Staff areas (admin, umpire console) have their own compact headers.
-  if (pathname.startsWith("/admin") || pathname.startsWith("/umpire")) return null;
-
   // Distinguish dark pages from daylight tournament pages
   const isDarkPage = pathname === "/" || pathname === "/live" || pathname.includes("/live");
   const isRegisterPage = pathname.endsWith("/register");
   const backed = solid || pathname !== "/";
+
+  // Dynamic status bar and browser toolbar tint matching active page palette
+  useEffect(() => {
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute("content", isDarkPage ? "#0A0A0A" : "#F4F6F9");
+    }
+  }, [isDarkPage]);
+
+  // Staff areas (admin, umpire console) have their own compact headers.
+  if (pathname.startsWith("/admin") || pathname.startsWith("/umpire")) return null;
 
   return (
     <>

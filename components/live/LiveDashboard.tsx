@@ -73,7 +73,7 @@ export default function LiveDashboard({
               <span className="font-display text-[10px] font-black tracking-widest text-amber-400 uppercase">
                 Public Announcement
               </span>
-              <p className="font-display text-sm font-bold text-white sm:text-base">
+              <p className="font-display text-sm font-bold text-off-white sm:text-base">
                 {snapshot.activeAnnouncement}
               </p>
             </div>
