@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Activity, Expand, Minimize, Trophy } from "lucide-react";
+import { Activity, Expand, Minimize, Trophy, TrendingUp } from "lucide-react";
 import { sideName } from "@/components/live/CourtCard";
 import { useLiveFeed } from "@/components/live/useLiveFeed";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
@@ -10,6 +10,8 @@ import RollingScore from "@/components/live/RollingScore";
 import LiveStreamPlayer from "@/components/live/LiveStreamPlayer";
 import MatchWinnerCardModal from "@/components/live/MatchWinnerCardModal";
 import MatchAnalytics from "@/components/live/MatchAnalytics";
+import MomentumWaveformChart from "@/components/live/MomentumWaveformChart";
+import StadiumCheerBar from "@/components/live/StadiumCheerBar";
 
 const SIDES: Side[] = ["a", "b"];
 
@@ -52,6 +54,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
   const [fullscreen, setFullscreen] = useState(false);
   const [showVictoryModal, setShowVictoryModal] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showWaveform, setShowWaveform] = useState(true);
   const now = useNow();
   const canFullscreen = useFullscreenSupported();
 
@@ -217,8 +220,24 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             </div>
             <button
               type="button"
+              onClick={() => setShowWaveform(!showWaveform)}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] transition-colors ${
+                showWaveform
+                  ? "border-court-green bg-court-green/15 text-court-green"
+                  : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-court-green"
+              }`}
+            >
+              <TrendingUp className="size-3 text-court-green" />
+              <span>{showWaveform ? "Hide Waveform" : "Momentum Waveform"}</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setShowAnalytics(!showAnalytics)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-off-white/10 bg-off-white/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-muted hover:border-court-green/40 hover:text-court-green transition-colors"
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] transition-colors ${
+                showAnalytics
+                  ? "border-court-green bg-court-green/15 text-court-green"
+                  : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-court-green"
+              }`}
             >
               <Activity className="size-3 text-court-green" />
               <span>{showAnalytics ? "Hide Stats" : "Match Stats"}</span>
@@ -247,6 +266,18 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             </div>
           )}
         </footer>
+
+        {/* Live Stadium Cheer Reaction Engine */}
+        {!fullscreen && (
+          <StadiumCheerBar matchId={match.id} />
+        )}
+
+        {/* BWF Momentum Waveform Chart */}
+        {showWaveform && !fullscreen && (
+          <div className="mt-6">
+            <MomentumWaveformChart match={match} />
+          </div>
+        )}
 
         {/* BWF Match Analytics & Momentum Drawer */}
         {showAnalytics && !fullscreen && (

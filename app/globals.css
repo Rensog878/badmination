@@ -139,6 +139,24 @@ body {
   animation: score-tick 0.5s ease-out;
 }
 
+@keyframes float-fade {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.8);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translateY(-60px) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-130px) scale(0.9);
+  }
+}
+.animate-float-fade {
+  animation: float-fade 1.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .strip-in,
   .score-tick,
