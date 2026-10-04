@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Trophy, Crown, Radio, ArrowUpRight, Printer, Award, ZoomIn, ZoomOut, RotateCcw, Compass } from "lucide-react";
 import type { Tournament } from "@/lib/tournaments";
 import type { LiveMatch } from "@/lib/live/types";
+import MobileCategorySheet from "@/components/tournaments/MobileCategorySheet";
 
 export interface BracketNode {
   id: string;
@@ -421,7 +422,16 @@ export default function TournamentBracket({
       )}
 
       {/* Mobile Round Selector (< md) */}
-      <div className="mt-6 md:hidden">
+      <div className="mt-6 md:hidden space-y-3">
+        <MobileCategorySheet
+          currentCategory={category}
+          onSelectCategory={(cat) => setCategory(cat)}
+          currentRound={mobileRound}
+          onSelectRound={(rnd) => setMobileRound(rnd)}
+          quartersCount={quarters.length}
+          semisCount={semis.length}
+        />
+
         <div className="grid grid-cols-3 gap-1 rounded-xl border border-off-white/15 bg-black/40 p-1 font-display text-xs font-bold uppercase">
           <button
             type="button"

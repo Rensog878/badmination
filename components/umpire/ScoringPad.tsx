@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { Check, Mic, MicOff, ShieldAlert, Timer, Tv, Undo2, Volume2, VolumeX, X, Vibrate, VibrateOff } from "lucide-react";
+import { Check, Mic, MicOff, ShieldAlert, Timer, Tv, Undo2, Volume2, VolumeX, X, Vibrate, VibrateOff, Hand } from "lucide-react";
 import { scoreRally, undoRally, updateCourtStreamAction } from "@/app/umpire/actions";
 import { sideName } from "@/components/live/CourtCard";
 import { FieldError } from "@/components/registration/FormField";
@@ -86,6 +86,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [hapticEnabled, setHapticEnabled] = useState(true);
+  const [thumbMode, setThumbMode] = useState<"off" | "right" | "left">("off");
   const [showStreamDrawer, setShowStreamDrawer] = useState(false);
   const [showCardsDrawer, setShowCardsDrawer] = useState(false);
   const [streamInput, setStreamInput] = useState("");
@@ -323,6 +324,28 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           >
             <Tv className="size-4" />
             <span className="hidden sm:inline">{match.streamUrl ? "Stream Linked" : "Attach Stream"}</span>
+          </button>
+
+          {/* Single-Hand Thumb Mode Button */}
+          <button
+            type="button"
+            onClick={() => {
+              const next = thumbMode === "off" ? "right" : thumbMode === "right" ? "left" : "off";
+              setThumbMode(next);
+              triggerHaptic("point", hapticEnabled);
+            }}
+            aria-label="Toggle Single-Hand Ergonomic Thumb Pad"
+            className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
+              thumbMode !== "off"
+                ? "border-court-green bg-court-green/20 text-court-green shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+                : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+            }`}
+            title="Toggle Single-Hand Mobile Thumb Mode (Right/Left reach)"
+          >
+            <Hand className="size-4" />
+            <span className="hidden sm:inline">
+              {thumbMode === "off" ? "Thumb Pad" : thumbMode === "right" ? "Right Thumb" : "Left Thumb"}
+            </span>
           </button>
 
           {/* Tactile Haptic Feedback Button */}
@@ -646,6 +669,78 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
       {error && (
         <div role="alert" className="mt-4">
           <FieldError message={error} />
+        </div>
+      )}
+
+      {/* Single-Hand Ergonomic Mobile Thumb Arc Pad */}
+      {thumbMode !== "off" && !finished && match.status === "live" && (
+        <div
+          className={`fixed bottom-4 z-50 flex flex-col gap-2 rounded-3xl border border-court-green/50 bg-black/95 p-3 backdrop-blur-2xl shadow-[0_16px_50px_rgba(0,0,0,0.9)] animate-fade-in ${
+            thumbMode === "right" ? "right-4 items-end" : "left-4 items-start"
+          }`}
+        >
+          <div className="flex items-center justify-between w-full gap-2 px-1 pb-1 border-b border-off-white/10 text-[10px] font-bold uppercase tracking-wider text-muted">
+            <span className="flex items-center gap-1 text-court-green">
+              <Hand className="size-3" />
+              <span>{thumbMode === "right" ? "Right-Thumb" : "Left-Thumb"} Arc</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setThumbMode(thumbMode === "right" ? "left" : "off")}
+              className="text-muted hover:text-off-white text-[9px] uppercase px-1 py-0.5 rounded bg-off-white/10"
+            >
+              {thumbMode === "right" ? "Left" : "Close"}
+            </button>
+          </div>
+
+          <div className="flex gap-2">
+            {/* Point to A */}
+            <button
+              type="button"
+              onClick={() => act("a")}
+              disabled={pending}
+              className={`flex flex-col items-center justify-center rounded-2xl border p-3 min-w-[5.2rem] min-h-[5.2rem] active:scale-90 transition-all ${
+                match.server === "a"
+                  ? "border-court-green bg-court-green/20 text-court-green shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                  : "border-off-white/20 bg-off-white/5 text-off-white"
+              }`}
+            >
+              <span className="text-[10px] font-black uppercase text-court-green truncate max-w-[4.8rem]">
+                {sideName(match, "a").split(" ")[0]}
+              </span>
+              <span className="font-display text-3xl font-black tabular-nums">{current.a}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-muted">+1 Pt</span>
+            </button>
+
+            {/* Point to B */}
+            <button
+              type="button"
+              onClick={() => act("b")}
+              disabled={pending}
+              className={`flex flex-col items-center justify-center rounded-2xl border p-3 min-w-[5.2rem] min-h-[5.2rem] active:scale-90 transition-all ${
+                match.server === "b"
+                  ? "border-court-green bg-court-green/20 text-court-green shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                  : "border-off-white/20 bg-off-white/5 text-off-white"
+              }`}
+            >
+              <span className="text-[10px] font-black uppercase text-court-green truncate max-w-[4.8rem]">
+                {sideName(match, "b").split(" ")[0]}
+              </span>
+              <span className="font-display text-3xl font-black tabular-nums">{current.b}</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-muted">+1 Pt</span>
+            </button>
+          </div>
+
+          {/* Quick Undo in Thumb Reach */}
+          <button
+            type="button"
+            onClick={() => act("undo")}
+            disabled={pending || match.history.length === 0}
+            className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-off-white/20 bg-off-white/5 py-2 font-display text-[10px] font-bold uppercase tracking-wider text-muted hover:text-off-white active:scale-95 disabled:opacity-40"
+          >
+            <Undo2 className="size-3" />
+            <span>Undo Rally</span>
+          </button>
         </div>
       )}
     </div>
