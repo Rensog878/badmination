@@ -6,6 +6,8 @@ import { useLiveFeed, type Connection } from "@/components/live/useLiveFeed";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
 import PlayerMatchFinder from "@/components/tournaments/PlayerMatchFinder";
 import TournamentBracket from "@/components/tournaments/TournamentBracket";
+import StadiumArenaMap from "@/components/live/StadiumArenaMap";
+import { LayoutGrid, MapPin } from "lucide-react";
 
 const UP_NEXT_COUNT = 6;
 
@@ -29,6 +31,7 @@ export default function LiveDashboard({
   tournamentName?: string;
 }) {
   const { snapshot, connection } = useLiveFeed(initial.slug, initial);
+  const [viewMode, setViewMode] = useState<"arena" | "grid">("arena");
   const [announcement, setAnnouncement] = useState("");
   const seenFinished = useRef(new Set(initial.matches.filter((m) => m.status === "finished").map((m) => m.id)));
 
@@ -104,20 +107,61 @@ export default function LiveDashboard({
       </div>
 
       <section aria-labelledby={courtsHeadingId} className="mt-10">
-        <h2 id={courtsHeadingId} className="sr-only">Courts</h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: snapshot.courts }, (_, i) => i + 1).map((court) => {
-            const match = live.find((m) => m.court === court);
-            return (
-              <CourtCard
-                key={court}
-                court={court}
-                match={match}
-                href={match ? `/tournaments/${snapshot.slug}/live/${match.id}` : undefined}
-              />
-            );
-          })}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <h2 id={courtsHeadingId} className="font-display text-sm font-bold tracking-[0.2em] uppercase text-muted">
+            Live Courts & Arena Floor
+          </h2>
+
+          {/* View Toggle */}
+          <div className="inline-flex rounded-xl border border-off-white/10 bg-black/60 p-1 backdrop-blur-md">
+            <button
+              type="button"
+              onClick={() => setViewMode("arena")}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-display text-xs font-semibold tracking-wider transition-all ${
+                viewMode === "arena"
+                  ? "bg-court-green text-black shadow-md font-bold"
+                  : "text-muted hover:text-off-white"
+              }`}
+            >
+              <MapPin className="size-3.5" />
+              <span>Arena Floorplan</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("grid")}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-display text-xs font-semibold tracking-wider transition-all ${
+                viewMode === "grid"
+                  ? "bg-court-green text-black shadow-md font-bold"
+                  : "text-muted hover:text-off-white"
+              }`}
+            >
+              <LayoutGrid className="size-3.5" />
+              <span>Card Grid</span>
+            </button>
+          </div>
         </div>
+
+        {viewMode === "arena" ? (
+          <StadiumArenaMap
+            slug={snapshot.slug}
+            courtsCount={snapshot.courts}
+            matches={snapshot.matches}
+          />
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: snapshot.courts }, (_, i) => i + 1).map((court) => {
+              const match = live.find((m) => m.court === court);
+              return (
+                <CourtCard
+                  key={court}
+                  court={court}
+                  match={match}
+                  href={match ? `/tournaments/${snapshot.slug}/live/${match.id}` : undefined}
+                />
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Instant Player / Match / Court Lookup Finder */}
