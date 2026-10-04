@@ -291,3 +291,27 @@ textarea {
     scroll-behavior: auto !important;
   }
 }
+
+/* Print Optimization for Tournament Draws & Order of Play */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+  }
+  nav, footer, .no-print, [data-pwa-banner], [data-mobile-menu] {
+    display: none !important;
+  }
+  .print-page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+  .print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}

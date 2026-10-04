@@ -13,9 +13,25 @@ export default async function EditTournamentPage({ params }: PageProps) {
     <div className="max-w-3xl">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">{t.name}</h1>
-        <Link href={`/tournaments/${t.slug}`} className="text-sm text-court-green underline underline-offset-4">
-          View public page
-        </Link>
+        <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
+          <Link
+            href={`/tournaments/${t.slug}/print`}
+            target="_blank"
+            className="rounded-lg border border-off-white/20 bg-off-white/5 px-3 py-1.5 text-off-white hover:border-court-green/50 hover:text-court-green transition-all"
+          >
+            🖨️ Print Draws & Schedule
+          </Link>
+          <Link
+            href={`/tournaments/${t.slug}/live`}
+            target="_blank"
+            className="rounded-lg border border-court-green/30 bg-court-green/10 px-3 py-1.5 text-court-green hover:bg-court-green hover:text-black transition-all"
+          >
+            Live Console
+          </Link>
+          <Link href={`/tournaments/${t.slug}`} className="text-muted hover:text-off-white underline underline-offset-4">
+            View public page
+          </Link>
+        </div>
       </div>
       <div className="mt-8">
         <TournamentForm tournament={t} />

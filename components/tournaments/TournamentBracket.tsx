@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Trophy, Crown, Radio, ArrowUpRight } from "lucide-react";
+import { Trophy, Crown, Radio, ArrowUpRight, Printer } from "lucide-react";
 import type { Tournament } from "@/lib/tournaments";
 import type { LiveMatch } from "@/lib/live/types";
 
@@ -241,33 +241,45 @@ export default function TournamentBracket({
           </p>
         </div>
 
-        {/* Category Switcher */}
-        {(hasSinglesEvent && hasDoublesEvent) && (
-          <div className="flex rounded-xl border border-off-white/15 bg-black/40 p-1">
-            <button
-              type="button"
-              onClick={() => setCategory("singles")}
-              className={`rounded-lg px-4 py-2 font-display text-xs font-bold tracking-[0.14em] uppercase transition-all ${
-                category === "singles"
-                  ? "bg-court-green text-black shadow-sm"
-                  : "text-muted hover:text-off-white"
-              }`}
-            >
-              Singles Draw
-            </button>
-            <button
-              type="button"
-              onClick={() => setCategory("doubles")}
-              className={`rounded-lg px-4 py-2 font-display text-xs font-bold tracking-[0.14em] uppercase transition-all ${
-                category === "doubles"
-                  ? "bg-court-green text-black shadow-sm"
-                  : "text-muted hover:text-off-white"
-              }`}
-            >
-              Doubles Draw
-            </button>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Category Switcher */}
+          {(hasSinglesEvent && hasDoublesEvent) && (
+            <div className="flex rounded-xl border border-off-white/15 bg-black/40 p-1">
+              <button
+                type="button"
+                onClick={() => setCategory("singles")}
+                className={`rounded-lg px-4 py-2 font-display text-xs font-bold tracking-[0.14em] uppercase transition-all ${
+                  category === "singles"
+                    ? "bg-court-green text-black shadow-sm"
+                    : "text-muted hover:text-off-white"
+                }`}
+              >
+                Singles Draw
+              </button>
+              <button
+                type="button"
+                onClick={() => setCategory("doubles")}
+                className={`rounded-lg px-4 py-2 font-display text-xs font-bold tracking-[0.14em] uppercase transition-all ${
+                  category === "doubles"
+                    ? "bg-court-green text-black shadow-sm"
+                    : "text-muted hover:text-off-white"
+                }`}
+              >
+                Doubles Draw
+              </button>
+            </div>
+          )}
+
+          <Link
+            href={`/tournaments/${tournament.slug}/print`}
+            target="_blank"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-off-white/15 bg-black/40 px-3.5 py-1.5 text-xs font-semibold text-muted hover:border-court-green/50 hover:text-court-green transition-all"
+            title="Print Official Tournament Draw Sheet"
+          >
+            <Printer className="size-3.5" />
+            <span className="font-display tracking-wider uppercase text-[11px] font-bold">Print Draw</span>
+          </Link>
+        </div>
       </div>
 
       {/* Champion Gold Celebration Banner */}
