@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { Check, Mic, MicOff, ShieldAlert, Timer, Tv, Undo2, Volume2, VolumeX, X } from "lucide-react";
+import { Check, Mic, MicOff, ShieldAlert, Timer, Tv, Undo2, Volume2, VolumeX, X, Vibrate, VibrateOff } from "lucide-react";
 import { scoreRally, undoRally, updateCourtStreamAction } from "@/app/umpire/actions";
 import { sideName } from "@/components/live/CourtCard";
 import { FieldError } from "@/components/registration/FormField";
@@ -10,6 +10,34 @@ import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scori
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
 
 const KEYS: Record<string, Side | "undo"> = { a: "a", b: "b", ArrowLeft: "a", ArrowRight: "b", u: "undo", Backspace: "undo" };
+
+function triggerHaptic(type: "point" | "pressure" | "win" | "undo" | "card" | "interval", enabled: boolean) {
+  if (!enabled || typeof window === "undefined" || !("vibrate" in navigator)) return;
+  try {
+    switch (type) {
+      case "point":
+        navigator.vibrate?.([28]);
+        break;
+      case "pressure":
+        navigator.vibrate?.([40, 50, 40]);
+        break;
+      case "win":
+        navigator.vibrate?.([60, 40, 60, 40, 100]);
+        break;
+      case "undo":
+        navigator.vibrate?.([70]);
+        break;
+      case "card":
+        navigator.vibrate?.([120, 60, 120]);
+        break;
+      case "interval":
+        navigator.vibrate?.([150, 80, 150, 80, 250]);
+        break;
+    }
+  } catch {
+    // Vibration blocked or unsupported
+  }
+}
 
 function playBeep(freq = 900, duration = 0.08) {
   try {
@@ -57,6 +85,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
   const [pending, startTransition] = useTransition();
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [hapticEnabled, setHapticEnabled] = useState(true);
   const [showStreamDrawer, setShowStreamDrawer] = useState(false);
   const [showCardsDrawer, setShowCardsDrawer] = useState(false);
   const [streamInput, setStreamInput] = useState("");
@@ -79,9 +108,12 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
   const act = useCallback(
     (what: Side | "undo") => {
       if (pending) return;
-      // Haptic feedback
-      if (typeof window !== "undefined" && "vibrate" in navigator) {
-        navigator.vibrate?.([30]);
+      // Contextual tactile haptic feedback
+      if (what === "undo") {
+        triggerHaptic("undo", hapticEnabled);
+      } else {
+        const isPressure = match?.games ? Boolean(pressurePoint(match.games)) : false;
+        triggerHaptic(isPressure ? "pressure" : "point", hapticEnabled);
       }
       // Audio chime
       if (soundEnabled) {
@@ -93,6 +125,9 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
         const res = what === "undo" ? await undoRally(initial.slug, matchId) : await scoreRally(initial.slug, matchId, what);
         if (res.ok) {
           setConfirmed(res.match);
+          if (res.match.status === "finished") {
+            triggerHaptic("win", hapticEnabled);
+          }
           if (voiceEnabled && what !== "undo") {
             const currentGame = res.match.games[res.match.games.length - 1];
             if (currentGame) {
@@ -112,7 +147,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
         }
       });
     },
-    [pending, initial.slug, matchId, soundEnabled, voiceEnabled],
+    [pending, initial.slug, matchId, soundEnabled, voiceEnabled, hapticEnabled, match],
   );
 
   useEffect(() => {
@@ -139,6 +174,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
     if (intervalTime <= 0) {
       setIntervalRunning(false);
       setIntervalTime(null);
+      triggerHaptic("interval", hapticEnabled);
       playBeep(980, 0.4);
       if (voiceEnabled) speakBwfCall("Time! Court, play!");
       return;
@@ -154,7 +190,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [intervalRunning, intervalTime, voiceEnabled]);
+  }, [intervalRunning, intervalTime, voiceEnabled, hapticEnabled]);
 
   const startInterval = (seconds: number) => {
     setIntervalTime(seconds);
@@ -178,6 +214,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
 
   const issueDisciplinaryCard = (side: Side, type: "yellow" | "red" | "black") => {
     if (!match) return;
+    triggerHaptic("card", hapticEnabled);
     const timeStr = new Date().toLocaleTimeString([], { minute: "2-digit", second: "2-digit" });
     const log = {
       id: Math.random().toString(36).slice(2, 7),
@@ -286,6 +323,31 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           >
             <Tv className="size-4" />
             <span className="hidden sm:inline">{match.streamUrl ? "Stream Linked" : "Attach Stream"}</span>
+          </button>
+
+          {/* Tactile Haptic Feedback Button */}
+          <button
+            type="button"
+            onClick={() => setHapticEnabled(!hapticEnabled)}
+            aria-label={hapticEnabled ? "Disable tactile haptic feedback" : "Enable tactile haptic feedback"}
+            className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
+              hapticEnabled
+                ? "border-court-green/40 bg-court-green/10 text-court-green"
+                : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+            }`}
+            title="Toggle tactile haptic vibration patterns"
+          >
+            {hapticEnabled ? (
+              <>
+                <Vibrate className="size-4 text-court-green animate-pulse" />
+                <span className="hidden sm:inline">Haptics ON</span>
+              </>
+            ) : (
+              <>
+                <VibrateOff className="size-4 text-muted" />
+                <span className="hidden sm:inline">Haptics OFF</span>
+              </>
+            )}
           </button>
 
           {/* Audio Chime Button */}
