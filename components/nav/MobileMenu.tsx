@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Download } from "lucide-react";
 import { NAV_CTA, VISIBLE_NAV_LINKS } from "@/lib/content";
 
 interface MobileMenuProps {
@@ -10,11 +10,50 @@ interface MobileMenuProps {
   id: string;
 }
 
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
+
 const FOCUSABLE = "a[href], button:not([disabled])";
 
 /** Full-screen menu for < lg. Traps focus, closes on Escape, locks page scroll. */
 export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
   const panel = useRef<HTMLDivElement>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isStandaloneMode =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        Boolean((window.navigator as unknown as { standalone?: boolean }).standalone);
+      setIsStandalone(Boolean(isStandaloneMode));
+
+      const handleBeforeInstall = (e: Event) => {
+        e.preventDefault();
+        setDeferredPrompt(e as BeforeInstallPromptEvent);
+      };
+      window.addEventListener("beforeinstallprompt", handleBeforeInstall);
+      return () => window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
+    }
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+      if (choiceResult.outcome === "accepted") {
+        setDeferredPrompt(null);
+      }
+    } else {
+      alert("To install Badmination on your home screen:\n\n1. In Safari/Chrome, tap the Share/Menu button\n2. Tap 'Add to Home Screen'");
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -81,15 +120,28 @@ export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
           ))}
         </ol>
       </nav>
-      <a
-        href={NAV_CTA.href}
-        onClick={onClose}
-        style={{ animationDelay: `${60 + VISIBLE_NAV_LINKS.length * 50}ms` }}
-        className="menu-item-in rounded-lg inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase"
-      >
-        {NAV_CTA.label}
-        <ArrowRight aria-hidden="true" className="size-4" />
-      </a>
+      <div className="flex flex-col gap-2.5">
+        <a
+          href={NAV_CTA.href}
+          onClick={onClose}
+          style={{ animationDelay: `${60 + VISIBLE_NAV_LINKS.length * 50}ms` }}
+          className="menu-item-in rounded-xl inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white transition-colors"
+        >
+          {NAV_CTA.label}
+          <ArrowRight aria-hidden="true" className="size-4" />
+        </a>
+
+        {!isStandalone && (
+          <button
+            type="button"
+            onClick={handleInstallClick}
+            className="menu-item-in rounded-xl inline-flex min-h-11 items-center justify-center gap-2 border border-off-white/15 bg-off-white/5 px-4 py-2.5 font-display text-xs font-semibold tracking-[0.14em] text-off-white uppercase hover:border-court-green/40 hover:text-court-green transition-colors"
+          >
+            <Download className="size-3.5 text-court-green" />
+            <span>Install Stadium App</span>
+          </button>
+        )}
+      </div>
     </div>
   );
 }

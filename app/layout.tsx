@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import SiteHeader from "@/components/nav/SiteHeader";
+import PwaProvider from "@/components/pwa/PwaProvider";
 import { SITE } from "@/lib/content";
 import "./globals.css";
 
@@ -19,6 +20,16 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: SITE.title,
   description: SITE.description,
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Badmination",
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export const viewport: Viewport = {
@@ -45,7 +56,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <SiteHeader />
-        {children}
+        <PwaProvider>{children}</PwaProvider>
       </body>
     </html>
   );
