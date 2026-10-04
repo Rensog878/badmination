@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { CheckCircle2, Clock, Search, Users, QrCode, Undo2 } from "lucide-react";
+import { CheckCircle2, Clock, Search, Users, QrCode, Undo2, MessageSquare } from "lucide-react";
 import { listRegistrations, registrationStats, type RegistrationStatus } from "@/lib/data/registrations";
 import { listTournaments } from "@/lib/data/tournaments";
 import { formatInr } from "@/lib/tournaments";
 import { toggleCheckInAction } from "@/app/admin/actions";
+import { buildCheckInMessage, getWhatsAppDirectUrl } from "@/lib/whatsapp";
 
 type PageProps = {
   searchParams: Promise<{
@@ -357,6 +358,26 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
                 >
                   Call
                 </a>
+
+                <a
+                  href={getWhatsAppDirectUrl(
+                    r.player.phone,
+                    buildCheckInMessage({
+                      tournamentName: r.tournamentName,
+                      playerName: r.player.fullName,
+                      reference: r.reference,
+                      events: r.events,
+                      checkedIn: Boolean(r.checkedIn),
+                    })
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+                  title="Send WhatsApp Desk Notice"
+                >
+                  <MessageSquare className="size-3.5" />
+                  <span>WhatsApp</span>
+                </a>
               </div>
             </li>
           );
@@ -464,7 +485,28 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
 
                   {/* Contact & Club */}
                   <td className="py-3.5 px-3">
-                    <span className="block text-xs text-off-white">{r.player.phone}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="block text-xs font-semibold text-off-white">{r.player.phone}</span>
+                      <a
+                        href={getWhatsAppDirectUrl(
+                          r.player.phone,
+                          buildCheckInMessage({
+                            tournamentName: r.tournamentName,
+                            playerName: r.player.fullName,
+                            reference: r.reference,
+                            events: r.events,
+                            checkedIn: Boolean(r.checkedIn),
+                          })
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+                        title="Send WhatsApp Desk Notice"
+                      >
+                        <MessageSquare className="size-2.5" />
+                        <span>WA</span>
+                      </a>
+                    </div>
                     <span className="block text-xs text-muted">
                       {r.player.club || r.player.city || "Direct Entry"}
                     </span>

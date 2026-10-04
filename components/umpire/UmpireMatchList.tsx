@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { sideName } from "@/components/live/CourtCard";
 import StartMatchButton from "@/components/umpire/StartMatchButton";
+import MatchCallButton from "@/components/umpire/MatchCallButton";
 import { useLiveFeed } from "@/components/live/useLiveFeed";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
 import { ChevronRight, Radio, Trophy } from "lucide-react";
@@ -16,9 +17,11 @@ const scoreLine = (m: LiveMatch) =>
 export default function UmpireMatchList({
   slug,
   initial,
+  tournamentName,
 }: {
   slug: string;
   initial: LiveSnapshot;
+  tournamentName?: string;
 }) {
   const { snapshot, connection } = useLiveFeed(slug, initial);
 
@@ -50,6 +53,13 @@ export default function UmpireMatchList({
           <span>{scheduled.length} in queue</span>
         </div>
       </div>
+
+      {snapshot.activeAnnouncement && (
+        <div className="flex items-center gap-2.5 rounded-xl border border-court-green/30 bg-court-green/10 px-4 py-3 text-xs text-court-green shadow-[0_0_15px_rgba(16,185,129,0.15)] animate-in fade-in">
+          <Radio className="size-4 shrink-0 animate-pulse text-court-green" />
+          <span className="font-semibold">{snapshot.activeAnnouncement}</span>
+        </div>
+      )}
 
       {snapshot.demo && (
         <p className="rounded-xl border border-dashed border-amber-400/40 bg-amber-400/5 p-4 text-xs text-amber-200">
@@ -160,7 +170,13 @@ export default function UmpireMatchList({
                 </p>
               </div>
 
-              <div>
+              <div className="flex items-center gap-2.5">
+                <MatchCallButton
+                  slug={slug}
+                  match={m}
+                  tournamentName={tournamentName || "Tournament"}
+                  courtsCount={snapshot.courts}
+                />
                 <StartMatchButton slug={slug} matchId={m.id} />
               </div>
             </li>

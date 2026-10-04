@@ -21,7 +21,7 @@ export default async function UmpireMatchesPage({ params }: PageProps) {
 
   return (
     <UmpireShell slug={slug} next={`/umpire/${slug}`}>
-      <UmpireMatchList slug={slug} initial={snapshot} />
+      <UmpireMatchList slug={slug} initial={snapshot} tournamentName={t.name} />
     </UmpireShell>
   );
 }

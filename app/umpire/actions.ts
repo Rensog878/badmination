@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { findTournament } from "@/lib/data/tournaments";
-import { editMatch, ensureFeed, flushFeed, umpireScore, umpireStart, umpireUndo, type UmpireResult } from "@/lib/live/store";
+import { callMatchToCourt, editMatch, ensureFeed, flushFeed, umpireScore, umpireStart, umpireUndo, type UmpireResult } from "@/lib/live/store";
 import type { Side } from "@/lib/live/scoring";
 import type { Tournament } from "@/lib/tournaments";
 import { logout } from "@/lib/auth/session";
@@ -84,4 +84,18 @@ export async function updateCourtStreamAction(slug: string, matchId: string, str
   revalidatePath(`/tournaments/${slug}/live/${matchId}`);
   revalidatePath("/live");
   return { ok: true, streamUrl: updated.streamUrl };
+}
+
+export async function callMatchAction(slug: string, matchId: string, courtNumber: number) {
+  const g = await guard(slug);
+  if ("error" in g) return { ok: false, error: g.error };
+  const updated = callMatchToCourt(g.t, matchId, courtNumber);
+  if (!updated) return { ok: false, error: "Match not found" };
+  await flushFeed(g.t);
+  revalidatePath(`/umpire/${slug}`);
+  revalidatePath(`/umpire/${slug}/${matchId}`);
+  revalidatePath(`/tournaments/${slug}/live`);
+  revalidatePath(`/tournaments/${slug}/live/${matchId}`);
+  revalidatePath("/live");
+  return { ok: true, match: updated };
 }
