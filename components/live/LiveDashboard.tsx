@@ -5,6 +5,7 @@ import CourtCard, { sideName } from "@/components/live/CourtCard";
 import { useLiveFeed, type Connection } from "@/components/live/useLiveFeed";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
 import PlayerMatchFinder from "@/components/tournaments/PlayerMatchFinder";
+import TournamentBracket from "@/components/tournaments/TournamentBracket";
 
 const UP_NEXT_COUNT = 6;
 
@@ -124,6 +125,29 @@ export default function LiveDashboard({
         tournamentSlug={snapshot.slug}
         tournamentName={tournamentName || "Badminton Championship"}
         matches={snapshot.matches}
+      />
+
+      {/* Interactive Visual Tournament Knockout Bracket Tree */}
+      <TournamentBracket
+        tournament={{
+          slug: snapshot.slug,
+          name: tournamentName || snapshot.slug.replace(/-/g, " "),
+          city: "Live Arena",
+          venue: "Indoor Badminton Stadium",
+          level: "Open",
+          startDate: "2026-10-24",
+          endDate: "2026-10-26",
+          registrationOpens: "2026-09-10",
+          registrationCloses: "2026-10-05",
+          entryFee: 500,
+          capacity: 128,
+          registered: snapshot.matches.length * 2,
+          events: [
+            { type: "Singles", ageGroup: "Open" },
+            { type: "Doubles", ageGroup: "Open" },
+          ],
+        }}
+        liveMatches={snapshot.matches}
       />
 
       <div className="mt-14 grid gap-12 lg:grid-cols-2">

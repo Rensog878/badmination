@@ -8,6 +8,7 @@ import { toTournament, tournamentFormInput, tournamentFormSchema } from "@/lib/a
 import { PASSWORD_MIN_LENGTH } from "@/lib/auth/password";
 import { createUser, deleteUser, login, logout, type Role } from "@/lib/auth/session";
 import { deleteTournament, findTournament, importSampleTournaments, saveTournament } from "@/lib/data/tournaments";
+import { toggleCheckIn } from "@/lib/data/registrations";
 
 export type FormState = { error?: string; fieldErrors?: Record<string, string>; ok?: string };
 
@@ -112,4 +113,15 @@ export async function deleteUserAction(fd: FormData) {
   if (id === auth.user.id) return; // can't delete yourself
   await deleteUser(id);
   revalidatePath("/admin/users");
+}
+
+// ---------- morning tournament check-in desk ----------
+
+export async function toggleCheckInAction(fd: FormData) {
+  const auth = await adminOrError();
+  if ("error" in auth) return;
+  const reference = String(fd.get("reference") ?? "");
+  const targetState = fd.get("checkedIn") === "true";
+  await toggleCheckIn(reference, targetState);
+  revalidatePath("/admin/registrations");
 }
