@@ -3,7 +3,7 @@ import MatchManager from "@/components/admin/MatchManager";
 import { listTournaments } from "@/lib/data/tournaments";
 import { ensureFeed, getSnapshot } from "@/lib/live/store";
 import { eventLabel, getStatus } from "@/lib/tournaments";
-import { ExternalLink, Radio } from "lucide-react";
+import { ExternalLink, Radio, Tv } from "lucide-react";
 
 type PageProps = { searchParams: Promise<{ t?: string }> };
 
@@ -38,17 +38,25 @@ export default async function AdminLive({ searchParams }: PageProps) {
             Live Matches & Draws
           </h1>
           <p className="mt-1 text-sm text-muted">
-            Manage real-time matches, court assignments, point-by-point scores, and championship brackets.
+            Manage real-time matches, court assignments, point-by-point scores, public address announcements, and TV stadium feeds.
           </p>
         </div>
 
-        <div className="flex w-full sm:w-auto items-center gap-2">
+        <div className="flex flex-wrap w-full sm:w-auto items-center gap-2">
+          <Link
+            href={`/tournaments/${selected.slug}/tv`}
+            target="_blank"
+            className="flex-1 sm:flex-initial inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3.5 py-2 font-display text-xs font-bold tracking-[0.12em] text-amber-300 uppercase transition-all hover:bg-amber-400 hover:text-black"
+          >
+            <Tv className="size-3.5" />
+            <span>Arena TV</span>
+          </Link>
           <Link
             href={`/tournaments/${selected.slug}/live`}
             target="_blank"
             className="flex-1 sm:flex-initial inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3.5 py-2 font-display text-xs font-bold tracking-[0.12em] text-off-white uppercase hover:border-court-green/50 hover:bg-court-green/10"
           >
-            <span>Public Scoreboard</span>
+            <span>Scoreboard</span>
             <ExternalLink className="size-3.5" />
           </Link>
           <Link
@@ -95,6 +103,8 @@ export default async function AdminLive({ searchParams }: PageProps) {
         events={selected.events.map(eventLabel)}
         matches={snapshot.matches}
         isDemo={snapshot.demo}
+        activeAnnouncement={snapshot.activeAnnouncement ?? null}
+        courts={snapshot.courts}
       />
     </div>
   );

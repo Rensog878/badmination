@@ -6,6 +6,8 @@ import { adminOrError } from "@/lib/admin/guard";
 import { findTournament } from "@/lib/data/tournaments";
 import {
   addMatch,
+  broadcastAnnouncement,
+  callMatchToCourt,
   clearMatches,
   editMatch,
   ensureFeed,
@@ -266,6 +268,37 @@ export async function advanceWinnerAction(fd: FormData): Promise<void> {
     });
   }
 
+  await flushFeed(t);
+  revalidateAll(slug);
+}
+
+export async function broadcastAnnouncementAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  const auth = await adminOrError();
+  if ("error" in auth) return { error: auth.error };
+  const slug = String(fd.get("slug") ?? "");
+  const t = await findTournament(slug);
+  if (!t) return { error: "Tournament not found." };
+  const message = String(fd.get("message") ?? "").trim();
+
+  await ensureFeed(t, { forceReal: true });
+  broadcastAnnouncement(t, message || null);
+  await flushFeed(t);
+  revalidateAll(slug);
+  return { ok: message ? "Public announcement broadcast to TVs and live scoreboards." : "Announcement cleared." };
+}
+
+export async function callMatchToCourtAction(fd: FormData): Promise<void> {
+  const auth = await adminOrError();
+  if ("error" in auth) return;
+  const slug = String(fd.get("slug") ?? "");
+  const id = String(fd.get("id") ?? "");
+  const courtRaw = fd.get("court");
+  const court = courtRaw ? parseInt(String(courtRaw), 10) : 1;
+  const t = await findTournament(slug);
+  if (!t) return;
+
+  await ensureFeed(t, { forceReal: true });
+  callMatchToCourt(t, id, isNaN(court) ? 1 : court);
   await flushFeed(t);
   revalidateAll(slug);
 }

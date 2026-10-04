@@ -22,6 +22,10 @@ export interface LiveMatch {
   controlledBy: "umpire" | null;
   /** Optional live stream or highlight replay URL (YouTube, Twitch, Vimeo, MP4, etc.) */
   streamUrl?: string | null;
+  /** Estimated match start time e.g. "11:30 AM" */
+  estimatedTime?: string | null;
+  /** Set when a player is actively paged to a court */
+  calledToCourt?: number | null;
 }
 
 export interface LiveSnapshot {
@@ -31,4 +35,6 @@ export interface LiveSnapshot {
   courts: number;
   matches: LiveMatch[];
   updatedAt: number;
+  /** Active venue paging announcement (e.g. "Calling Court 3: A. Sharma vs R. Verma") */
+  activeAnnouncement?: string | null;
 }

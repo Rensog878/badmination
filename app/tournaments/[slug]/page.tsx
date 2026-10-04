@@ -7,6 +7,7 @@ import { ArrowRight, ExternalLink, Radio } from "lucide-react";
 import RegistrationCard from "@/components/tournaments/RegistrationCard";
 import StatusBadge from "@/components/tournaments/StatusBadge";
 import TournamentBracket from "@/components/tournaments/TournamentBracket";
+import PlayerMatchFinder from "@/components/tournaments/PlayerMatchFinder";
 import SchoolLeaderboard from "@/components/tournaments/SchoolLeaderboard";
 import TournamentRow from "@/components/tournaments/TournamentRow";
 import CourtLines from "@/components/ui/CourtLines";
@@ -159,6 +160,8 @@ export default async function TournamentPage({ params }: PageProps) {
               </table>
             </div>
           </section>
+
+          <PlayerMatchFinder tournamentSlug={t.slug} tournamentName={t.name} matches={snapshot.matches} />
 
           <TournamentBracket tournament={t} liveMatches={snapshot.matches} />
 

@@ -1,11 +1,29 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { Plus, Edit2, Play, CheckCircle2, Trash2, Trophy, Flame, Clock, X, Tv, ArrowRight } from "lucide-react";
+import {
+  Plus,
+  Edit2,
+  Play,
+  CheckCircle2,
+  Trash2,
+  Trophy,
+  Flame,
+  Clock,
+  X,
+  Tv,
+  ArrowRight,
+  Megaphone,
+  Send,
+  Bell,
+  MessageCircle,
+} from "lucide-react";
 import type { FormState } from "@/app/admin/actions";
 import {
   addMatchAction,
   advanceWinnerAction,
+  broadcastAnnouncementAction,
+  callMatchToCourtAction,
   clearAllMatchesAction,
   editMatchAction,
   quickFinishMatchAction,
@@ -21,6 +39,8 @@ interface MatchManagerProps {
   events: string[];
   matches: LiveMatch[];
   isDemo: boolean;
+  activeAnnouncement?: string | null;
+  courts?: number;
 }
 
 const ROUND_PRESETS = [
@@ -38,10 +58,23 @@ export default function MatchManager({
   events,
   matches,
   isDemo,
+  activeAnnouncement = null,
+  courts = 4,
 }: MatchManagerProps) {
   const [filter, setFilter] = useState<"all" | "live" | "scheduled" | "finished">("all");
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingMatchId, setEditingMatchId] = useState<string | null>(null);
+  const [announcementText, setAnnouncementText] = useState("");
+  const [callCourtSelections, setCallCourtSelections] = useState<Record<string, number>>({});
+
+  const [broadcastState, broadcastAction, broadcastPending] = useActionState<FormState, FormData>(
+    async (prev, fd) => {
+      const res = await broadcastAnnouncementAction(prev, fd);
+      if (res.ok) setAnnouncementText("");
+      return res;
+    },
+    {}
+  );
 
   const [addState, addAction, addPending] = useActionState<FormState, FormData>(
     async (prev, fd) => {
@@ -83,8 +116,103 @@ export default function MatchManager({
 
   const editingMatch = matches.find((m) => m.id === editingMatchId);
 
+  const handleWhatsAppCall = (m: LiveMatch, courtNum: number) => {
+    const sA = m.sides.a.join(" / ");
+    const sB = m.sides.b.join(" / ");
+    const msg = `🏸 *MATCH CALL - ${tournamentName}*\n\n*Court ${courtNum}* is now calling:\n*${sA}* vs *${sB}*\nEvent: ${m.event} (${m.round})\n\n👉 *Please report to Court ${courtNum} immediately!*`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+  };
+
   return (
     <div className="space-y-6">
+      {/* Venue Public Address & Stadium TV Announcement Ticker Control */}
+      <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/[0.07] via-black/40 to-amber-500/[0.04] p-5 backdrop-blur-md">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-black shadow-md shadow-amber-400/20">
+              <Megaphone className="size-4 animate-bounce" />
+            </span>
+            <div>
+              <h3 className="font-display text-sm font-extrabold tracking-wider uppercase text-off-white">
+                Public Address & Arena TV Banner
+              </h3>
+              <p className="text-xs text-muted">
+                Push instant scrolling tickers to venue Stadium Arena TVs and spectators&apos; mobile devices.
+              </p>
+            </div>
+          </div>
+
+          {activeAnnouncement && (
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/20 px-3 py-1 font-display text-xs font-bold text-amber-300 uppercase">
+                <span className="size-2 rounded-full bg-amber-400 animate-ping" />
+                Active on Screens
+              </span>
+              <form action={broadcastAction}>
+                <input type="hidden" name="slug" value={slug} />
+                <input type="hidden" name="message" value="" />
+                <button
+                  type="submit"
+                  disabled={broadcastPending}
+                  className="rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-bold text-red-300 hover:bg-red-500 hover:text-black transition-colors"
+                >
+                  Clear Screen
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+
+        {activeAnnouncement && (
+          <div className="mt-3 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-2.5 text-xs font-semibold text-amber-200">
+            📢 Now Displaying: &quot;{activeAnnouncement}&quot;
+          </div>
+        )}
+
+        <form action={broadcastAction} className="mt-4 flex flex-col gap-2 sm:flex-row">
+          <input type="hidden" name="slug" value={slug} />
+          <input
+            name="message"
+            value={announcementText}
+            onChange={(e) => setAnnouncementText(e.target.value)}
+            placeholder="Type custom announcement (e.g. Warm-up starting in 5 minutes on Court 3)..."
+            className="min-h-11 flex-1 rounded-xl border border-white/15 bg-black/50 px-3.5 py-2 text-sm text-off-white placeholder:text-muted/60 focus:border-amber-400 focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={broadcastPending}
+            className="btn-shimmer inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-2 font-display text-xs font-black tracking-wider uppercase text-black hover:bg-white disabled:opacity-50 transition-all shadow-md shadow-amber-400/20"
+          >
+            <Send className="size-3.5" />
+            <span>{broadcastPending ? "Broadcasting…" : "Broadcast to TVs"}</span>
+          </button>
+        </form>
+
+        {broadcastState.ok && <p className="mt-2 text-xs text-court-green">{broadcastState.ok}</p>}
+        {broadcastState.error && <p className="mt-2 text-xs text-red-400">{broadcastState.error}</p>}
+
+        {/* Quick Presets */}
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] font-bold text-muted uppercase tracking-wider mr-1">Quick Presets:</span>
+          {[
+            "🏸 Warm-up session starting in 5 minutes on all courts",
+            "☕ Lunch Break: Matches resume promptly at 2:00 PM",
+            "🏆 Prize Presentation Ceremony starting on Court 1",
+            "📢 Paging All Quarter-Finalists to report to desk",
+            "🚨 Shuttlecock & Stringing Desk is now open",
+          ].map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              onClick={() => setAnnouncementText(preset)}
+              className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-muted hover:border-amber-400/50 hover:text-off-white transition-colors"
+            >
+              {preset.split(":")[0]}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Top Banner & Control Bar */}
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -653,6 +781,14 @@ export default function MatchManager({
                     </span>
                   )}
 
+                  {/* Called to Court Alert Badge */}
+                  {m.calledToCourt && m.status === "scheduled" && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/60 bg-amber-500/20 px-2.5 py-0.5 text-[10px] font-black tracking-wider text-amber-300 uppercase animate-pulse shadow-[0_0_12px_rgba(245,158,11,0.3)]">
+                      <Bell className="size-3 animate-bounce" />
+                      <span>Called: Court {m.calledToCourt}</span>
+                    </span>
+                  )}
+
                   {/* Stream Badge */}
                   {m.streamUrl && (
                     <span className="inline-flex items-center gap-1 rounded-md border border-red-500/30 bg-red-600/10 px-2 py-0.5 text-[10px] font-bold text-red-400">
@@ -718,6 +854,53 @@ export default function MatchManager({
 
               {/* Right Column: Actions */}
               <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3 sm:border-t-0 sm:pt-0">
+                {/* 1-Tap Call to Court + WhatsApp Dispatch (if scheduled) */}
+                {m.status === "scheduled" && (
+                  <div className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-1">
+                    <form
+                      action={async (fd) => {
+                        await callMatchToCourtAction(fd);
+                        const c = callCourtSelections[m.id] ?? m.court ?? 1;
+                        handleWhatsAppCall(m, c);
+                      }}
+                      className="flex items-center gap-1.5"
+                    >
+                      <input type="hidden" name="slug" value={slug} />
+                      <input type="hidden" name="id" value={m.id} />
+                      <select
+                        name="court"
+                        value={callCourtSelections[m.id] ?? m.court ?? 1}
+                        onChange={(e) =>
+                          setCallCourtSelections({ ...callCourtSelections, [m.id]: parseInt(e.target.value, 10) })
+                        }
+                        className="rounded-lg border border-white/15 bg-black/60 px-2 py-1 text-xs font-bold text-amber-300 focus:outline-none"
+                      >
+                        {Array.from({ length: Math.max(courts, 6) }, (_, i) => i + 1).map((c) => (
+                          <option key={c} value={c}>
+                            CT {c}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="submit"
+                        className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-amber-400 px-2.5 py-1 text-xs font-black tracking-wider text-black uppercase hover:bg-white transition-all shadow-sm shadow-amber-400/20"
+                        title="Broadcast match call to TVs and dispatch to WhatsApp"
+                      >
+                        <Bell className="size-3" />
+                        <span>Call to Court</span>
+                      </button>
+                    </form>
+                    <button
+                      type="button"
+                      onClick={() => handleWhatsAppCall(m, callCourtSelections[m.id] ?? m.court ?? 1)}
+                      className="rounded-lg p-1.5 text-emerald-400 hover:bg-emerald-400/20 transition-colors"
+                      title="Share to WhatsApp"
+                    >
+                      <MessageCircle className="size-4" />
+                    </button>
+                  </div>
+                )}
+
                 {/* Quick Start (if scheduled) */}
                 {m.status === "scheduled" && (
                   <form action={quickStartMatchAction}>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import CourtCard, { sideName } from "@/components/live/CourtCard";
 import { useLiveFeed, type Connection } from "@/components/live/useLiveFeed";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
+import PlayerMatchFinder from "@/components/tournaments/PlayerMatchFinder";
 
 const UP_NEXT_COUNT = 6;
 
@@ -19,7 +20,13 @@ const CONNECTION_LABEL: Record<Connection, string> = {
   reconnecting: "Reconnecting…",
 };
 
-export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
+export default function LiveDashboard({
+  initial,
+  tournamentName,
+}: {
+  initial: LiveSnapshot;
+  tournamentName?: string;
+}) {
   const { snapshot, connection } = useLiveFeed(initial.slug, initial);
   const [announcement, setAnnouncement] = useState("");
   const seenFinished = useRef(new Set(initial.matches.filter((m) => m.status === "finished").map((m) => m.id)));
@@ -54,6 +61,25 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
 
   return (
     <div>
+      {/* Real-time Venue Announcement Banner */}
+      {snapshot.activeAnnouncement && (
+        <div className="mb-8 rounded-2xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-amber-500/15 p-4 shadow-lg backdrop-blur-md animate-pulse">
+          <div className="flex items-center gap-3">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-black font-black text-base shadow-md">
+              📢
+            </span>
+            <div className="min-w-0">
+              <span className="font-display text-[10px] font-black tracking-widest text-amber-400 uppercase">
+                Public Announcement
+              </span>
+              <p className="font-display text-sm font-bold text-white sm:text-base">
+                {snapshot.activeAnnouncement}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {snapshot.demo && (
         <p role="note" className="mb-8 border border-dashed border-court-green/50 px-5 py-3 text-sm text-off-white">
           <span className="font-display font-semibold tracking-[0.15em] text-court-green uppercase">Demo feed · </span>
@@ -92,6 +118,13 @@ export default function LiveDashboard({ initial }: { initial: LiveSnapshot }) {
           })}
         </div>
       </section>
+
+      {/* Instant Player / Match / Court Lookup Finder */}
+      <PlayerMatchFinder
+        tournamentSlug={snapshot.slug}
+        tournamentName={tournamentName || "Badminton Championship"}
+        matches={snapshot.matches}
+      />
 
       <div className="mt-14 grid gap-12 lg:grid-cols-2">
         <section aria-labelledby={nextHeadingId}>

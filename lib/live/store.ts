@@ -420,6 +420,8 @@ export interface EditMatchInput {
   games?: LiveMatch["games"];
   winner?: LiveMatch["winner"];
   streamUrl?: string | null;
+  calledToCourt?: number | null;
+  estimatedTime?: string | null;
 }
 
 export function editMatch(t: Tournament, input: EditMatchInput): LiveMatch | null {
@@ -434,6 +436,8 @@ export function editMatch(t: Tournament, input: EditMatchInput): LiveMatch | nul
   if (input.b !== undefined && input.b.length > 0) match.sides.b = input.b;
   if (input.games !== undefined) match.games = input.games;
   if (input.streamUrl !== undefined) match.streamUrl = input.streamUrl?.trim() || null;
+  if (input.calledToCourt !== undefined) match.calledToCourt = input.calledToCourt;
+  if (input.estimatedTime !== undefined) match.estimatedTime = input.estimatedTime;
 
   if (input.status !== undefined) {
     match.status = input.status;
@@ -558,3 +562,24 @@ export function clearMatches(t: Tournament): void {
   feed.snapshot.updatedAt = Date.now();
   publish(feed);
 }
+
+export function broadcastAnnouncement(t: Tournament, message: string | null): void {
+  const feed = getFeed(t);
+  feed.snapshot.activeAnnouncement = message && message.trim() ? message.trim() : null;
+  feed.snapshot.updatedAt = Date.now();
+  publish(feed);
+}
+
+export function callMatchToCourt(t: Tournament, id: string, courtNumber: number): LiveMatch | null {
+  const feed = getFeed(t);
+  const match = feed.snapshot.matches.find((m) => m.id === id);
+  if (!match) return null;
+  match.calledToCourt = courtNumber;
+  const pA = match.sides.a.join(" / ");
+  const pB = match.sides.b.join(" / ");
+  feed.snapshot.activeAnnouncement = `🔔 MATCH CALL: Court ${courtNumber} — ${pA} vs ${pB} (${match.event} · ${match.round}). Please report to court immediately!`;
+  feed.snapshot.updatedAt = Date.now();
+  publish(feed);
+  return match;
+}
+
