@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { findTournament } from "@/lib/data/tournaments";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarPlus, CircleCheck, Clock } from "lucide-react";
+import { CalendarPlus, CircleCheck, Clock, Award } from "lucide-react";
 import PrintButton from "@/components/registration/PrintButton";
 import DigitalPlayerPass from "@/components/registration/DigitalPlayerPass";
 import StudentCertificateButton from "@/components/registration/StudentCertificateButton";
@@ -179,17 +179,36 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
               </a>
               <PrintButton className="rounded-lg inline-flex items-center justify-center gap-2 border border-off-white/20 px-6 py-3.5 font-display text-xs font-semibold tracking-[0.16em] uppercase hover:border-court-green hover:text-court-green" />
               {result.kind === "ok" && (
-                <StudentCertificateButton
-                  studentName={result.order.notes.player || "Student Athlete"}
-                  institution={result.order.notes.institution}
-                  studentId={result.order.notes.studentId}
-                  tournamentName={t.name}
-                  tournamentCity={t.city}
-                  tournamentVenue={t.venue}
-                  dates={formatRange(t.startDate, t.endDate)}
-                  events={eventNames(t, result.order.notes.events)}
-                  reference={result.order.notes.reference || result.order.receipt || "CONFIRMED"}
-                />
+                <>
+                  <StudentCertificateButton
+                    studentName={result.order.notes.player || "Student Athlete"}
+                    institution={result.order.notes.institution}
+                    studentId={result.order.notes.studentId}
+                    tournamentName={t.name}
+                    tournamentCity={t.city}
+                    tournamentVenue={t.venue}
+                    dates={formatRange(t.startDate, t.endDate)}
+                    events={eventNames(t, result.order.notes.events)}
+                    reference={result.order.notes.reference || result.order.receipt || "CONFIRMED"}
+                  />
+
+                  <Link
+                    href={`/tournaments/${t.slug}/certificate?name=${encodeURIComponent(
+                      result.order.notes.player || "Athlete"
+                    )}&ref=${encodeURIComponent(
+                      result.order.notes.reference || result.order.receipt || ""
+                    )}&event=${encodeURIComponent(
+                      eventNames(t, result.order.notes.events)
+                    )}&club=${encodeURIComponent(
+                      result.order.notes.institution || ""
+                    )}&type=participation`}
+                    target="_blank"
+                    className="rounded-lg inline-flex items-center justify-center gap-2 border border-amber-400/40 bg-amber-400/10 px-6 py-3.5 font-display text-xs font-bold tracking-[0.16em] uppercase text-amber-300 hover:bg-amber-400 hover:text-black transition-all shadow-md shadow-amber-400/10"
+                  >
+                    <Award className="size-4" />
+                    <span>Official Certificate</span>
+                  </Link>
+                </>
               )}
               <a
                 href={mapsUrl(t)}

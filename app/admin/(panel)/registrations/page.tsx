@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, Clock, Search, Users, QrCode, Undo2, MessageSquare } from "lucide-react";
+import { CheckCircle2, Clock, Search, Users, QrCode, Undo2, MessageSquare, Award } from "lucide-react";
 import { listRegistrations, registrationStats, type RegistrationStatus } from "@/lib/data/registrations";
 import { listTournaments } from "@/lib/data/tournaments";
 import { formatInr } from "@/lib/tournaments";
@@ -378,6 +378,20 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
                   <MessageSquare className="size-3.5" />
                   <span>WhatsApp</span>
                 </a>
+
+                <Link
+                  href={`/tournaments/${r.tournamentSlug}/certificate?name=${encodeURIComponent(
+                    r.player.fullName
+                  )}&ref=${encodeURIComponent(r.reference)}&event=${encodeURIComponent(
+                    r.events.join(", ")
+                  )}&club=${encodeURIComponent(r.player.club || "")}&type=participation`}
+                  target="_blank"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 text-xs font-semibold text-amber-300 hover:bg-amber-400/20 transition-colors"
+                  title="Generate Official Tournament Certificate"
+                >
+                  <Award className="size-3.5" />
+                  <span>Certificate</span>
+                </Link>
               </div>
             </li>
           );
@@ -472,7 +486,22 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
                     <span className="block font-display font-bold text-off-white">
                       {r.player.fullName}
                     </span>
-                    <span className="font-mono text-xs text-muted">{r.reference}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs text-muted">{r.reference}</span>
+                      <Link
+                        href={`/tournaments/${r.tournamentSlug}/certificate?name=${encodeURIComponent(
+                          r.player.fullName
+                        )}&ref=${encodeURIComponent(r.reference)}&event=${encodeURIComponent(
+                          r.events.join(", ")
+                        )}&club=${encodeURIComponent(r.player.club || "")}&type=participation`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1 rounded bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-300 hover:bg-amber-400/20 transition-colors"
+                        title="Print / View Official Certificate"
+                      >
+                        <Award className="size-2.5" />
+                        <span>Cert</span>
+                      </Link>
+                    </div>
                   </td>
 
                   {/* Tournament & Events */}

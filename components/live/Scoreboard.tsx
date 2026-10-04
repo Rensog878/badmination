@@ -264,6 +264,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
         {showVictoryModal && (
           <MatchWinnerCardModal
             match={match}
+            tournamentSlug={initial.slug}
             tournamentName={initial.slug.replace(/-/g, " ")}
             onClose={() => setShowVictoryModal(false)}
           />

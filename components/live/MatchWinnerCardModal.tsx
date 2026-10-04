@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Download, Share2, Trophy, X, Check } from "lucide-react";
+import Link from "next/link";
+import { Download, Share2, Trophy, X, Check, Award } from "lucide-react";
 import type { LiveMatch } from "@/lib/live/types";
 import { sideName } from "@/components/live/CourtCard";
 import { gamesWon } from "@/lib/live/scoring";
@@ -9,6 +10,7 @@ import { gamesWon } from "@/lib/live/scoring";
 interface MatchWinnerCardModalProps {
   match: LiveMatch;
   tournamentName: string;
+  tournamentSlug?: string;
   venue?: string;
   onClose: () => void;
 }
@@ -16,6 +18,7 @@ interface MatchWinnerCardModalProps {
 export default function MatchWinnerCardModal({
   match,
   tournamentName,
+  tournamentSlug = "",
   venue = "Arena Complex",
   onClose,
 }: MatchWinnerCardModalProps) {
@@ -279,6 +282,19 @@ export default function MatchWinnerCardModal({
               <span>Save Image</span>
             </button>
           </div>
+
+          {tournamentSlug && (
+            <Link
+              href={`/tournaments/${tournamentSlug}/certificate?name=${encodeURIComponent(
+                winnerName
+              )}&type=winner&event=${encodeURIComponent(match.event)}`}
+              target="_blank"
+              className="mt-3 flex min-h-11 items-center justify-center gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-2 font-display text-xs font-bold uppercase tracking-wider text-amber-300 hover:bg-amber-400/20 transition-all"
+            >
+              <Award className="size-4" />
+              <span>Generate Official Certificate</span>
+            </Link>
+          )}
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Trophy, Crown, Radio, ArrowUpRight, Printer } from "lucide-react";
+import { Trophy, Crown, Radio, ArrowUpRight, Printer, Award } from "lucide-react";
 import type { Tournament } from "@/lib/tournaments";
 import type { LiveMatch } from "@/lib/live/types";
 
@@ -299,8 +299,24 @@ export default function TournamentBracket({
                 </p>
               </div>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 font-display text-xs font-bold text-amber-300 uppercase">
-              <span>Gold Medal Winner</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 font-display text-xs font-bold text-amber-300 uppercase">
+                <span>Gold Medal Winner</span>
+              </div>
+
+              <Link
+                href={`/tournaments/${tournament.slug}/certificate?name=${encodeURIComponent(
+                  championName
+                )}&type=winner&event=${encodeURIComponent(
+                  category === "singles" ? "Open Singles" : "Open Doubles"
+                )}`}
+                target="_blank"
+                className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/60 bg-amber-400/20 px-3.5 py-1 font-display text-xs font-bold text-amber-300 uppercase hover:bg-amber-400 hover:text-black transition-all shadow-[0_0_12px_rgba(234,179,8,0.3)]"
+                title="Generate Official Championship Certificate"
+              >
+                <Award className="size-3.5" />
+                <span>Champion Certificate</span>
+              </Link>
             </div>
           </div>
         </div>
