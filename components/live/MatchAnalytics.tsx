@@ -220,9 +220,9 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
       : graph?.points[graph.points.length - 1] ?? null;
 
   return (
-    <div className="mt-6 rounded-2xl border border-white/10 bg-black/60 p-5 backdrop-blur-md animate-fade-in">
+    <div className="mt-6 rounded-2xl border border-off-white/10 bg-black/60 p-5 backdrop-blur-md animate-fade-in">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-off-white/10 pb-3">
         <div className="flex items-center gap-2">
           <Activity className="size-4 text-court-green" />
           <h3 className="font-display text-xs font-bold tracking-[0.16em] uppercase text-off-white">
@@ -231,7 +231,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
         </div>
         <div className="flex items-center gap-3 font-display text-[10px] font-bold tracking-[0.12em] uppercase text-muted">
           <span>Rallies: {analytics.totalA + analytics.totalB}</span>
-          <span className="text-white/20">|</span>
+          <span className="text-muted/40">|</span>
           <span className="text-court-green">Lead Swings: {analytics.leadChanges}</span>
         </div>
       </div>
@@ -246,7 +246,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
             {sideBName} ({analytics.totalB} pts · {analytics.pctB}%)
           </span>
         </div>
-        <div className="mt-2 flex h-3 w-full overflow-hidden rounded-full bg-white/10 p-0.5">
+        <div className="mt-2 flex h-3 w-full overflow-hidden rounded-full bg-off-white/10 p-0.5">
           <div
             style={{ width: `${analytics.pctA}%` }}
             className="h-full rounded-full bg-court-green transition-all duration-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
@@ -261,7 +261,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
       {/* Tactical Telemetry Metrics Grid */}
       <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         {/* Streak A */}
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3 text-center">
+        <div className="rounded-xl border border-off-white/10 bg-off-white/[0.03] p-3 text-center">
           <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-muted uppercase">
             <Flame className="size-3 text-court-green" />
             <span>Best Run ({sideAName.split(" ")[0]})</span>
@@ -272,7 +272,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
         </div>
 
         {/* Streak B */}
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3 text-center">
+        <div className="rounded-xl border border-off-white/10 bg-off-white/[0.03] p-3 text-center">
           <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-muted uppercase">
             <Flame className="size-3 text-off-white" />
             <span>Best Run ({sideBName.split(" ")[0]})</span>
@@ -283,7 +283,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
         </div>
 
         {/* Lead Changes */}
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3 text-center">
+        <div className="rounded-xl border border-off-white/10 bg-off-white/[0.03] p-3 text-center">
           <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-muted uppercase">
             <Shuffle className="size-3 text-amber-400" />
             <span>Lead Swings</span>
@@ -294,7 +294,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
         </div>
 
         {/* Service Wins / Breaks */}
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3 text-center">
+        <div className="rounded-xl border border-off-white/10 bg-off-white/[0.03] p-3 text-center">
           <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-muted uppercase">
             <Zap className="size-3 text-court-green" />
             <span>Serve Holds</span>
@@ -324,10 +324,10 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
 
       {/* Continuous SVG Bezier Momentum Graph */}
       {graph ? (
-        <div className="mt-5 rounded-xl border border-white/5 bg-black/40 p-3">
+        <div className="mt-5 rounded-xl border border-off-white/10 bg-black/40 p-3">
           <div className="flex items-center justify-between text-[11px] font-display uppercase tracking-wider text-muted mb-2">
             <span className="text-court-green font-bold">▲ {sideAName} (+{analytics.maxLeadA} max)</span>
-            <span className="text-xs font-medium text-white/40">Baseline (0 = Tied)</span>
+            <span className="text-xs font-medium text-muted">Baseline (0 = Tied)</span>
             <span className="text-off-white font-bold">▼ {sideBName} (+{analytics.maxLeadB} max)</span>
           </div>
 
@@ -345,8 +345,8 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
                   <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
                 </linearGradient>
                 <linearGradient id="gradientB" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.0" />
-                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0.2" />
+                  <stop offset="0%" stopColor="var(--color-off-white)" stopOpacity="0.0" />
+                  <stop offset="100%" stopColor="var(--color-off-white)" stopOpacity="0.2" />
                 </linearGradient>
                 <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
                   <feGaussianBlur stdDeviation="3" result="blur" />
@@ -363,7 +363,9 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
                 y1={graph.yCenter}
                 x2={graph.viewBoxW - graph.padX}
                 y2={graph.yCenter}
-                stroke="rgba(255, 255, 255, 0.15)"
+                stroke="currentColor"
+                strokeOpacity="0.2"
+                className="text-off-white"
                 strokeWidth="1.5"
                 strokeDasharray="4 4"
               />
@@ -427,7 +429,9 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
                     y1={10}
                     x2={activePoint.x}
                     y2={graph.viewBoxH - 10}
-                    stroke="rgba(255, 255, 255, 0.5)"
+                    stroke="currentColor"
+                    strokeOpacity="0.5"
+                    className="text-off-white"
                     strokeWidth="1.5"
                     strokeDasharray="2 2"
                   />
@@ -435,7 +439,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
                     cx={activePoint.x}
                     cy={activePoint.y}
                     r="6"
-                    fill={activePoint.data.diff > 0 ? "#10b981" : activePoint.data.diff < 0 ? "#ffffff" : "#eab308"}
+                    fill={activePoint.data.diff > 0 ? "#10b981" : activePoint.data.diff < 0 ? "var(--color-off-white)" : "#eab308"}
                     stroke="#000"
                     strokeWidth="2"
                     className="drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]"
@@ -447,7 +451,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
 
           {/* Floating Live Tooltip Banner */}
           {activePoint && (
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-xs">
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-off-white/10 bg-off-white/[0.04] px-3 py-2 text-xs">
               <div className="flex items-center gap-2">
                 <span className="font-display font-black text-court-green uppercase">
                   Rally #{activePoint.data.point}
@@ -473,7 +477,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
                     ? `+${Math.abs(activePoint.data.diff)} ${sideBName}`
                     : "Scores Level (Tied)"}
                 </span>
-                <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] text-muted">
+                <span className="rounded bg-off-white/10 px-1.5 py-0.5 text-[10px] text-muted">
                   Point won by {sideName(match, activePoint.data.side)}
                 </span>
               </div>
@@ -481,7 +485,7 @@ export default function MatchAnalytics({ match }: MatchAnalyticsProps) {
           )}
         </div>
       ) : (
-        <div className="mt-4 rounded-xl border border-dashed border-white/10 p-6 text-center text-xs text-muted">
+        <div className="mt-4 rounded-xl border border-dashed border-off-white/10 p-6 text-center text-xs text-muted">
           Rally data accumulating... Real-time momentum curve renders once play begins.
         </div>
       )}

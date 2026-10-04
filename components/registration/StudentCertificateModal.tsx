@@ -354,7 +354,7 @@ export default function StudentCertificateModal({
             type="button"
             onClick={onClose}
             aria-label="Close certificate dialog"
-            className="rounded-full p-2 text-muted hover:bg-white/10 hover:text-off-white transition-colors"
+            className="rounded-full p-2 text-muted hover:bg-off-white/10 hover:text-off-white transition-colors"
           >
             <X className="size-5" />
           </button>
@@ -364,7 +364,7 @@ export default function StudentCertificateModal({
         <div className="relative flex-1 overflow-auto p-4 sm:p-6 flex items-center justify-center bg-black/80">
           <canvas
             ref={canvasRef}
-            className="w-full max-w-4xl h-auto aspect-[3/2] rounded-xl shadow-2xl border border-white/10"
+            className="w-full max-w-4xl h-auto aspect-[3/2] rounded-xl shadow-2xl border border-off-white/10"
             style={{ imageRendering: "crisp-edges" }}
           />
         </div>
@@ -373,14 +373,14 @@ export default function StudentCertificateModal({
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-off-white/10 bg-black/70 px-6 py-4">
           <div className="flex items-center gap-2 text-xs text-muted">
             <School className="size-4 text-court-green" />
-            <span>Institution: <strong className="text-white">{institution}</strong></span>
+            <span>Institution: <strong className="text-off-white">{institution}</strong></span>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2.5 font-display text-xs font-semibold text-off-white uppercase hover:border-court-green hover:text-court-green transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border border-off-white/20 bg-off-white/5 px-4 py-2.5 font-display text-xs font-semibold text-off-white uppercase hover:border-court-green hover:text-court-green transition-colors"
             >
               <Share2 className="size-4" />
               <span>{copied ? "Copied!" : "Share Certificate"}</span>
@@ -389,7 +389,7 @@ export default function StudentCertificateModal({
             <button
               type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2.5 font-display text-xs font-semibold text-off-white uppercase hover:border-court-green hover:text-court-green transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border border-off-white/20 bg-off-white/5 px-4 py-2.5 font-display text-xs font-semibold text-off-white uppercase hover:border-court-green hover:text-court-green transition-colors"
             >
               <Printer className="size-4" />
               <span>Print / PDF</span>

@@ -217,7 +217,7 @@ textarea {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
+  background: color-mix(in srgb, var(--color-off-white) 20%, transparent);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {

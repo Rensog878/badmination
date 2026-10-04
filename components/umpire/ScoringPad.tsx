@@ -222,7 +222,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
   return (
     <div>
       {/* Top Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-off-white/10 pb-4">
         <div>
           <p className="font-display text-xs tracking-[0.18em] text-muted uppercase">
             {match.court ? `Court ${match.court} · ` : ""}
@@ -251,7 +251,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
             className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
               voiceEnabled
                 ? "border-court-green bg-court-green/20 text-court-green"
-                : "border-white/10 bg-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+                : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
             }`}
           >
             {voiceEnabled ? <Mic className="size-4 text-court-green" /> : <MicOff className="size-4 text-muted" />}
@@ -266,7 +266,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
             className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
               showCardsDrawer
                 ? "border-amber-400 bg-amber-400/20 text-amber-300"
-                : "border-white/10 bg-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+                : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
             }`}
           >
             <ShieldAlert className="size-4" />
@@ -281,7 +281,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
             className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
               match.streamUrl
                 ? "border-red-500/40 bg-red-600/10 text-red-400 hover:border-red-500"
-                : "border-white/10 bg-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+                : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
             }`}
           >
             <Tv className="size-4" />
@@ -293,7 +293,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
             type="button"
             onClick={() => setSoundEnabled(!soundEnabled)}
             aria-label={soundEnabled ? "Mute scoring chimes" : "Enable scoring chimes"}
-            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase text-muted hover:border-court-green/40 hover:text-off-white"
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-off-white/10 bg-off-white/5 px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase text-muted hover:border-court-green/40 hover:text-off-white"
           >
             {soundEnabled ? (
               <>
@@ -311,7 +311,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
       </div>
 
       {/* Interval Timer Ticker */}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-xs">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-off-white/10 bg-off-white/[0.02] p-3 text-xs">
         <div className="flex items-center gap-2">
           <Timer className="size-4 text-court-green" />
           <span className="font-display font-bold uppercase tracking-wider text-muted">BWF Interval:</span>
@@ -328,14 +328,14 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           <button
             type="button"
             onClick={() => startInterval(60)}
-            className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 font-display text-[11px] font-bold uppercase text-off-white hover:border-court-green hover:text-court-green"
+            className="rounded-lg border border-off-white/15 bg-off-white/5 px-2.5 py-1 font-display text-[11px] font-bold uppercase text-off-white hover:border-court-green hover:text-court-green"
           >
             60s (Mid-Game)
           </button>
           <button
             type="button"
             onClick={() => startInterval(120)}
-            className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 font-display text-[11px] font-bold uppercase text-off-white hover:border-court-green hover:text-court-green"
+            className="rounded-lg border border-off-white/15 bg-off-white/5 px-2.5 py-1 font-display text-[11px] font-bold uppercase text-off-white hover:border-court-green hover:text-court-green"
           >
             120s (Between Games)
           </button>
@@ -357,7 +357,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
       {/* Expandable BWF Cards Drawer */}
       {showCardsDrawer && (
         <div className="mt-3 rounded-2xl border border-amber-400/40 bg-black/90 p-4 backdrop-blur-md animate-fade-in shadow-xl">
-          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+          <div className="flex items-center justify-between border-b border-off-white/10 pb-2">
             <div className="flex items-center gap-2">
               <ShieldAlert className="size-4 text-amber-400" />
               <span className="font-display text-xs font-bold uppercase tracking-[0.14em] text-amber-400">
@@ -375,8 +375,8 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {/* Side A Actions */}
-            <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
-              <p className="font-display text-xs font-bold uppercase text-white truncate">{sideName(match, "a")}</p>
+            <div className="rounded-xl border border-off-white/10 bg-off-white/[0.02] p-3">
+              <p className="font-display text-xs font-bold uppercase text-off-white truncate">{sideName(match, "a")}</p>
               <div className="mt-2.5 flex items-center gap-2">
                 <button
                   type="button"
@@ -395,7 +395,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
                 <button
                   type="button"
                   onClick={() => issueDisciplinaryCard("a", "black")}
-                  className="rounded-lg bg-black border border-white/30 px-2 py-1.5 font-display text-[11px] font-bold text-white uppercase hover:bg-white hover:text-black"
+                  className="rounded-lg bg-black border border-off-white/30 px-2 py-1.5 font-display text-[11px] font-bold text-off-white uppercase hover:bg-white hover:text-black"
                 >
                   ⬛ Black
                 </button>
@@ -403,8 +403,8 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
             </div>
 
             {/* Side B Actions */}
-            <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
-              <p className="font-display text-xs font-bold uppercase text-white truncate">{sideName(match, "b")}</p>
+            <div className="rounded-xl border border-off-white/10 bg-off-white/[0.02] p-3">
+              <p className="font-display text-xs font-bold uppercase text-off-white truncate">{sideName(match, "b")}</p>
               <div className="mt-2.5 flex items-center gap-2">
                 <button
                   type="button"
@@ -423,7 +423,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
                 <button
                   type="button"
                   onClick={() => issueDisciplinaryCard("b", "black")}
-                  className="rounded-lg bg-black border border-white/30 px-2 py-1.5 font-display text-[11px] font-bold text-white uppercase hover:bg-white hover:text-black"
+                  className="rounded-lg bg-black border border-off-white/30 px-2 py-1.5 font-display text-[11px] font-bold text-off-white uppercase hover:bg-white hover:text-black"
                 >
                   ⬛ Black
                 </button>
@@ -433,7 +433,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
 
           {/* Sanctions Log */}
           {cardLogs.length > 0 && (
-            <div className="mt-3 border-t border-white/10 pt-3">
+            <div className="mt-3 border-t border-off-white/10 pt-3">
               <p className="font-display text-[10px] font-bold tracking-wider uppercase text-muted">Misconduct Log:</p>
               <ul className="mt-1 space-y-1">
                 {cardLogs.map((log) => (
@@ -452,8 +452,8 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
 
       {/* Expandable Court Stream Drawer */}
       {showStreamDrawer && (
-        <div className="mt-3 rounded-2xl border border-white/15 bg-black/80 p-4 backdrop-blur-md animate-fade-in">
-          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+        <div className="mt-3 rounded-2xl border border-off-white/15 bg-black/80 p-4 backdrop-blur-md animate-fade-in">
+          <div className="flex items-center justify-between border-b border-off-white/10 pb-2">
             <div className="flex items-center gap-2">
               <Tv className="size-4 text-court-green" />
               <span className="font-display text-xs font-bold uppercase tracking-[0.14em] text-off-white">
@@ -477,7 +477,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
               value={streamInput}
               onChange={(e) => setStreamInput(e.target.value)}
               placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/..."
-              className="min-h-11 flex-1 rounded-xl border border-white/15 bg-charcoal px-3 py-2 text-sm text-off-white placeholder:text-muted/60 focus:border-court-green focus:outline-none"
+              className="min-h-11 flex-1 rounded-xl border border-off-white/15 bg-charcoal px-3 py-2 text-sm text-off-white placeholder:text-muted/60 focus:border-court-green focus:outline-none"
             />
             <div className="flex items-center gap-2">
               <button

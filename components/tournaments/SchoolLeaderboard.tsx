@@ -153,7 +153,7 @@ export default function SchoolLeaderboard({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search school or academy..."
-            className="w-full rounded-xl border border-white/15 bg-black/60 py-2 pl-10 pr-4 text-xs text-off-white placeholder:text-muted focus:border-court-green focus:outline-none transition-colors"
+            className="w-full rounded-xl border border-off-white/15 bg-black/60 py-2 pl-10 pr-4 text-xs text-off-white placeholder:text-muted focus:border-court-green focus:outline-none transition-colors"
           />
         </div>
       </div>
@@ -175,7 +175,7 @@ export default function SchoolLeaderboard({
             className={`rounded-lg px-3.5 py-1.5 font-display text-xs font-semibold uppercase tracking-wider transition-colors ${
               filterType === tab.id
                 ? "bg-court-green text-black font-bold shadow-md shadow-court-green/20"
-                : "border border-white/15 bg-white/5 text-muted hover:border-court-green/50 hover:text-off-white"
+                : "border border-off-white/15 bg-off-white/5 text-muted hover:border-court-green/50 hover:text-off-white"
             }`}
           >
             {tab.label}
@@ -195,7 +195,7 @@ export default function SchoolLeaderboard({
               <p className="mt-3 font-display text-base font-bold text-off-white line-clamp-1">{topThree[1].name}</p>
               <p className="text-[11px] text-muted">{topThree[1].city}</p>
             </div>
-            <div className="mt-4 flex items-center justify-center gap-3 border-t border-white/10 pt-3 text-xs">
+            <div className="mt-4 flex items-center justify-center gap-3 border-t border-off-white/10 pt-3 text-xs">
               <span>🥇 {topThree[1].gold}</span>
               <span>🥈 {topThree[1].silver}</span>
               <span>🥉 {topThree[1].bronze}</span>
@@ -216,9 +216,9 @@ export default function SchoolLeaderboard({
               <p className="text-xs text-muted">{topThree[0].city}</p>
             </div>
             <div className="mt-5 flex items-center justify-center gap-4 border-t border-amber-400/20 pt-3 text-sm">
-              <span>🥇 <strong className="text-white">{topThree[0].gold}</strong></span>
-              <span>🥈 <strong className="text-white">{topThree[0].silver}</strong></span>
-              <span>🥉 <strong className="text-white">{topThree[0].bronze}</strong></span>
+              <span>🥇 <strong className="text-off-white">{topThree[0].gold}</strong></span>
+              <span>🥈 <strong className="text-off-white">{topThree[0].silver}</strong></span>
+              <span>🥉 <strong className="text-off-white">{topThree[0].bronze}</strong></span>
               <span className="font-display font-black text-amber-300 text-base">{topThree[0].points} pts</span>
             </div>
           </div>
@@ -232,7 +232,7 @@ export default function SchoolLeaderboard({
               <p className="mt-3 font-display text-base font-bold text-off-white line-clamp-1">{topThree[2].name}</p>
               <p className="text-[11px] text-muted">{topThree[2].city}</p>
             </div>
-            <div className="mt-4 flex items-center justify-center gap-3 border-t border-white/10 pt-3 text-xs">
+            <div className="mt-4 flex items-center justify-center gap-3 border-t border-off-white/10 pt-3 text-xs">
               <span>🥇 {topThree[2].gold}</span>
               <span>🥈 {topThree[2].silver}</span>
               <span>🥉 {topThree[2].bronze}</span>
@@ -246,7 +246,7 @@ export default function SchoolLeaderboard({
       <div className="mt-8 overflow-hidden rounded-2xl border border-off-white/10 bg-black">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-off-white/10 bg-white/[0.02] font-display text-xs tracking-wider text-muted uppercase">
+            <thead className="border-b border-off-white/10 bg-off-white/[0.04] font-display text-xs tracking-wider text-muted uppercase">
               <tr>
                 <th scope="col" className="px-5 py-3.5 text-center w-14">#</th>
                 <th scope="col" className="px-5 py-3.5">Institution / Academy</th>
@@ -261,7 +261,7 @@ export default function SchoolLeaderboard({
               {filtered.map((inst, idx) => {
                 const rankNumber = idx + 1;
                 return (
-                  <tr key={inst.name} className="hover:bg-white/[0.03] transition-colors">
+                  <tr key={inst.name} className="hover:bg-off-white/[0.04] transition-colors">
                     <td className="px-5 py-4 text-center font-display font-bold text-muted">
                       {rankNumber === 1 ? (
                         <span className="text-amber-400">1</span>

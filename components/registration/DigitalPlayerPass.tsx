@@ -201,7 +201,7 @@ export default function DigitalPlayerPass({
               <ShieldCheck className="size-3.5" />
               <span>Official Player Credential</span>
             </span>
-            <span className="rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 font-display text-[11px] font-semibold text-muted uppercase">
+            <span className="rounded-full border border-off-white/15 bg-off-white/5 px-2.5 py-0.5 font-display text-[11px] font-semibold text-muted uppercase">
               {level} Level
             </span>
           </div>
@@ -217,18 +217,18 @@ export default function DigitalPlayerPass({
 
           {playerName && (
             <div className="pt-1">
-              <p className="font-display text-xl font-bold uppercase text-white tracking-wide">{playerName}</p>
+              <p className="font-display text-xl font-bold uppercase text-off-white tracking-wide">{playerName}</p>
               {institution && (
                 <p className="mt-1 inline-flex items-center gap-2 rounded-lg border border-court-green/30 bg-court-green/10 px-2.5 py-1 text-xs text-court-green font-semibold">
                   <span>🏫 {institution}</span>
-                  {studentId && <span className="text-white/80">· ID: {studentId}</span>}
+                  {studentId && <span className="text-muted">· ID: {studentId}</span>}
                 </p>
               )}
             </div>
           )}
 
           <div className="grid gap-3 pt-2 sm:grid-cols-2">
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <div className="rounded-xl border border-off-white/10 bg-off-white/[0.03] p-3">
               <span className="block font-display text-[10px] font-bold tracking-[0.14em] text-court-green uppercase">
                 Registered Event(s)
               </span>
@@ -237,7 +237,7 @@ export default function DigitalPlayerPass({
               </span>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <div className="rounded-xl border border-off-white/10 bg-off-white/[0.03] p-3">
               <span className="block font-display text-[10px] font-bold tracking-[0.14em] text-muted uppercase">
                 Credential Reference
               </span>
@@ -254,7 +254,7 @@ export default function DigitalPlayerPass({
         </div>
 
         {/* QR Code Anchor Box */}
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-white/15 bg-black/60 p-5 shrink-0 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-off-white/15 bg-black/60 p-5 shrink-0 text-center">
           <SimpleQrCode text={verificationPayload} size={135} />
           <span className="mt-2.5 font-mono text-[10px] font-bold tracking-[0.18em] text-muted uppercase">
             Pass ID · {orderId.slice(-6).toUpperCase()}

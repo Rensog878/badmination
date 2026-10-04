@@ -282,7 +282,7 @@ export default function TournamentBracket({
                 <span className="font-display text-[10px] font-black tracking-widest text-amber-400 uppercase">
                   Reigning Champion · {category === "singles" ? "Singles" : "Doubles"}
                 </span>
-                <p className="font-display text-base font-black text-white sm:text-lg">
+                <p className="font-display text-base font-black text-off-white sm:text-lg">
                   {championName}
                 </p>
               </div>
@@ -474,11 +474,10 @@ function BracketConnectorFork({
   outActive?: boolean;
 }) {
   const activeColor = "#10b981"; // court-green
-  const mutedColor = "rgba(255, 255, 255, 0.18)";
 
   return (
     <svg
-      className="h-full w-full overflow-visible"
+      className="h-full w-full overflow-visible text-muted"
       viewBox="0 0 40 100"
       preserveAspectRatio="none"
       fill="none"
@@ -487,21 +486,24 @@ function BracketConnectorFork({
       {/* Top branch */}
       <path
         d="M 0,25 H 20 V 50"
-        stroke={topActive ? activeColor : mutedColor}
+        stroke={topActive ? activeColor : "currentColor"}
+        strokeOpacity={topActive ? 1 : 0.35}
         strokeWidth={topActive ? "2.5" : "1.5"}
         vectorEffect="non-scaling-stroke"
       />
       {/* Bottom branch */}
       <path
         d="M 0,75 H 20 V 50"
-        stroke={bottomActive ? activeColor : mutedColor}
+        stroke={bottomActive ? activeColor : "currentColor"}
+        strokeOpacity={bottomActive ? 1 : 0.35}
         strokeWidth={bottomActive ? "2.5" : "1.5"}
         vectorEffect="non-scaling-stroke"
       />
       {/* Stem into next round */}
       <path
         d="M 20,50 H 40"
-        stroke={outActive ? activeColor : mutedColor}
+        stroke={outActive ? activeColor : "currentColor"}
+        strokeOpacity={outActive ? 1 : 0.35}
         strokeWidth={outActive ? "2.5" : "1.5"}
         vectorEffect="non-scaling-stroke"
       />
@@ -510,7 +512,8 @@ function BracketConnectorFork({
         cx="20"
         cy="50"
         r="3"
-        fill={outActive ? activeColor : mutedColor}
+        fill={outActive ? activeColor : "currentColor"}
+        fillOpacity={outActive ? 1 : 0.45}
         className={outActive ? "drop-shadow-[0_0_6px_rgba(16,185,129,0.8)]" : ""}
       />
     </svg>

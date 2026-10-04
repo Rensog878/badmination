@@ -231,9 +231,9 @@ export default function MatchWinnerCardModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-md animate-fade-in">
-      <div className="relative flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-white/15 bg-charcoal shadow-2xl">
+      <div className="relative flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-off-white/15 bg-charcoal shadow-2xl">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-off-white/10 px-5 py-4">
           <div className="flex items-center gap-2">
             <Trophy className="size-5 text-court-green" />
             <h3 className="font-display text-sm font-bold tracking-[0.14em] uppercase text-off-white">
@@ -243,7 +243,7 @@ export default function MatchWinnerCardModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted hover:bg-white/10 hover:text-off-white"
+            className="rounded-lg p-1.5 text-muted hover:bg-off-white/10 hover:text-off-white"
           >
             <X className="size-5" />
           </button>
@@ -260,7 +260,7 @@ export default function MatchWinnerCardModal({
         </div>
 
         {/* Modal Action Buttons */}
-        <div className="border-t border-white/10 bg-white/[0.02] p-5">
+        <div className="border-t border-off-white/10 bg-off-white/[0.02] p-5">
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -273,7 +273,7 @@ export default function MatchWinnerCardModal({
             <button
               type="button"
               onClick={handleDownload}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 font-display text-xs font-bold tracking-[0.14em] text-off-white uppercase hover:border-court-green hover:text-court-green transition-all"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-off-white/15 bg-off-white/5 px-4 py-2 font-display text-xs font-bold tracking-[0.14em] text-off-white uppercase hover:border-court-green hover:text-court-green transition-all"
             >
               <Download className="size-4" />
               <span>Save Image</span>

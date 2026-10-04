@@ -84,7 +84,7 @@ export default function SiteHeader() {
               aria-controls={MENU_ID}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               onClick={() => setMenuOpen((o) => !o)}
-              className="-mr-2 inline-flex size-11 items-center justify-center rounded-lg text-off-white hover:bg-white/10 lg:hidden"
+              className="-mr-2 inline-flex size-11 items-center justify-center rounded-lg text-off-white hover:bg-off-white/10 lg:hidden"
             >
               {menuOpen ? <X aria-hidden="true" className="size-6" /> : <Menu aria-hidden="true" className="size-6" />}
             </button>

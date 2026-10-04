@@ -112,7 +112,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
                   className={`group flex items-center gap-2 rounded-xl px-3.5 py-2 font-display text-xs font-bold uppercase transition-all shrink-0 ${
                     isActive
                       ? "bg-court-green text-black shadow-[0_0_12px_rgba(16,185,129,0.4)]"
-                      : "border border-white/10 bg-white/5 text-muted hover:border-court-green/40 hover:bg-white/10 hover:text-off-white"
+                      : "border border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:bg-off-white/10 hover:text-off-white"
                   }`}
                 >
                   <span
@@ -218,7 +218,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             <button
               type="button"
               onClick={() => setShowAnalytics(!showAnalytics)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-muted hover:border-court-green/40 hover:text-court-green transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-off-white/10 bg-off-white/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-muted hover:border-court-green/40 hover:text-court-green transition-colors"
             >
               <Activity className="size-3 text-court-green" />
               <span>{showAnalytics ? "Hide Stats" : "Match Stats"}</span>

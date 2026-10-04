@@ -31,7 +31,7 @@ export default function UmpireMatchList({
   return (
     <div className="space-y-10">
       {/* Live Feed Status Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-off-white/10 pb-4">
         <div className="flex items-center gap-2">
           <span
             className={`size-2.5 rounded-full ${
@@ -70,13 +70,13 @@ export default function UmpireMatchList({
           <span className="text-xs text-muted">Tap Score to open scoring pad</span>
         </div>
 
-        <ul className="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+        <ul className="mt-4 divide-y divide-off-white/10 rounded-2xl border border-off-white/10 bg-off-white/[0.02] overflow-hidden">
           {live.map((m) => {
             const currentScore = m.games[m.games.length - 1];
             return (
               <li
                 key={m.id}
-                className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-white/[0.03]"
+                className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-off-white/[0.03]"
               >
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -87,7 +87,7 @@ export default function UmpireMatchList({
                       {m.event} · {m.round}
                     </span>
                     {m.controlledBy === "umpire" && (
-                      <span className="rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted">
+                      <span className="rounded-md border border-off-white/10 bg-off-white/5 px-1.5 py-0.5 text-[10px] text-muted">
                         Official Scored
                       </span>
                     )}
@@ -145,11 +145,11 @@ export default function UmpireMatchList({
           <span className="text-xs text-muted">Scheduled for call</span>
         </div>
 
-        <ul className="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+        <ul className="mt-4 divide-y divide-off-white/10 rounded-2xl border border-off-white/10 bg-off-white/[0.02] overflow-hidden">
           {scheduled.map((m) => (
             <li
               key={m.id}
-              className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-white/[0.03]"
+              className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-off-white/[0.03]"
             >
               <div className="min-w-0 flex-1 space-y-1">
                 <p className="text-xs text-muted font-medium">
@@ -185,7 +185,7 @@ export default function UmpireMatchList({
             <span>Completed Today ({finished.length})</span>
           </h2>
 
-          <ul className="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+          <ul className="mt-4 divide-y divide-off-white/10 rounded-2xl border border-off-white/10 bg-off-white/[0.02] overflow-hidden">
             {finished.map((m) => {
               const winnerName = m.winner ? sideName(m, m.winner) : null;
               return (

@@ -72,7 +72,7 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
         </div>
 
         {/* Status Filter Tabs */}
-        <div className="flex rounded-xl border border-white/15 bg-black/40 p-1 font-display text-xs font-semibold uppercase">
+        <div className="flex rounded-xl border border-off-white/15 bg-black/40 p-1 font-display text-xs font-semibold uppercase">
           {(
             [
               { id: "all", label: "All" },
@@ -86,7 +86,7 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
               type="button"
               onClick={() => setStatusFilter(tab.id)}
               className={`rounded-lg px-3 py-1.5 transition-colors ${
-                statusFilter === tab.id ? "bg-court-green text-black font-bold" : "text-muted hover:text-white"
+                statusFilter === tab.id ? "bg-court-green text-black font-bold" : "text-muted hover:text-off-white"
               }`}
             >
               {tab.label}
@@ -103,13 +103,13 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Type player name, partner, school, or court number..."
-          className="w-full rounded-2xl border border-white/20 bg-black/80 py-4 pl-12 pr-12 text-sm sm:text-base text-off-white placeholder:text-muted focus:border-court-green focus:outline-none transition-colors shadow-inner"
+          className="w-full rounded-2xl border border-off-white/20 bg-black/80 py-4 pl-12 pr-12 text-sm sm:text-base text-off-white placeholder:text-muted focus:border-court-green focus:outline-none transition-colors shadow-inner"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery("")}
-            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted hover:text-white"
+            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-2 text-muted hover:text-off-white"
           >
             <X className="size-4" />
           </button>
@@ -130,7 +130,7 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
                 className={`flex flex-col justify-between gap-4 rounded-2xl border p-5 transition-all duration-300 ${
                   isLive
                     ? "border-court-green/60 bg-gradient-to-r from-court-green/[0.08] via-black to-black shadow-[0_4px_25px_rgba(16,185,129,0.15)]"
-                    : "border-white/10 bg-black/60 hover:border-white/25"
+                    : "border-off-white/10 bg-black/60 hover:border-off-white/25"
                 } sm:flex-row sm:items-center`}
               >
                 {/* Left: Court & Schedule Badge */}
@@ -145,7 +145,7 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
                         <span>{m.court ? `Court ${m.court} · Live` : "Live Now"}</span>
                       </span>
                     ) : isFinished ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 font-display text-[10px] font-bold uppercase tracking-wider text-muted">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-off-white/20 bg-off-white/10 px-2.5 py-0.5 font-display text-[10px] font-bold uppercase tracking-wider text-muted">
                         <Trophy className="size-3 text-amber-400" />
                         <span>Completed</span>
                       </span>
@@ -166,15 +166,15 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
                     </span>
                   </div>
 
-                  <p className="font-display text-xs font-bold uppercase tracking-wider text-white">
+                  <p className="font-display text-xs font-bold uppercase tracking-wider text-off-white">
                     {m.event}
                   </p>
                 </div>
 
                 {/* Center: Competitors & Current Points */}
-                <div className="flex-1 space-y-1.5 border-t sm:border-t-0 sm:border-l border-white/10 pt-3 sm:pt-0 sm:pl-6">
+                <div className="flex-1 space-y-1.5 border-t sm:border-t-0 sm:border-l border-off-white/10 pt-3 sm:pt-0 sm:pl-6">
                   <div className="flex items-center justify-between gap-4">
-                    <span className={`font-display text-sm font-bold uppercase ${m.winner === "a" ? "text-court-green font-black" : "text-white"}`}>
+                    <span className={`font-display text-sm font-bold uppercase ${m.winner === "a" ? "text-court-green font-black" : "text-off-white"}`}>
                       {sideName(m, "a")} {m.winner === "a" ? "👑" : ""}
                     </span>
                     <span className="font-display font-black text-base tabular-nums">
@@ -183,7 +183,7 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
                   </div>
 
                   <div className="flex items-center justify-between gap-4">
-                    <span className={`font-display text-sm font-bold uppercase ${m.winner === "b" ? "text-court-green font-black" : "text-white"}`}>
+                    <span className={`font-display text-sm font-bold uppercase ${m.winner === "b" ? "text-court-green font-black" : "text-off-white"}`}>
                       {sideName(m, "b")} {m.winner === "b" ? "👑" : ""}
                     </span>
                     <span className="font-display font-black text-base tabular-nums">
@@ -193,12 +193,12 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
                 </div>
 
                 {/* Right: Actions */}
-                <div className="flex items-center gap-2 border-t sm:border-t-0 border-white/10 pt-3 sm:pt-0 sm:pl-4 shrink-0">
+                <div className="flex items-center gap-2 border-t sm:border-t-0 border-off-white/10 pt-3 sm:pt-0 sm:pl-4 shrink-0">
                   <button
                     type="button"
                     onClick={() => handleShareMatch(m)}
                     title="Share match time to WhatsApp"
-                    className="inline-flex size-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-muted hover:border-court-green hover:text-white transition-colors"
+                    className="inline-flex size-9 items-center justify-center rounded-xl border border-off-white/15 bg-off-white/5 text-muted hover:border-court-green hover:text-off-white transition-colors"
                   >
                     <Share2 className="size-4" />
                   </button>
@@ -214,7 +214,7 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
                   ) : (
                     <Link
                       href={`/tournaments/${tournamentSlug}/live`}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/5 px-3 py-2 font-display text-xs font-semibold text-white uppercase hover:border-court-green hover:text-court-green transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-off-white/20 bg-off-white/5 px-3 py-2 font-display text-xs font-semibold text-off-white uppercase hover:border-court-green hover:text-court-green transition-colors"
                     >
                       <span>Track</span>
                     </Link>
@@ -224,8 +224,8 @@ export default function PlayerMatchFinder({ tournamentSlug, tournamentName, matc
             );
           })
         ) : (
-          <div className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-muted">
-            <p className="font-display text-base font-bold text-white uppercase">No matches found</p>
+          <div className="rounded-2xl border border-dashed border-off-white/15 p-8 text-center text-muted">
+            <p className="font-display text-base font-bold text-off-white uppercase">No matches found</p>
             <p className="mt-1 text-xs">
               No matches matched &quot;{query}&quot;. Try searching for the player&apos;s first or last name.
             </p>

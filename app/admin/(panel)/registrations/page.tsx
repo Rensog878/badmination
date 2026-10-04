@@ -92,7 +92,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
       {/* Live Morning Arrival Counter Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Confirmed Entries */}
-        <div className="rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-sm">
+        <div className="rounded-2xl border border-off-white/10 bg-black/40 p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between text-muted text-xs font-semibold uppercase tracking-wider">
             <span>Confirmed Paid</span>
             <Users className="size-4 text-off-white" />
@@ -126,7 +126,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
         </div>
 
         {/* Awaiting Arrival */}
-        <div className="rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-sm">
+        <div className="rounded-2xl border border-off-white/10 bg-black/40 p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between text-muted text-xs font-semibold uppercase tracking-wider">
             <span>Awaiting Arrival</span>
             <Clock className="size-4 text-amber-400" />
@@ -140,7 +140,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
         </div>
 
         {/* Total Fee Revenue */}
-        <div className="rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-sm">
+        <div className="rounded-2xl border border-off-white/10 bg-black/40 p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between text-muted text-xs font-semibold uppercase tracking-wider">
             <span>Entry Revenue</span>
             <span className="font-bold text-off-white">INR</span>
@@ -155,7 +155,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
       </div>
 
       {/* Search & Filter Bar */}
-      <form className="flex flex-wrap items-end gap-3 rounded-2xl border border-white/10 bg-black/50 p-4">
+      <form className="flex flex-wrap items-end gap-3 rounded-2xl border border-off-white/10 bg-black/50 p-4">
         {/* Instant Search Bar */}
         <div className="flex-1 min-w-[200px]">
           <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">
@@ -168,7 +168,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
               name="q"
               defaultValue={sp.q ?? ""}
               placeholder="e.g. Arjun, REG-2026-001, 98765..."
-              className="min-h-11 w-full rounded-xl border border-white/15 bg-charcoal pl-10 pr-3 text-sm text-off-white placeholder:text-muted/60 focus:border-court-green focus:outline-none"
+              className="min-h-11 w-full rounded-xl border border-off-white/15 bg-charcoal pl-10 pr-3 text-sm text-off-white placeholder:text-muted/60 focus:border-court-green focus:outline-none"
             />
           </div>
         </div>
@@ -181,7 +181,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
           <select
             name="tournament"
             defaultValue={sp.tournament ?? ""}
-            className="min-h-11 rounded-xl border border-white/15 bg-charcoal px-3 py-2 text-sm text-off-white focus:border-court-green focus:outline-none"
+            className="min-h-11 rounded-xl border border-off-white/15 bg-charcoal px-3 py-2 text-sm text-off-white focus:border-court-green focus:outline-none"
           >
             <option value="">All Tournaments</option>
             {tournaments.map((t) => (
@@ -200,7 +200,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
           <select
             name="checkin"
             defaultValue={checkInStatus ?? ""}
-            className="min-h-11 rounded-xl border border-white/15 bg-charcoal px-3 py-2 text-sm text-off-white focus:border-court-green focus:outline-none"
+            className="min-h-11 rounded-xl border border-off-white/15 bg-charcoal px-3 py-2 text-sm text-off-white focus:border-court-green focus:outline-none"
           >
             {CHECKIN_FILTERS.map((f) => (
               <option key={f.value} value={f.value}>
@@ -218,7 +218,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
           <select
             name="status"
             defaultValue={status ?? ""}
-            className="min-h-11 rounded-xl border border-white/15 bg-charcoal px-3 py-2 text-sm text-off-white focus:border-court-green focus:outline-none"
+            className="min-h-11 rounded-xl border border-off-white/15 bg-charcoal px-3 py-2 text-sm text-off-white focus:border-court-green focus:outline-none"
           >
             <option value="">All Payments</option>
             {STATUSES.map((s) => (
@@ -264,7 +264,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
               className={`rounded-2xl border p-4 transition-all ${
                 isCheckedIn
                   ? "border-court-green/40 bg-court-green/[0.04]"
-                  : "border-white/10 bg-black/40"
+                  : "border-off-white/10 bg-black/40"
               }`}
             >
               <div className="flex items-start justify-between gap-3">
@@ -279,7 +279,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
                     className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
                       r.status === "paid"
                         ? "bg-court-green/15 text-court-green"
-                        : "bg-white/10 text-muted"
+                        : "bg-off-white/10 text-muted"
                     }`}
                   >
                     {r.status === "paid" ? "Paid" : "Awaiting payment"}
@@ -297,7 +297,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
                 {r.events.map((ev) => (
                   <span
                     key={ev}
-                    className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-xs font-medium text-off-white"
+                    className="rounded-md border border-off-white/10 bg-off-white/5 px-2 py-0.5 text-xs font-medium text-off-white"
                   >
                     {ev}
                   </span>
@@ -310,7 +310,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
                 </p>
               )}
 
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-white/5 pt-3 text-xs text-muted">
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-off-white/5 pt-3 text-xs text-muted">
                 <span className="font-display font-bold text-off-white">
                   {formatInr(r.total)}
                 </span>
@@ -352,7 +352,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
 
                 <a
                   href={`tel:${r.player.phone}`}
-                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/15 px-3 text-xs font-semibold text-off-white hover:bg-white/5"
+                  className="inline-flex min-h-11 items-center justify-center rounded-xl border border-off-white/15 px-3 text-xs font-semibold text-off-white hover:bg-off-white/5"
                   title="Call Player"
                 >
                   Call
@@ -362,16 +362,16 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
           );
         })}
         {rows.length === 0 && (
-          <li className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-sm text-muted">
+          <li className="rounded-2xl border border-dashed border-off-white/10 p-12 text-center text-sm text-muted">
             No registrations match the selected filters.
           </li>
         )}
       </ul>
 
       {/* Desktop Table (md+) */}
-      <div className="hidden overflow-x-auto rounded-2xl border border-white/10 bg-black/40 md:block [scrollbar-width:thin]">
+      <div className="hidden overflow-x-auto rounded-2xl border border-off-white/10 bg-black/40 md:block [scrollbar-width:thin]">
         <table className="w-full min-w-[64rem] text-left text-sm">
-          <thead className="border-b border-white/10 bg-white/[0.02] font-display text-xs uppercase tracking-[0.16em] text-muted">
+          <thead className="border-b border-off-white/10 bg-off-white/[0.02] font-display text-xs uppercase tracking-[0.16em] text-muted">
             <tr>
               <th scope="col" className="py-3.5 pl-4 pr-3 font-semibold">
                 Arrival Desk
@@ -396,14 +396,14 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-off-white/5">
             {rows.map((r) => {
               const isCheckedIn = Boolean(r.checkedIn);
               return (
                 <tr
                   key={r.reference}
                   className={`transition-colors ${
-                    isCheckedIn ? "bg-court-green/[0.03]" : "hover:bg-white/[0.02]"
+                    isCheckedIn ? "bg-court-green/[0.03]" : "hover:bg-off-white/[0.02]"
                   }`}
                 >
                   {/* Morning Desk Check-in Action Column */}
@@ -481,7 +481,7 @@ export default async function AdminRegistrations({ searchParams }: PageProps) {
                       className={`inline-block rounded-md px-2 py-0.5 text-xs font-semibold ${
                         r.status === "paid"
                           ? "bg-court-green/15 text-court-green"
-                          : "bg-white/10 text-muted"
+                          : "bg-off-white/10 text-muted"
                       }`}
                     >
                       {r.status === "paid" ? "Paid" : "Awaiting"}

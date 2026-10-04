@@ -65,7 +65,7 @@ export default function LiveStreamPlayer({
         <button
           type="button"
           onClick={() => setCollapsed(false)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 px-3 py-1 text-xs font-semibold text-off-white hover:border-court-green hover:text-court-green transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-off-white/15 px-3 py-1 text-xs font-semibold text-off-white hover:border-court-green hover:text-court-green transition-colors"
         >
           <span>Expand Video</span>
           <ChevronDown className="size-3.5" />
@@ -75,9 +75,9 @@ export default function LiveStreamPlayer({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/15 bg-black shadow-[0_12px_40px_rgba(0,0,0,0.8)] transition-all">
+    <div className="overflow-hidden rounded-2xl border border-off-white/15 bg-black shadow-[0_12px_40px_rgba(0,0,0,0.8)] transition-all">
       {/* Player Header Bar */}
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-white/[0.04] px-4 py-3">
+      <div className="flex items-center justify-between gap-3 border-b border-off-white/10 bg-off-white/[0.04] px-4 py-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <div
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-display text-[10px] font-bold tracking-[0.14em] uppercase ${
@@ -120,7 +120,7 @@ export default function LiveStreamPlayer({
             target="_blank"
             rel="noopener noreferrer"
             title="Watch in external player"
-            className="inline-flex size-8 items-center justify-center rounded-lg border border-white/10 text-muted hover:border-court-green hover:text-court-green transition-colors"
+            className="inline-flex size-8 items-center justify-center rounded-lg border border-off-white/10 text-muted hover:border-court-green hover:text-court-green transition-colors"
           >
             <ExternalLink className="size-3.5" />
           </a>
@@ -128,7 +128,7 @@ export default function LiveStreamPlayer({
             type="button"
             onClick={() => setCollapsed(true)}
             aria-label="Minimize video player"
-            className="inline-flex size-8 items-center justify-center rounded-lg border border-white/10 text-muted hover:border-court-green hover:text-court-green transition-colors"
+            className="inline-flex size-8 items-center justify-center rounded-lg border border-off-white/10 text-muted hover:border-court-green hover:text-court-green transition-colors"
           >
             <ChevronUp className="size-4" />
           </button>
@@ -158,7 +158,7 @@ export default function LiveStreamPlayer({
       </div>
 
       {/* Hint Footer Bar */}
-      <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-white/[0.02] px-4 py-2 text-[11px] text-muted">
+      <div className="flex items-center justify-between gap-3 border-t border-off-white/10 bg-off-white/[0.02] px-4 py-2 text-[11px] text-muted">
         <span className="flex items-center gap-1.5">
           <Volume2 className="size-3.5 text-court-green shrink-0" />
           <span>Autoplays muted by browser policy. Tap unmute on player controls for arena audio.</span>
