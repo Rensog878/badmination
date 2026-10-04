@@ -25,7 +25,7 @@ export default function RegistrationCard({ tournament: t, status, now }: Registr
   const days = daysToClose(t, now);
 
   return (
-    <aside aria-label="Registration" className="rounded-2xl border border-off-white/15 bg-black/60 backdrop-blur-md p-6 sm:p-8 shadow-2xl">
+    <aside aria-label="Registration" className="rounded-3xl border border-off-white/15 bg-gradient-to-b from-black/80 via-black/60 to-court-green/[0.04] backdrop-blur-xl p-6 sm:p-8 shadow-2xl">
       <StatusBadge tournament={t} status={status} now={now} />
       <p className="mt-6 font-display text-4xl font-black tracking-tight">
         {formatInr(t.entryFee)}
@@ -64,7 +64,7 @@ export default function RegistrationCard({ tournament: t, status, now }: Registr
           <>
             <Link
               href={registerHref(t)}
-              className="rounded-xl group flex items-center justify-between bg-court-green px-6 py-4 font-display text-sm font-bold tracking-[0.14em] text-black uppercase shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-[1.02] hover:bg-off-white hover:shadow-[0_0_30px_rgba(243,244,246,0.35)] active:scale-[0.98]"
+              className="btn-shimmer rounded-xl group flex items-center justify-between bg-court-green px-6 py-4 font-display text-sm font-bold tracking-[0.14em] text-black uppercase shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-[1.02] hover:bg-off-white hover:shadow-[0_0_30px_rgba(243,244,246,0.35)] active:scale-[0.98]"
             >
               Register now
               <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1.5 motion-reduce:transition-none" />

@@ -34,7 +34,7 @@ export default function StudentCertificateButton({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-court-green/60 bg-court-green/10 px-6 py-3.5 font-display text-xs font-bold tracking-[0.16em] text-court-green uppercase hover:bg-court-green hover:text-black transition-all shadow-md shadow-court-green/10 hover:shadow-court-green/30"
+        className="btn-shimmer inline-flex items-center justify-center gap-2 rounded-lg border-2 border-court-green/60 bg-court-green/10 px-6 py-3.5 font-display text-xs font-bold tracking-[0.16em] text-court-green uppercase hover:bg-court-green hover:text-black transition-all shadow-md shadow-court-green/10 hover:shadow-court-green/30 active:scale-[0.98]"
       >
         <GraduationCap className="size-4" />
         <span>Student Certificate of Participation</span>

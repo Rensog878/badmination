@@ -40,7 +40,10 @@ export default function SiteHeader() {
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-8 lg:h-20 lg:px-16">
           <Link href="/" className="group flex items-center gap-2 font-display text-sm font-black tracking-[0.18em] uppercase transition-transform duration-200 active:scale-95" onClick={closeMenu}>
             <span>{COACH_NAME}</span>
-            <span aria-hidden="true" className="size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] animate-pulse" />
+            <span aria-hidden="true" className="relative flex size-2.5 items-center justify-center">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-court-green opacity-75 motion-reduce:hidden" />
+              <span className="relative inline-flex size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
+            </span>
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
@@ -70,7 +73,7 @@ export default function SiteHeader() {
             {!isRegisterPage && (
               <a
                 href={NAV_CTA.href}
-                className="hidden sm:inline-flex min-h-11 items-center rounded-xl border border-court-green/50 bg-court-green/10 px-5 py-2.5 font-display text-xs font-bold tracking-[0.2em] text-court-green uppercase shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-300 hover:border-court-green hover:bg-court-green hover:text-black hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-95 motion-reduce:active:scale-100"
+                className="btn-shimmer hidden sm:inline-flex min-h-11 items-center rounded-xl border border-court-green/50 bg-court-green/10 px-5 py-2.5 font-display text-xs font-bold tracking-[0.2em] text-court-green uppercase shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-300 hover:border-court-green hover:bg-court-green hover:text-black hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-95 motion-reduce:active:scale-100"
               >
                 {NAV_CTA.label}
               </a>

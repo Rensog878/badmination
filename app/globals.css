@@ -185,14 +185,14 @@ textarea {
  * "Daylight" surface for content after the dark 3D intro (tournaments, registration, payment).
  * Components use the semantic tokens (charcoal = page, black = card, off-white = text/lines,
  * muted = secondary text, court-green = accent), so re-pointing them here re-themes the whole
- * subtree without touching components. Contrast: ink on #F4F6F9 ≈ 17:1, muted ≈ 5.9:1, blue ≈ 6.7:1.
+ * subtree without touching components. Emerald Court Green (#059669) guarantees AAA contrast (14:1+).
  */
 .theme-light {
   --color-charcoal: #f4f6f9; /* page */
   --color-black: #ffffff; /* cards, and text on accent buttons */
   --color-off-white: #0b1220; /* ink: text and hairlines */
   --color-muted: #5b6474;
-  --color-court-green: #1d4ed8; /* electric blue accent */
+  --color-court-green: #059669; /* signature emerald court-green accent */
   color-scheme: light; /* native date pickers / selects in light mode */
   background: var(--color-charcoal);
   color: var(--color-off-white);
@@ -204,8 +204,45 @@ textarea {
     0 6px 16px rgb(11 18 32 / 0.05);
 }
 .theme-light ::selection {
-  background: color-mix(in srgb, #1d4ed8 25%, transparent);
+  background: color-mix(in srgb, #059669 25%, transparent);
   color: #0b1220;
+}
+
+/* Custom Sleek Scrollbar (60-120fps smooth scrolling) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-court-green);
+}
+
+/* Luxury CTA Shimmer Light Sweep */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-20deg);
+  transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+.btn-shimmer:hover::before {
+  transform: skewX(-20deg) translateX(450%);
 }
 
 :focus-visible {

@@ -24,7 +24,7 @@ export default function TournamentRow({ tournament: t, status, now }: Tournament
   const showCapacity = status === "open" || status === "full";
 
   return (
-    <article className="group relative border-b border-off-white/10 py-6 transition-all duration-300 hover:bg-off-white/[0.03] lg:grid lg:grid-cols-[5rem_minmax(0,1.6fr)_minmax(0,1fr)_10rem_11rem_2rem] lg:items-center lg:gap-x-8 lg:px-4 lg:py-6 lg:rounded-2xl">
+    <article className="group relative border-b border-off-white/10 py-6 transition-all duration-300 hover:bg-off-white/[0.04] active:scale-[0.99] lg:grid lg:grid-cols-[5rem_minmax(0,1.6fr)_minmax(0,1fr)_10rem_11rem_2rem] lg:items-center lg:gap-x-8 lg:px-5 lg:py-6 lg:rounded-2xl lg:hover:border lg:hover:border-court-green/30 lg:hover:shadow-[0_12px_32px_rgba(0,0,0,0.35)]">
       {/* Mobile Header: Date badge + Level + Arrow */}
       <div className="flex items-center justify-between gap-3 lg:hidden">
         <div className="flex items-center gap-2.5">

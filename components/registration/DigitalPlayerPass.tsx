@@ -263,7 +263,7 @@ export default function DigitalPlayerPass({
             type="button"
             onClick={handleSavePass}
             disabled={downloading}
-            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-court-green/40 bg-court-green/10 px-3 py-1.5 font-display text-[11px] font-bold tracking-[0.12em] text-court-green uppercase hover:bg-court-green hover:text-black transition-colors"
+            className="btn-shimmer mt-3 inline-flex items-center gap-1.5 rounded-lg border border-court-green/40 bg-court-green/10 px-3 py-1.5 font-display text-[11px] font-bold tracking-[0.12em] text-court-green uppercase hover:bg-court-green hover:text-black transition-colors"
           >
             <Download className="size-3.5" />
             <span>{downloading ? "Saving..." : "Save Pass"}</span>

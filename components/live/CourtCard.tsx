@@ -27,17 +27,20 @@ export default function CourtCard({ court, match, href }: { court: number; match
   return (
     <article
       aria-label={`Court ${court}: ${sideName(match, "a")} versus ${sideName(match, "b")}, game ${gameNumber}, ${current.a}–${current.b}`}
-      className="group relative flex flex-col rounded-2xl border border-white/[0.08] bg-black/70 backdrop-blur-md p-5 transition-all duration-300 hover:border-court-green/50 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
+      className="group relative flex flex-col rounded-2xl border border-white/[0.1] bg-gradient-to-br from-black/80 via-black/70 to-court-green/[0.04] backdrop-blur-xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-court-green/60 hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)] active:scale-[0.985]"
     >
       {href && (
-        <Link href={href} className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-court-green">
+        <Link href={href} className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-court-green rounded-2xl">
           <span className="sr-only">Open court {court} scoreboard</span>
         </Link>
       )}
       <header className="flex items-center justify-between gap-3">
         <div className="flex shrink-0 items-center gap-2">
-          <p className="flex shrink-0 items-center gap-2 font-display text-xs font-bold tracking-[0.18em] whitespace-nowrap uppercase text-off-white">
-            <span aria-hidden="true" className="size-2 animate-pulse rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)] motion-reduce:animate-none" />
+          <p className="flex shrink-0 items-center gap-2.5 font-display text-xs font-bold tracking-[0.18em] whitespace-nowrap uppercase text-off-white">
+            <span aria-hidden="true" className="relative flex size-2.5 items-center justify-center">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-court-green opacity-75 motion-reduce:hidden" />
+              <span className="relative inline-flex size-2 rounded-full bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
+            </span>
             Court {court}
           </p>
           {match.streamUrl && (
@@ -50,7 +53,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
             </span>
           )}
         </div>
-        <p className="min-w-0 truncate text-xs font-medium tracking-[0.08em] text-muted uppercase">
+        <p className="min-w-0 truncate text-xs font-semibold tracking-[0.1em] text-muted uppercase">
           {match.event} · {match.round}
         </p>
       </header>
@@ -61,10 +64,17 @@ export default function CourtCard({ court, match, href }: { court: number; match
           return (
             <div key={side} className="grid grid-cols-[1fr_auto_3.5rem] items-center gap-3">
               <p className="flex min-w-0 items-center gap-2">
-                <span
-                  aria-label={serving ? "Serving" : undefined}
-                  className={`size-2 shrink-0 rounded-full transition-all duration-300 ${serving ? "bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.9)]" : "bg-transparent"}`}
-                />
+                {serving ? (
+                  <span
+                    aria-label="Serving"
+                    className="flex shrink-0 items-center gap-1 rounded bg-court-green/15 px-1.5 py-0.5 text-[9px] font-black tracking-wider text-court-green border border-court-green/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                  >
+                    <span className="size-1.5 rounded-full bg-court-green animate-pulse" />
+                    S
+                  </span>
+                ) : (
+                  <span className="size-2 shrink-0 rounded-full bg-transparent" />
+                )}
                 <span className="truncate font-display font-bold uppercase">{sideName(match, side)}</span>
               </p>
               <span className="flex gap-1.5 font-display text-sm font-semibold tabular-nums text-muted">
