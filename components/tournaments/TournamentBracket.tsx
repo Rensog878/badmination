@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { Trophy, Crown, Radio, ArrowUpRight, Printer, Award } from "lucide-react";
+import { Trophy, Crown, Radio, ArrowUpRight, Printer, Award, ZoomIn, ZoomOut, RotateCcw, Compass } from "lucide-react";
 import type { Tournament } from "@/lib/tournaments";
 import type { LiveMatch } from "@/lib/live/types";
 
@@ -224,6 +224,52 @@ export default function TournamentBracket({
       ? finalMatch.playerB.name
       : null;
 
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showRadar, setShowRadar] = useState(true);
+  const dragStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    const target = e.target as HTMLElement;
+    if (target.closest("a") || target.closest("button")) return;
+    setIsDragging(true);
+    dragStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      panX: pan.x,
+      panY: pan.y,
+    };
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    setPan({
+      x: dragStartRef.current.panX + dx,
+      y: dragStartRef.current.panY + dy,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleZoomIn = () => {
+    setZoom((prev) => Math.min(1.5, Number((prev + 0.15).toFixed(2))));
+  };
+
+  const handleZoomOut = () => {
+    setZoom((prev) => Math.max(0.7, Number((prev - 0.15).toFixed(2))));
+  };
+
+  const handleResetZoom = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
   return (
     <section aria-labelledby="bracket-heading" className="mt-16 border-t border-off-white/10 pt-16">
       {/* Section Header */}
@@ -269,6 +315,58 @@ export default function TournamentBracket({
               </button>
             </div>
           )}
+
+          {/* Floating Pan & Zoom Toolbar (Desktop) */}
+          <div className="hidden md:flex items-center gap-1 rounded-xl border border-off-white/15 bg-black/60 px-2 py-1 shadow-lg backdrop-blur-md">
+            <button
+              type="button"
+              onClick={handleZoomOut}
+              disabled={zoom <= 0.7}
+              title="Zoom out"
+              className="flex size-7 items-center justify-center rounded-lg text-muted hover:bg-off-white/10 hover:text-off-white disabled:opacity-30 transition-colors"
+            >
+              <ZoomOut className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={handleResetZoom}
+              title="Reset zoom to 100%"
+              className="px-2 font-display text-xs font-bold text-off-white hover:text-court-green tabular-nums"
+            >
+              {Math.round(zoom * 100)}%
+            </button>
+            <button
+              type="button"
+              onClick={handleZoomIn}
+              disabled={zoom >= 1.5}
+              title="Zoom in"
+              className="flex size-7 items-center justify-center rounded-lg text-muted hover:bg-off-white/10 hover:text-off-white disabled:opacity-30 transition-colors"
+            >
+              <ZoomIn className="size-3.5" />
+            </button>
+            <div className="h-4 w-px bg-off-white/10 mx-1" />
+            <button
+              type="button"
+              onClick={handleResetZoom}
+              title="Reset view orientation"
+              className="flex size-7 items-center justify-center rounded-lg text-muted hover:bg-off-white/10 hover:text-off-white transition-colors"
+            >
+              <RotateCcw className="size-3" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowRadar(!showRadar)}
+              title={showRadar ? "Hide Mini-Radar" : "Show Mini-Radar"}
+              className={`flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold tracking-wider uppercase transition-colors ${
+                showRadar
+                  ? "bg-court-green/20 text-court-green border border-court-green/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]"
+                  : "text-muted hover:text-off-white"
+              }`}
+            >
+              <Compass className="size-3 text-court-green" />
+              <span>Radar</span>
+            </button>
+          </div>
 
           <Link
             href={`/tournaments/${tournament.slug}/print`}
@@ -390,8 +488,23 @@ export default function TournamentBracket({
       </div>
 
       {/* Desktop Visual Bracket Tree with Connected SVG Branches (md+) */}
-      <div className="mt-8 hidden overflow-x-auto pb-4 md:block [scrollbar-width:thin]">
-        <div className="min-w-[920px]">
+      <div
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        className={`relative mt-8 hidden overflow-hidden rounded-2xl border border-off-white/10 bg-black/40 p-6 md:block select-none ${
+          isDragging ? "cursor-grabbing" : zoom !== 1 || pan.x !== 0 || pan.y !== 0 ? "cursor-grab" : ""
+        }`}
+      >
+        <div
+          style={{
+            transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
+            transformOrigin: "top left",
+            transition: isDragging ? "none" : "transform 0.18s ease-out",
+          }}
+          className="min-w-[920px] will-change-transform"
+        >
           {/* Stage Headers */}
           <div className="grid grid-cols-[1fr_40px_1fr_40px_1fr] gap-0 border-b border-off-white/10 pb-3">
             <div className="flex items-center justify-between pr-4">
@@ -483,6 +596,48 @@ export default function TournamentBracket({
             </div>
           </div>
         </div>
+
+        {/* Floating Mini-Radar Window */}
+        {showRadar && (
+          <div className="absolute bottom-4 right-4 z-20 flex flex-col rounded-xl border border-off-white/15 bg-black/90 p-2.5 backdrop-blur-xl shadow-2xl">
+            <div className="flex items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-wider text-muted mb-1.5">
+              <span className="flex items-center gap-1 text-court-green">
+                <Compass className="size-3" />
+                <span>Mini-Radar</span>
+              </span>
+              <span>8-Draw</span>
+            </div>
+            {/* Scaled Mini-Map SVG */}
+            <div className="relative h-16 w-32 rounded-lg border border-off-white/10 bg-charcoal/90 p-1 overflow-hidden">
+              <div className="grid h-full grid-cols-3 gap-1.5">
+                {/* QF column */}
+                <div className="flex flex-col justify-between py-0.5">
+                  <div className="h-1.5 w-full rounded-xs bg-court-green/50" />
+                  <div className="h-1.5 w-full rounded-xs bg-court-green/50" />
+                  <div className="h-1.5 w-full rounded-xs bg-court-green/50" />
+                  <div className="h-1.5 w-full rounded-xs bg-court-green/50" />
+                </div>
+                {/* SF column */}
+                <div className="flex flex-col justify-around py-1">
+                  <div className="h-2 w-full rounded-xs bg-court-green/70" />
+                  <div className="h-2 w-full rounded-xs bg-court-green/70" />
+                </div>
+                {/* Final column */}
+                <div className="flex flex-col justify-center">
+                  <div className="h-2.5 w-full rounded-xs bg-amber-400 shadow-[0_0_6px_rgba(234,179,8,0.8)]" />
+                </div>
+              </div>
+              {/* Radar Viewport indicator rectangle */}
+              <div
+                className="pointer-events-none absolute inset-0 border border-court-green rounded-md bg-court-green/15"
+                style={{
+                  transform: `scale(${Math.min(1, 1 / zoom)}) translate(${-pan.x * 0.04}px, ${-pan.y * 0.04}px)`,
+                  transition: isDragging ? "none" : "all 0.18s ease-out",
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
