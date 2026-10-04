@@ -7,6 +7,7 @@ import { ArrowRight, ExternalLink, Radio } from "lucide-react";
 import RegistrationCard from "@/components/tournaments/RegistrationCard";
 import StatusBadge from "@/components/tournaments/StatusBadge";
 import TournamentBracket from "@/components/tournaments/TournamentBracket";
+import SchoolLeaderboard from "@/components/tournaments/SchoolLeaderboard";
 import TournamentRow from "@/components/tournaments/TournamentRow";
 import CourtLines from "@/components/ui/CourtLines";
 import { SITE } from "@/lib/content";
@@ -160,6 +161,8 @@ export default async function TournamentPage({ params }: PageProps) {
           </section>
 
           <TournamentBracket tournament={t} liveMatches={snapshot.matches} />
+
+          <SchoolLeaderboard tournamentName={t.name} />
 
           <section aria-labelledby="schedule-heading">
             <h2 id="schedule-heading" className="font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">

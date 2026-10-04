@@ -5,7 +5,7 @@
  */
 
 export type TournamentLevel = "Club" | "District" | "State" | "Open";
-export type AgeGroup = "U13" | "U15" | "U17" | "Open";
+export type AgeGroup = "U9" | "U11" | "U13" | "U15" | "U17" | "U19" | "College" | "Open";
 export type EventType = "Singles" | "Doubles" | "Mixed";
 
 export interface TournamentEvent {
@@ -90,6 +90,30 @@ export const SAMPLE_TOURNAMENTS: readonly Tournament[] = [
     entryFee: 900,
     capacity: 64,
     registered: 64,
+  },
+  {
+    slug: "inter-school-junior-championship-2026",
+    name: "Inter-School & College Junior Championship",
+    city: "Bengaluru",
+    venue: "National Centre for Excellence",
+    level: "State",
+    startDate: "2026-11-28",
+    endDate: "2026-11-30",
+    registrationOpens: "2026-10-15",
+    registrationCloses: "2026-11-20",
+    events: [
+      { ageGroup: "U11", type: "Singles" },
+      { ageGroup: "U13", type: "Singles" },
+      { ageGroup: "U15", type: "Singles" },
+      { ageGroup: "U17", type: "Singles" },
+      { ageGroup: "U19", type: "Singles" },
+      { ageGroup: "College", type: "Singles" },
+      { ageGroup: "College", type: "Doubles" },
+    ],
+    entryFee: 500,
+    capacity: 128,
+    registered: 32,
+    prizePool: 80000,
   },
   {
     slug: "club-night-doubles-2026",

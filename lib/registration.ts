@@ -7,7 +7,16 @@ import { eventLabel, type AgeGroup, type Tournament, type TournamentEvent } from
  * eligibility depends on its events and dates.
  */
 
-const AGE_LIMITS: Record<AgeGroup, number | null> = { U13: 13, U15: 15, U17: 17, Open: null };
+const AGE_LIMITS: Record<AgeGroup, number | null> = {
+  U9: 9,
+  U11: 11,
+  U13: 13,
+  U15: 15,
+  U17: 17,
+  U19: 19,
+  College: 26,
+  Open: null,
+};
 const ADULT_AGE = 18;
 const INDIAN_MOBILE = /^(?:\+91[\s-]?)?[6-9]\d{9}$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -51,6 +60,9 @@ export function makeRegistrationSchema(t: Tournament) {
         phone: z.string().trim().regex(INDIAN_MOBILE, "Enter a 10-digit Indian mobile number"),
         city: z.string().trim().min(2, "Enter your city").max(60, "Keep this under 60 characters"),
         club: optionalText(80),
+        isStudent: z.boolean(),
+        institution: optionalText(100),
+        studentId: optionalText(50),
       }),
       events: z
         .array(z.string())
@@ -111,7 +123,18 @@ export function crossFieldIssues(data: CrossFieldInput, t: Tournament): CrossFie
 export type RegistrationValues = z.infer<ReturnType<typeof makeRegistrationSchema>>;
 
 export const emptyRegistration: RegistrationValues = {
-  player: { fullName: "", dateOfBirth: "", gender: "" as RegistrationValues["player"]["gender"], email: "", phone: "", city: "", club: "" },
+  player: {
+    fullName: "",
+    dateOfBirth: "",
+    gender: "" as RegistrationValues["player"]["gender"],
+    email: "",
+    phone: "",
+    city: "",
+    club: "",
+    isStudent: false,
+    institution: "",
+    studentId: "",
+  },
   events: [],
   partners: {},
   emergency: { name: "", phone: "" },

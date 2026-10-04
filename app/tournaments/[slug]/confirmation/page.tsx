@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { CalendarPlus, CircleCheck, Clock } from "lucide-react";
 import PrintButton from "@/components/registration/PrintButton";
 import DigitalPlayerPass from "@/components/registration/DigitalPlayerPass";
+import StudentCertificateButton from "@/components/registration/StudentCertificateButton";
 import { SITE, TRIAL } from "@/lib/content";
 import {
   fetchOrder,
@@ -163,7 +164,7 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
               </dl>
             </section>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row print:hidden">
+            <div className="mt-8 flex flex-wrap gap-3 print:hidden">
               <a
                 href={`/tournaments/${t.slug}/calendar`}
                 className="rounded-lg inline-flex items-center justify-center gap-2 bg-court-green px-6 py-3.5 font-display text-xs font-semibold tracking-[0.16em] text-black uppercase hover:bg-off-white"
@@ -172,6 +173,19 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
                 Add to calendar
               </a>
               <PrintButton className="rounded-lg inline-flex items-center justify-center gap-2 border border-off-white/20 px-6 py-3.5 font-display text-xs font-semibold tracking-[0.16em] uppercase hover:border-court-green hover:text-court-green" />
+              {result.kind === "ok" && (
+                <StudentCertificateButton
+                  studentName={result.order.notes.player || "Student Athlete"}
+                  institution={result.order.notes.institution}
+                  studentId={result.order.notes.studentId}
+                  tournamentName={t.name}
+                  tournamentCity={t.city}
+                  tournamentVenue={t.venue}
+                  dates={formatRange(t.startDate, t.endDate)}
+                  events={eventNames(t, result.order.notes.events)}
+                  reference={result.order.notes.reference || result.order.receipt || "CONFIRMED"}
+                />
+              )}
               <a
                 href={mapsUrl(t)}
                 target="_blank"
@@ -193,6 +207,9 @@ export default async function ConfirmationPage({ params, searchParams }: PagePro
                 dates={formatRange(t.startDate, t.endDate)}
                 level={t.level}
                 events={eventNames(t, result.order.notes.events)}
+                playerName={result.order.notes.player}
+                institution={result.order.notes.institution}
+                studentId={result.order.notes.studentId}
                 paymentId={result.payment?.id}
                 email={result.order.notes.email}
               />

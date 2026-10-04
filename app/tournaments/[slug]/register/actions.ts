@@ -88,6 +88,8 @@ export async function submitRegistration(slug: string, data: unknown): Promise<R
         events: parsed.data.events.join(", "),
         player: parsed.data.player.fullName,
         email: parsed.data.player.email,
+        institution: parsed.data.player.institution || "",
+        studentId: parsed.data.player.studentId || "",
       },
     });
     await attachOrder(reference, order.id);

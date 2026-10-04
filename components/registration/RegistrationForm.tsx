@@ -341,6 +341,48 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
             <FormField id="club" label="Club / academy" optional error={err("player.club")}>
               <input id="club" autoComplete="organization" className={inputClass} {...describedBy("club", err("player.club"))} {...register("player.club")} />
             </FormField>
+
+            {/* Student & School / Academy representation */}
+            <div className="rounded-xl border border-court-green/30 bg-court-green/5 p-4 sm:col-span-2">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="size-5 accent-court-green rounded"
+                  {...register("player.isStudent")}
+                />
+                <div>
+                  <span className="font-display text-sm font-semibold tracking-wide uppercase text-court-green">
+                    Student Athlete / Representing an Institution
+                  </span>
+                  <p className="text-xs text-muted">
+                    Check this if you are representing a School, College, University, or Junior Academy.
+                  </p>
+                </div>
+              </label>
+
+              {watch("player.isStudent") && (
+                <div className="mt-4 grid gap-4 pt-3 border-t border-off-white/10 sm:grid-cols-2">
+                  <FormField id="institution" label="School / College / Academy" error={err("player.institution")}>
+                    <input
+                      id="institution"
+                      placeholder="e.g. DPS Bengaluru / Gopichand Academy"
+                      className={inputClass}
+                      {...describedBy("institution", err("player.institution"))}
+                      {...register("player.institution")}
+                    />
+                  </FormField>
+                  <FormField id="studentId" label="Student ID / Roll No." optional error={err("player.studentId")} hint="Used for certificate & student verification">
+                    <input
+                      id="studentId"
+                      placeholder="e.g. 2024-DPS-8492"
+                      className={inputClass}
+                      {...describedBy("studentId", err("player.studentId"), "hint")}
+                      {...register("player.studentId")}
+                    />
+                  </FormField>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -427,6 +469,7 @@ export default function RegistrationForm({ tournament: t }: { tournament: Tourna
             {[
               { label: "Player", value: `${values.player.fullName} · ${values.player.dateOfBirth} · ${GENDERS.find((g) => g.value === values.player.gender)?.label ?? ""}` },
               { label: "Contact", value: `${values.player.email} · ${values.player.phone} · ${values.player.city}` },
+              ...(values.player.institution ? [{ label: "Institution", value: `${values.player.institution}${values.player.studentId ? ` (ID: ${values.player.studentId})` : ""}` }] : []),
               ...(values.player.club ? [{ label: "Club", value: values.player.club }] : []),
               {
                 label: "Events",

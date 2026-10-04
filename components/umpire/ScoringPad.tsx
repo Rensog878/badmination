@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { Check, Tv, Undo2, Volume2, VolumeX, X } from "lucide-react";
+import { Check, Mic, MicOff, ShieldAlert, Timer, Tv, Undo2, Volume2, VolumeX, X } from "lucide-react";
 import { scoreRally, undoRally, updateCourtStreamAction } from "@/app/umpire/actions";
 import { sideName } from "@/components/live/CourtCard";
 import { FieldError } from "@/components/registration/FormField";
@@ -33,6 +33,19 @@ function playBeep(freq = 900, duration = 0.08) {
   }
 }
 
+function speakBwfCall(text: string) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  try {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+    window.speechSynthesis.speak(utterance);
+  } catch {
+    // speech synthesis blocked or unavailable
+  }
+}
+
 /**
  * Umpire scoring pad. Each tap is one rally; the server applies BWF scoring and
  * broadcasts it. Shows the server's confirmed state (feed + action results).
@@ -43,10 +56,21 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [showStreamDrawer, setShowStreamDrawer] = useState(false);
+  const [showCardsDrawer, setShowCardsDrawer] = useState(false);
   const [streamInput, setStreamInput] = useState("");
   const [streamSaving, setStreamSaving] = useState(false);
   const [streamSavedMsg, setStreamSavedMsg] = useState<string | null>(null);
+
+  // Interval timer (60s mid-game at 11, 120s between games)
+  const [intervalTime, setIntervalTime] = useState<number | null>(null);
+  const [intervalRunning, setIntervalRunning] = useState(false);
+
+  // Disciplinary card logs
+  const [cardLogs, setCardLogs] = useState<
+    { id: string; side: Side; type: "yellow" | "red" | "black"; reason: string; time: string }[]
+  >([]);
 
   const fromFeed = snapshot.matches.find((m) => m.id === matchId);
   // Prefer whichever copy has seen more rallies (action result can beat the feed).
@@ -67,11 +91,28 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
       setError(null);
       startTransition(async () => {
         const res = what === "undo" ? await undoRally(initial.slug, matchId) : await scoreRally(initial.slug, matchId, what);
-        if (res.ok) setConfirmed(res.match);
-        else setError(res.error);
+        if (res.ok) {
+          setConfirmed(res.match);
+          if (voiceEnabled && what !== "undo") {
+            const currentGame = res.match.games[res.match.games.length - 1];
+            if (currentGame) {
+              const sScore = currentGame[res.match.server];
+              const rScore = currentGame[res.match.server === "a" ? "b" : "a"];
+              if (res.match.status === "finished") {
+                speakBwfCall(`Match won by ${sideName(res.match, res.match.winner || "a")}`);
+              } else if (sScore === 11 && rScore < 11) {
+                speakBwfCall(`Interval. 11 - ${rScore}.`);
+              } else {
+                speakBwfCall(`${sScore} - ${rScore}`);
+              }
+            }
+          }
+        } else {
+          setError(res.error);
+        }
       });
     },
-    [pending, initial.slug, matchId, soundEnabled],
+    [pending, initial.slug, matchId, soundEnabled, voiceEnabled],
   );
 
   useEffect(() => {
@@ -92,6 +133,35 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
     }
   }, [match?.streamUrl]);
 
+  // Interval countdown effect
+  useEffect(() => {
+    if (!intervalRunning || intervalTime === null) return;
+    if (intervalTime <= 0) {
+      setIntervalRunning(false);
+      setIntervalTime(null);
+      playBeep(980, 0.4);
+      if (voiceEnabled) speakBwfCall("Time! Court, play!");
+      return;
+    }
+    const timer = setInterval(() => {
+      setIntervalTime((prev) => {
+        if (prev === null) return null;
+        if (prev === 21 && voiceEnabled) {
+          speakBwfCall("20 seconds.");
+          playBeep(660, 0.15);
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [intervalRunning, intervalTime, voiceEnabled]);
+
+  const startInterval = (seconds: number) => {
+    setIntervalTime(seconds);
+    setIntervalRunning(true);
+    if (voiceEnabled) speakBwfCall(`${seconds} seconds interval.`);
+  };
+
   const handleSaveStream = async (url: string | null) => {
     setStreamSaving(true);
     setStreamSavedMsg(null);
@@ -103,6 +173,38 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
       }
     } finally {
       setStreamSaving(false);
+    }
+  };
+
+  const issueDisciplinaryCard = (side: Side, type: "yellow" | "red" | "black") => {
+    if (!match) return;
+    const timeStr = new Date().toLocaleTimeString([], { minute: "2-digit", second: "2-digit" });
+    const log = {
+      id: Math.random().toString(36).slice(2, 7),
+      side,
+      type,
+      reason:
+        type === "yellow"
+          ? "Warning: Delaying play or verbal misconduct"
+          : type === "red"
+          ? "Fault: Repeat offense (1 Penalty Point to opponent)"
+          : "Disqualification (Gross misconduct / referee sanction)",
+      time: timeStr,
+    };
+    setCardLogs((prev) => [log, ...prev]);
+
+    if (type === "yellow") {
+      playBeep(520, 0.2);
+      if (voiceEnabled) speakBwfCall(`Warning. Yellow card to ${sideName(match, side)}.`);
+    } else if (type === "red") {
+      // Award fault point to opponent side per BWF Rule 16.7.1
+      const opponentSide: Side = side === "a" ? "b" : "a";
+      playBeep(320, 0.3);
+      if (voiceEnabled) speakBwfCall(`Fault. Red card to ${sideName(match, side)}. Point to ${sideName(match, opponentSide)}.`);
+      act(opponentSide);
+    } else if (type === "black") {
+      playBeep(220, 0.5);
+      if (voiceEnabled) speakBwfCall(`Disqualified. Black card to ${sideName(match, side)}.`);
     }
   };
 
@@ -119,6 +221,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
 
   return (
     <div>
+      {/* Top Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
         <div>
           <p className="font-display text-xs tracking-[0.18em] text-muted uppercase">
@@ -135,7 +238,41 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Voice Announcements Button */}
+          <button
+            type="button"
+            onClick={() => {
+              const next = !voiceEnabled;
+              setVoiceEnabled(next);
+              if (next) speakBwfCall("BWF voice calls activated.");
+            }}
+            aria-label={voiceEnabled ? "Disable BWF voice calls" : "Enable BWF voice calls"}
+            className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
+              voiceEnabled
+                ? "border-court-green bg-court-green/20 text-court-green"
+                : "border-white/10 bg-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+            }`}
+          >
+            {voiceEnabled ? <Mic className="size-4 text-court-green" /> : <MicOff className="size-4 text-muted" />}
+            <span className="hidden sm:inline">{voiceEnabled ? "Voice ON" : "Voice Calls"}</span>
+          </button>
+
+          {/* Cards & Misconduct Drawer Button */}
+          <button
+            type="button"
+            onClick={() => setShowCardsDrawer(!showCardsDrawer)}
+            aria-label="BWF Disciplinary Cards"
+            className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
+              showCardsDrawer
+                ? "border-amber-400 bg-amber-400/20 text-amber-300"
+                : "border-white/10 bg-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+            }`}
+          >
+            <ShieldAlert className="size-4" />
+            <span className="hidden sm:inline">BWF Cards</span>
+          </button>
+
           {/* Umpire Court Live Stream Button */}
           <button
             type="button"
@@ -151,6 +288,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
             <span className="hidden sm:inline">{match.streamUrl ? "Stream Linked" : "Attach Stream"}</span>
           </button>
 
+          {/* Audio Chime Button */}
           <button
             type="button"
             onClick={() => setSoundEnabled(!soundEnabled)}
@@ -160,7 +298,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
             {soundEnabled ? (
               <>
                 <Volume2 className="size-4 text-court-green" />
-                <span className="hidden sm:inline">Sound On</span>
+                <span className="hidden sm:inline">Chime</span>
               </>
             ) : (
               <>
@@ -171,6 +309,146 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           </button>
         </div>
       </div>
+
+      {/* Interval Timer Ticker */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-xs">
+        <div className="flex items-center gap-2">
+          <Timer className="size-4 text-court-green" />
+          <span className="font-display font-bold uppercase tracking-wider text-muted">BWF Interval:</span>
+          {intervalTime !== null ? (
+            <span className="font-mono text-base font-bold text-court-green">
+              {Math.floor(intervalTime / 60)}:{String(intervalTime % 60).padStart(2, "0")}
+            </span>
+          ) : (
+            <span className="text-muted">Standby</span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => startInterval(60)}
+            className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 font-display text-[11px] font-bold uppercase text-off-white hover:border-court-green hover:text-court-green"
+          >
+            60s (Mid-Game)
+          </button>
+          <button
+            type="button"
+            onClick={() => startInterval(120)}
+            className="rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 font-display text-[11px] font-bold uppercase text-off-white hover:border-court-green hover:text-court-green"
+          >
+            120s (Between Games)
+          </button>
+          {intervalTime !== null && (
+            <button
+              type="button"
+              onClick={() => {
+                setIntervalRunning(false);
+                setIntervalTime(null);
+              }}
+              className="rounded-lg border border-red-500/30 px-2 py-1 font-display text-[11px] font-bold text-red-400 hover:bg-red-500/10"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Expandable BWF Cards Drawer */}
+      {showCardsDrawer && (
+        <div className="mt-3 rounded-2xl border border-amber-400/40 bg-black/90 p-4 backdrop-blur-md animate-fade-in shadow-xl">
+          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="size-4 text-amber-400" />
+              <span className="font-display text-xs font-bold uppercase tracking-[0.14em] text-amber-400">
+                Official BWF Discipline & Penalties (Law 16)
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowCardsDrawer(false)}
+              className="rounded-lg p-1 text-muted hover:text-off-white"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {/* Side A Actions */}
+            <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
+              <p className="font-display text-xs font-bold uppercase text-white truncate">{sideName(match, "a")}</p>
+              <div className="mt-2.5 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => issueDisciplinaryCard("a", "yellow")}
+                  className="flex-1 rounded-lg bg-amber-400/20 border border-amber-400 px-2 py-1.5 font-display text-[11px] font-bold text-amber-300 uppercase hover:bg-amber-400 hover:text-black"
+                >
+                  🟨 Yellow (Warn)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => issueDisciplinaryCard("a", "red")}
+                  className="flex-1 rounded-lg bg-red-600/20 border border-red-500 px-2 py-1.5 font-display text-[11px] font-bold text-red-400 uppercase hover:bg-red-600 hover:text-white"
+                >
+                  🟥 Red (Fault +1)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => issueDisciplinaryCard("a", "black")}
+                  className="rounded-lg bg-black border border-white/30 px-2 py-1.5 font-display text-[11px] font-bold text-white uppercase hover:bg-white hover:text-black"
+                >
+                  ⬛ Black
+                </button>
+              </div>
+            </div>
+
+            {/* Side B Actions */}
+            <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
+              <p className="font-display text-xs font-bold uppercase text-white truncate">{sideName(match, "b")}</p>
+              <div className="mt-2.5 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => issueDisciplinaryCard("b", "yellow")}
+                  className="flex-1 rounded-lg bg-amber-400/20 border border-amber-400 px-2 py-1.5 font-display text-[11px] font-bold text-amber-300 uppercase hover:bg-amber-400 hover:text-black"
+                >
+                  🟨 Yellow (Warn)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => issueDisciplinaryCard("b", "red")}
+                  className="flex-1 rounded-lg bg-red-600/20 border border-red-500 px-2 py-1.5 font-display text-[11px] font-bold text-red-400 uppercase hover:bg-red-600 hover:text-white"
+                >
+                  🟥 Red (Fault +1)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => issueDisciplinaryCard("b", "black")}
+                  className="rounded-lg bg-black border border-white/30 px-2 py-1.5 font-display text-[11px] font-bold text-white uppercase hover:bg-white hover:text-black"
+                >
+                  ⬛ Black
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Sanctions Log */}
+          {cardLogs.length > 0 && (
+            <div className="mt-3 border-t border-white/10 pt-3">
+              <p className="font-display text-[10px] font-bold tracking-wider uppercase text-muted">Misconduct Log:</p>
+              <ul className="mt-1 space-y-1">
+                {cardLogs.map((log) => (
+                  <li key={log.id} className="flex items-center justify-between text-xs text-muted">
+                    <span>
+                      {log.type === "yellow" ? "🟨" : log.type === "red" ? "🟥" : "⬛"} {sideName(match, log.side)}: {log.reason}
+                    </span>
+                    <span className="font-mono text-[10px]">{log.time}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Expandable Court Stream Drawer */}
       {showStreamDrawer && (

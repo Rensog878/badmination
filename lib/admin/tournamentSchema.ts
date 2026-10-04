@@ -2,7 +2,7 @@ import { z } from "zod";
 import { dayStart, type AgeGroup, type EventType, type Tournament, type TournamentLevel } from "@/lib/tournaments";
 
 export const LEVELS: TournamentLevel[] = ["Club", "District", "State", "Open"];
-export const AGE_GROUPS: AgeGroup[] = ["U13", "U15", "U17", "Open"];
+export const AGE_GROUPS: AgeGroup[] = ["U9", "U11", "U13", "U15", "U17", "U19", "College", "Open"];
 export const EVENT_TYPES: EventType[] = ["Singles", "Doubles", "Mixed"];
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid date");
@@ -30,7 +30,7 @@ export const tournamentFormSchema = z
     capacity: int(1, "Capacity must be at least 1"),
     prizePool: z.union([z.literal(""), int(0, "Enter a whole number")]).optional(),
     events: z
-      .array(z.string().regex(/^(U13|U15|U17|Open)\|(Singles|Doubles|Mixed)$/))
+      .array(z.string().regex(/^(U9|U11|U13|U15|U17|U19|College|Open)\|(Singles|Doubles|Mixed)$/))
       .min(1, "Choose at least one event"),
   })
   .superRefine((v, ctx) => {

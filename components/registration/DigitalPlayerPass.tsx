@@ -12,6 +12,9 @@ interface DigitalPlayerPassProps {
   venue: string;
   level: string;
   events: string;
+  playerName?: string;
+  institution?: string;
+  studentId?: string;
   paymentId?: string;
   email?: string;
 }
@@ -82,6 +85,9 @@ export default function DigitalPlayerPass({
   venue,
   level,
   events,
+  playerName,
+  institution,
+  studentId,
 }: DigitalPlayerPassProps) {
   const [downloading, setDownloading] = useState(false);
 
@@ -117,40 +123,53 @@ export default function DigitalPlayerPass({
 
       // Tournament Name
       ctx.fillStyle = "#ffffff";
-      ctx.font = "900 36px system-ui";
-      ctx.fillText(tournamentName.toUpperCase(), 50, 115);
+      ctx.font = "900 34px system-ui";
+      ctx.fillText(tournamentName.toUpperCase(), 50, 110);
 
       // Event details
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "600 20px system-ui";
-      ctx.fillText(`${venue} · ${city} · ${dates}`, 50, 155);
+      ctx.font = "600 18px system-ui";
+      ctx.fillText(`${venue} · ${city} · ${dates}`, 50, 145);
 
       // Divider line
       ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(50, 185);
-      ctx.lineTo(850, 185);
+      ctx.moveTo(50, 170);
+      ctx.lineTo(850, 170);
       ctx.stroke();
 
       // Player details
-      ctx.fillStyle = "#10b981";
-      ctx.font = "bold 18px system-ui";
-      ctx.fillText("REGISTERED EVENT(S)", 50, 230);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 28px system-ui";
-      ctx.fillText(events, 50, 270);
+      let currentY = 210;
+      if (playerName) {
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 26px system-ui";
+        ctx.fillText(playerName, 50, currentY);
+        currentY += 30;
+      }
+      if (institution) {
+        ctx.fillStyle = "#10b981";
+        ctx.font = "600 18px system-ui";
+        ctx.fillText(`${institution}${studentId ? ` · ID: ${studentId}` : ""}`, 50, currentY);
+        currentY += 35;
+      }
 
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "bold 16px system-ui";
-      ctx.fillText("CREDENTIAL / ORDER ID", 50, 335);
+      ctx.font = "bold 15px system-ui";
+      ctx.fillText("REGISTERED EVENT(S)", 50, currentY);
+      currentY += 30;
       ctx.fillStyle = "#ffffff";
-      ctx.font = "mono 22px monospace";
-      ctx.fillText(orderId, 50, 370);
+      ctx.font = "bold 24px system-ui";
+      ctx.fillText(events, 50, currentY);
+      currentY += 40;
 
-      ctx.fillStyle = "#10b981";
-      ctx.font = "bold 18px system-ui";
-      ctx.fillText("STATUS: VERIFIED & CONFIRMED", 50, 435);
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "bold 15px system-ui";
+      ctx.fillText("CREDENTIAL / ORDER ID", 50, currentY);
+      currentY += 28;
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "mono 20px monospace";
+      ctx.fillText(orderId, 50, currentY);
 
       // QR Code placeholder / watermark block
       ctx.fillStyle = "#ffffff";
@@ -195,6 +214,18 @@ export default function DigitalPlayerPass({
               {venue}, {city} · {dates}
             </p>
           </div>
+
+          {playerName && (
+            <div className="pt-1">
+              <p className="font-display text-xl font-bold uppercase text-white tracking-wide">{playerName}</p>
+              {institution && (
+                <p className="mt-1 inline-flex items-center gap-2 rounded-lg border border-court-green/30 bg-court-green/10 px-2.5 py-1 text-xs text-court-green font-semibold">
+                  <span>🏫 {institution}</span>
+                  {studentId && <span className="text-white/80">· ID: {studentId}</span>}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="grid gap-3 pt-2 sm:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
