@@ -1,5 +1,5 @@
-import { Mail } from "lucide-react";
 import ProgramExplorer from "@/components/programs/ProgramExplorer";
+import TrialBookingButton from "@/components/programs/TrialBookingButton";
 import Reveal from "@/components/ui/Reveal";
 import { PROGRAMS_INTRO, TRIAL } from "@/lib/content";
 
@@ -41,13 +41,7 @@ export default function ProgramsSection() {
               </h3>
               <p className="mt-3 text-muted">{TRIAL.text}</p>
             </div>
-            <a
-              href={`mailto:${TRIAL.email}?subject=${encodeURIComponent("Trial session")}`}
-              className="rounded-lg relative inline-flex items-center justify-center gap-3 self-start bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase transition-colors hover:bg-off-white lg:self-auto"
-            >
-              <Mail aria-hidden="true" className="size-4" />
-              {TRIAL.cta}
-            </a>
+            <TrialBookingButton label={TRIAL.cta} />
           </div>
         </Reveal>
       </div>
