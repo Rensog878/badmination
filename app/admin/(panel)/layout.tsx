@@ -18,6 +18,7 @@ const NAV = [
   { href: "/admin/live", label: "Live matches" },
   ...(FEATURES.showcase ? [{ href: "/admin/media", label: "Gallery & quotes" }] : []),
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/settings", label: "Settings & Flags" },
 ];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {

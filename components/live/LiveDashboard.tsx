@@ -7,7 +7,8 @@ import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
 import PlayerMatchFinder from "@/components/tournaments/PlayerMatchFinder";
 import TournamentBracket from "@/components/tournaments/TournamentBracket";
 import StadiumArenaMap from "@/components/live/StadiumArenaMap";
-import { LayoutGrid, MapPin } from "lucide-react";
+import MultiCourtBroadcastStudio from "@/components/live/MultiCourtBroadcastStudio";
+import { LayoutGrid, MapPin, Tv } from "lucide-react";
 
 const UP_NEXT_COUNT = 6;
 
@@ -31,7 +32,7 @@ export default function LiveDashboard({
   tournamentName?: string;
 }) {
   const { snapshot, connection } = useLiveFeed(initial.slug, initial);
-  const [viewMode, setViewMode] = useState<"arena" | "grid">("arena");
+  const [viewMode, setViewMode] = useState<"arena" | "grid" | "broadcast">("arena");
   const [announcement, setAnnouncement] = useState("");
   const seenFinished = useRef(new Set(initial.matches.filter((m) => m.status === "finished").map((m) => m.id)));
 
@@ -128,6 +129,18 @@ export default function LiveDashboard({
             </button>
             <button
               type="button"
+              onClick={() => setViewMode("broadcast")}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-display text-xs font-semibold tracking-wider transition-all ${
+                viewMode === "broadcast"
+                  ? "bg-court-green text-black shadow-md font-bold"
+                  : "text-muted hover:text-off-white"
+              }`}
+            >
+              <Tv className="size-3.5" />
+              <span>Video Wall</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setViewMode("grid")}
               className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-display text-xs font-semibold tracking-wider transition-all ${
                 viewMode === "grid"
@@ -146,6 +159,11 @@ export default function LiveDashboard({
             slug={snapshot.slug}
             courtsCount={snapshot.courts}
             matches={snapshot.matches}
+          />
+        ) : viewMode === "broadcast" ? (
+          <MultiCourtBroadcastStudio
+            snapshot={snapshot}
+            slug={snapshot.slug}
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
