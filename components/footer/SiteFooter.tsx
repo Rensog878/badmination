@@ -9,7 +9,6 @@ import {
   ShieldCheck,
   Award,
   ExternalLink,
-  Sliders,
   ChevronRight,
   Zap,
 } from "lucide-react";
@@ -20,11 +19,6 @@ export default function SiteFooter() {
 
   // Omit on staff consoles
   if (pathname.startsWith("/admin") || pathname.startsWith("/umpire")) return null;
-
-  const handleOpenOptions = () => {
-    // Dispatch keyboard shortcut to open Studio Settings
-    window.dispatchEvent(new KeyboardEvent("keydown", { key: ",", ctrlKey: true }));
-  };
 
   return (
     <footer
@@ -154,46 +148,46 @@ export default function SiteFooter() {
             </ul>
           </div>
 
-          {/* Col 3: Academy Training & Masterclass */}
+          {/* Col 3: Broadcast & Coverage */}
           <div className="lg:col-span-2 space-y-4">
             <h3 className="font-display text-xs font-bold tracking-[0.2em] uppercase text-off-white">
-              Academy
+              Broadcast
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
                 <Link
-                  href="/#coach"
+                  href="/tournaments/cuddalore-open-2026/live"
                   className="group flex items-center gap-1.5 text-muted hover:text-court-green transition-colors"
                 >
                   <ChevronRight className="size-3 transition-transform group-hover:translate-x-0.5" />
-                  <span>Coach {COACH_NAME}</span>
+                  <span>Multi-Court Video Wall</span>
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/#programs"
+                  href="/tournaments/cuddalore-open-2026/live"
                   className="group flex items-center gap-1.5 text-muted hover:text-court-green transition-colors"
                 >
                   <ChevronRight className="size-3 transition-transform group-hover:translate-x-0.5" />
-                  <span>Junior Development</span>
+                  <span>Stadium Arena Radar</span>
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/#programs"
+                  href="/live"
                   className="group flex items-center gap-1.5 text-muted hover:text-court-green transition-colors"
                 >
                   <ChevronRight className="size-3 transition-transform group-hover:translate-x-0.5" />
-                  <span>Elite Competition Squad</span>
+                  <span>Match Schedule</span>
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/#programs"
+                  href="/tournaments/cuddalore-open-2026/calendar"
                   className="group flex items-center gap-1.5 text-muted hover:text-court-green transition-colors"
                 >
                   <ChevronRight className="size-3 transition-transform group-hover:translate-x-0.5" />
-                  <span>Trial Assessment Booking</span>
+                  <span>Calendar Sync</span>
                 </Link>
               </li>
             </ul>
@@ -236,18 +230,10 @@ export default function SiteFooter() {
                 </Link>
                 <Link
                   href="/admin/settings"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-off-white/15 bg-white/[0.03] px-2.5 py-1.5 text-[11px] font-semibold text-muted hover:border-court-green/50 hover:text-court-green transition-all"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-court-green/40 bg-court-green/10 px-2.5 py-1.5 text-[11px] font-semibold text-court-green hover:bg-court-green hover:text-black transition-all"
                 >
-                  <span>Feature Matrix</span>
+                  <span>Admin Feature Matrix</span>
                 </Link>
-                <button
-                  type="button"
-                  onClick={handleOpenOptions}
-                  className="inline-flex items-center gap-1 rounded-lg border border-court-green/40 bg-court-green/10 px-2.5 py-1.5 text-[11px] font-semibold text-court-green hover:bg-court-green hover:text-black transition-all"
-                >
-                  <Sliders className="size-3" />
-                  <span>Studio Options</span>
-                </button>
               </div>
             </div>
           </div>

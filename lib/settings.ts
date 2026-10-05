@@ -12,7 +12,7 @@ export interface StudioSettings {
   preferredView: "arena" | "grid" | "dual" | "quad";
 }
 
-const STORAGE_KEY = "badmination_studio_settings_v1";
+const STORAGE_KEY = "badmination_studio_settings_v2";
 
 export const DEFAULT_SETTINGS: StudioSettings = {
   features: { ...FEATURES },

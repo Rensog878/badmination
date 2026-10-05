@@ -27,8 +27,8 @@ export interface FeatureFlags {
 }
 
 export const FEATURES: FeatureFlags = {
-  coachProfile: true,
-  programs: true,
+  coachProfile: false,
+  programs: false,
   showcase: true,
   stadiumCheerBar: true,
   momentumWaveform: true,

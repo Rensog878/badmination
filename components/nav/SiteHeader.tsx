@@ -1,11 +1,10 @@
 "use client";
 
-  import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Sliders } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import MobileMenu from "@/components/nav/MobileMenu";
-import StudioSettingsModal from "@/components/ui/StudioSettingsModal";
 import { useActiveSection, useHeaderState } from "@/components/nav/useHeaderState";
 import { COACH_NAME, NAV_CTA, VISIBLE_NAV_LINKS } from "@/lib/content";
 
@@ -18,22 +17,10 @@ const NAV_HREFS = VISIBLE_NAV_LINKS.map((l) => l.href);
  */
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [studioOpen, setStudioOpen] = useState(false);
   const { solid, hidden } = useHeaderState(menuOpen);
   const active = useActiveSection(NAV_HREFS);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === ",") {
-        e.preventDefault();
-        setStudioOpen((o) => !o);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   // Distinguish dark pages from daylight tournament pages
   const isDarkPage = pathname === "/" || pathname === "/live" || pathname.includes("/live");
@@ -91,18 +78,6 @@ export default function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-3">
-            {/* Arena Studio Controls Pill */}
-            <button
-              type="button"
-              onClick={() => setStudioOpen(true)}
-              title="Arena Controls & Options (Ctrl+,)"
-              aria-label="Open Arena Controls and Feature Flags"
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-off-white/15 bg-black/40 px-3 py-2 text-xs font-semibold text-muted hover:border-court-green/50 hover:text-court-green transition-all"
-            >
-              <Sliders className="size-3.5 text-court-green" />
-              <span className="hidden sm:inline font-display uppercase tracking-wider text-[11px]">Options</span>
-            </button>
-
             {!isRegisterPage && (
               <a
                 href={NAV_CTA.href}
@@ -125,7 +100,6 @@ export default function SiteHeader() {
         </div>
       </header>
       <MobileMenu id={MENU_ID} open={menuOpen} onClose={closeMenu} />
-      <StudioSettingsModal isOpen={studioOpen} onClose={() => setStudioOpen(false)} />
     </>
   );
 }
