@@ -37,16 +37,15 @@ export const SMASH = {
 
 export interface NavLink {
   label: string;
-  /** Hidden unless this feature is on (lib/features.ts). */
-  feature?: "coachProfile" | "programs" | "showcase";
   href: string;
+  feature?: "coachProfile" | "programs" | "showcase";
 }
 
 export const NAV_LINKS: readonly NavLink[] = [
+  { label: "Home", href: "/" },
   { label: "Tournaments", href: "/#tournaments" },
-  { label: "Live Hub", href: "/live" },
-  { label: "Coach", href: "/#coach", feature: "coachProfile" },
-  { label: "Programs", href: "/#programs", feature: "programs" },
+  { label: "Live", href: "/live" },
+  { label: "Umpire Console", href: "/umpire/cuddalore-open-2026" },
 ] as const;
 
 /** Navigation after applying feature flags. */

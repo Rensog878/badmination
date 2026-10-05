@@ -6,21 +6,39 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import MobileMenu from "@/components/nav/MobileMenu";
 import { useActiveSection, useHeaderState } from "@/components/nav/useHeaderState";
-import { COACH_NAME, NAV_CTA, VISIBLE_NAV_LINKS } from "@/lib/content";
+import { COACH_NAME } from "@/lib/content";
+import { useStudioSettings, DEFAULT_NAV_ITEMS, type NavigationItem } from "@/lib/settings";
 
 const MENU_ID = "mobile-menu";
-const NAV_HREFS = VISIBLE_NAV_LINKS.map((l) => l.href);
 
 /**
  * Fixed site header. Transparent over the hero, gains a backing once the page
  * scrolls, and slides away while scrolling down so the cinematic sequence stays clear.
+ * Dynamically governed by admin settings for navigation items and CTA buttons.
  */
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { settings } = useStudioSettings();
   const { solid, hidden } = useHeaderState(menuOpen);
-  const active = useActiveSection(NAV_HREFS);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Use dynamic nav items when mounted; fallback to defaults during SSR
+  const activeNavItems: NavigationItem[] = mounted
+    ? settings.navigationItems.filter((item) => item.enabled)
+    : DEFAULT_NAV_ITEMS.filter((item) => item.enabled);
+
+  const ctaLabel = mounted ? settings.ctaLabel : "Register";
+  const ctaHref = mounted ? settings.ctaHref : "/#tournaments";
+  const ctaEnabled = mounted ? settings.ctaEnabled : true;
+
+  const navHrefs = activeNavItems.map((l) => l.href);
+  const active = useActiveSection(navHrefs);
 
   // Distinguish dark pages from daylight tournament pages
   const isDarkPage = pathname === "/" || pathname === "/live" || pathname.includes("/live");
@@ -56,10 +74,10 @@ export default function SiteHeader() {
 
           <nav aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-8 xl:gap-10">
-              {VISIBLE_NAV_LINKS.map((link) => {
-                const current = active === link.href;
+              {activeNavItems.map((link) => {
+                const current = active === link.href || (link.href !== "/" && pathname === link.href);
                 return (
-                  <li key={link.href}>
+                  <li key={link.id || link.href}>
                     <a
                       href={link.href}
                       aria-current={current ? "true" : undefined}
@@ -78,12 +96,12 @@ export default function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-3">
-            {!isRegisterPage && (
+            {!isRegisterPage && ctaEnabled && (
               <a
-                href={NAV_CTA.href}
+                href={ctaHref}
                 className="btn-shimmer hidden sm:inline-flex min-h-11 items-center rounded-xl border border-court-green/50 bg-court-green/10 px-5 py-2.5 font-display text-xs font-bold tracking-[0.2em] text-court-green uppercase shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-300 hover:border-court-green hover:bg-court-green hover:text-black hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] active:scale-95 motion-reduce:active:scale-100"
               >
-                {NAV_CTA.label}
+                {ctaLabel}
               </a>
             )}
             <button
@@ -99,7 +117,13 @@ export default function SiteHeader() {
           </div>
         </div>
       </header>
-      <MobileMenu id={MENU_ID} open={menuOpen} onClose={closeMenu} />
+      <MobileMenu
+        id={MENU_ID}
+        open={menuOpen}
+        onClose={closeMenu}
+        items={activeNavItems}
+        cta={{ label: ctaLabel, href: ctaHref, enabled: ctaEnabled }}
+      />
     </>
   );
 }

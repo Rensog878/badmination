@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Download } from "lucide-react";
-import { NAV_CTA, VISIBLE_NAV_LINKS } from "@/lib/content";
+import { DEFAULT_NAV_ITEMS, type NavigationItem } from "@/lib/settings";
 
 interface MobileMenuProps {
   open: boolean;
   onClose: () => void;
   id: string;
+  items?: NavigationItem[];
+  cta?: { label: string; href: string; enabled: boolean };
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -22,10 +24,13 @@ interface BeforeInstallPromptEvent extends Event {
 const FOCUSABLE = "a[href], button:not([disabled])";
 
 /** Full-screen menu for < lg. Traps focus, closes on Escape, locks page scroll. */
-export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
+export default function MobileMenu({ open, onClose, id, items, cta }: MobileMenuProps) {
   const panel = useRef<HTMLDivElement>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isStandalone, setIsStandalone] = useState(false);
+
+  const navItems = items ?? DEFAULT_NAV_ITEMS.filter((i) => i.enabled);
+  const ctaConfig = cta ?? { label: "Register", href: "/#tournaments", enabled: true };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -104,8 +109,8 @@ export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
     >
       <nav aria-label="Mobile" className="flex-1">
         <ol className="flex flex-col gap-2">
-          {VISIBLE_NAV_LINKS.map((link, i) => (
-            <li key={link.href} className="menu-item-in border-b border-off-white/10" style={{ animationDelay: `${60 + i * 50}ms` }}>
+          {navItems.map((link, i) => (
+            <li key={link.id || link.href} className="menu-item-in border-b border-off-white/10" style={{ animationDelay: `${60 + i * 50}ms` }}>
               <a
                 href={link.href}
                 onClick={onClose}
@@ -121,15 +126,17 @@ export default function MobileMenu({ open, onClose, id }: MobileMenuProps) {
         </ol>
       </nav>
       <div className="flex flex-col gap-2.5">
-        <a
-          href={NAV_CTA.href}
-          onClick={onClose}
-          style={{ animationDelay: `${60 + VISIBLE_NAV_LINKS.length * 50}ms` }}
-          className="menu-item-in rounded-xl inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white transition-colors"
-        >
-          {NAV_CTA.label}
-          <ArrowRight aria-hidden="true" className="size-4" />
-        </a>
+        {ctaConfig.enabled && (
+          <a
+            href={ctaConfig.href}
+            onClick={onClose}
+            style={{ animationDelay: `${60 + navItems.length * 50}ms` }}
+            className="menu-item-in rounded-xl inline-flex items-center justify-center gap-3 bg-court-green px-7 py-4 font-display text-sm font-semibold tracking-[0.14em] text-black uppercase hover:bg-off-white transition-colors"
+          >
+            {ctaConfig.label}
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </a>
+        )}
 
         {!isStandalone && (
           <button

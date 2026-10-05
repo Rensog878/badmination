@@ -139,7 +139,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             {match.court ? `Court ${match.court} · ` : ""}
             {match.event} · {match.round}
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
             {!finished && (
               <BwfServiceRadar
                 server={match.server}
@@ -205,11 +205,11 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
                   <RollingScore
                     value={current[side]}
                     game={match.games.length}
-                    className="min-w-[2ch] justify-end text-right font-display text-[clamp(4rem,13vw,12rem)] leading-[0.85] font-bold tabular-nums"
+                    className="min-w-[2ch] justify-end text-right font-display text-[clamp(3.5rem,11vw,10rem)] leading-none py-1 font-bold tabular-nums"
                   />
                 )}
                 {finished && (
-                  <span className="font-display text-[clamp(3rem,8vw,7rem)] leading-none font-bold tabular-nums">
+                  <span className="font-display text-[clamp(2.75rem,8vw,7rem)] leading-none py-1 font-bold tabular-nums">
                     {gamesWon(match.games, side)}
                   </span>
                 )}

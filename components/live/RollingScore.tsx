@@ -17,7 +17,7 @@ interface RollingScoreProps {
 export default function RollingScore({ value, game, className = "" }: RollingScoreProps) {
   return (
     <MotionProvider>
-      <span className={`relative inline-grid overflow-hidden ${className}`}>
+      <span className={`relative inline-grid overflow-hidden py-0.5 px-0.5 ${className}`}>
         <AnimatePresence initial={false} mode="popLayout">
           <m.span
             key={`${game}-${value}`}

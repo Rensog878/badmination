@@ -3,6 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { FEATURES, type FeatureFlags } from "@/lib/features";
 
+export interface NavigationItem {
+  id: string;
+  label: string;
+  href: string;
+  enabled: boolean;
+}
+
 export interface StudioSettings {
   features: FeatureFlags;
   themeMode: "midnight" | "daylight";
@@ -10,9 +17,20 @@ export interface StudioSettings {
   corkSound: boolean;
   hapticsEnabled: boolean;
   preferredView: "arena" | "grid" | "dual" | "quad";
+  navigationItems: NavigationItem[];
+  ctaLabel: string;
+  ctaHref: string;
+  ctaEnabled: boolean;
 }
 
 const STORAGE_KEY = "badmination_studio_settings_v2";
+
+export const DEFAULT_NAV_ITEMS: NavigationItem[] = [
+  { id: "home", label: "Home", href: "/", enabled: true },
+  { id: "tournaments", label: "Tournaments", href: "/#tournaments", enabled: true },
+  { id: "live", label: "Live", href: "/live", enabled: true },
+  { id: "umpire", label: "Umpire Console", href: "/umpire/cuddalore-open-2026", enabled: true },
+];
 
 export const DEFAULT_SETTINGS: StudioSettings = {
   features: { ...FEATURES },
@@ -21,6 +39,10 @@ export const DEFAULT_SETTINGS: StudioSettings = {
   corkSound: true,
   hapticsEnabled: true,
   preferredView: "arena",
+  navigationItems: DEFAULT_NAV_ITEMS,
+  ctaLabel: "Register",
+  ctaHref: "/#tournaments",
+  ctaEnabled: true,
 };
 
 export function getStoredSettings(): StudioSettings {
@@ -29,6 +51,10 @@ export function getStoredSettings(): StudioSettings {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_SETTINGS;
     const parsed = JSON.parse(raw) as Partial<StudioSettings>;
+    const storedNav = Array.isArray(parsed.navigationItems) && parsed.navigationItems.length > 0
+      ? parsed.navigationItems
+      : DEFAULT_NAV_ITEMS;
+
     return {
       ...DEFAULT_SETTINGS,
       ...parsed,
@@ -36,6 +62,10 @@ export function getStoredSettings(): StudioSettings {
         ...DEFAULT_SETTINGS.features,
         ...(parsed.features || {}),
       },
+      navigationItems: storedNav,
+      ctaLabel: typeof parsed.ctaLabel === "string" ? parsed.ctaLabel : DEFAULT_SETTINGS.ctaLabel,
+      ctaHref: typeof parsed.ctaHref === "string" ? parsed.ctaHref : DEFAULT_SETTINGS.ctaHref,
+      ctaEnabled: typeof parsed.ctaEnabled === "boolean" ? parsed.ctaEnabled : DEFAULT_SETTINGS.ctaEnabled,
     };
   } catch {
     return DEFAULT_SETTINGS;
@@ -97,6 +127,30 @@ export function useStudioSettings() {
     });
   }, []);
 
+  const updateNavigationItems = useCallback((items: NavigationItem[]) => {
+    setSettings((prev) => {
+      const updated: StudioSettings = {
+        ...prev,
+        navigationItems: items,
+      };
+      saveStoredSettings(updated);
+      return updated;
+    });
+  }, []);
+
+  const updateCta = useCallback((cta: Partial<{ label: string; href: string; enabled: boolean }>) => {
+    setSettings((prev) => {
+      const updated: StudioSettings = {
+        ...prev,
+        ctaLabel: cta.label !== undefined ? cta.label : prev.ctaLabel,
+        ctaHref: cta.href !== undefined ? cta.href : prev.ctaHref,
+        ctaEnabled: cta.enabled !== undefined ? cta.enabled : prev.ctaEnabled,
+      };
+      saveStoredSettings(updated);
+      return updated;
+    });
+  }, []);
+
   const resetDefaults = useCallback(() => {
     setSettings(DEFAULT_SETTINGS);
     saveStoredSettings(DEFAULT_SETTINGS);
@@ -106,6 +160,8 @@ export function useStudioSettings() {
     settings,
     toggleFeature,
     updateSetting,
+    updateNavigationItems,
+    updateCta,
     resetDefaults,
   };
 }
