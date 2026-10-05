@@ -1,4 +1,5 @@
 import ProgramExplorer from "@/components/programs/ProgramExplorer";
+import ProgramComparisonMatrix from "@/components/programs/ProgramComparisonMatrix";
 import TrialBookingButton from "@/components/programs/TrialBookingButton";
 import Reveal from "@/components/ui/Reveal";
 import { PROGRAMS_INTRO, TRIAL } from "@/lib/content";
@@ -24,6 +25,10 @@ export default function ProgramsSection() {
 
         <Reveal className="mt-14">
           <ProgramExplorer />
+        </Reveal>
+
+        <Reveal className="mt-16">
+          <ProgramComparisonMatrix />
         </Reveal>
 
         <Reveal className="mt-20">

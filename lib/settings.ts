@@ -5,6 +5,7 @@ import { FEATURES, type FeatureFlags } from "@/lib/features";
 
 export interface StudioSettings {
   features: FeatureFlags;
+  themeMode: "midnight" | "daylight";
   soundEnabled: boolean;
   corkSound: boolean;
   hapticsEnabled: boolean;
@@ -15,6 +16,7 @@ const STORAGE_KEY = "badmination_studio_settings_v1";
 
 export const DEFAULT_SETTINGS: StudioSettings = {
   features: { ...FEATURES },
+  themeMode: "midnight",
   soundEnabled: true,
   corkSound: true,
   hapticsEnabled: true,

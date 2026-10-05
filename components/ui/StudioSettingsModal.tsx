@@ -15,6 +15,8 @@ import {
   LayoutGrid,
   Users,
   Compass,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { useStudioSettings } from "@/lib/settings";
 
@@ -197,6 +199,45 @@ export default function StudioSettingsModal({ isOpen, onClose }: StudioSettingsM
 
         {/* Modal Body - Scrollable Settings Groups */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Visual Theme Mode Selector */}
+          <div className="rounded-xl border border-off-white/10 bg-white/[0.02] p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-display text-xs font-bold uppercase tracking-wider text-off-white">
+                  Arena Visual Theme
+                </p>
+                <p className="text-[11px] text-muted">
+                  Switch between Stadium Midnight (OLED black) and Daylight Pro (crisp light)
+                </p>
+              </div>
+              <div className="inline-flex rounded-xl border border-off-white/10 bg-black/40 p-1 shrink-0 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => updateSetting("themeMode", "midnight")}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                    settings.themeMode === "midnight"
+                      ? "bg-court-green text-black shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                      : "text-muted hover:text-off-white"
+                  }`}
+                >
+                  <Moon className="size-3.5" />
+                  <span>Midnight</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateSetting("themeMode", "daylight")}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                    settings.themeMode === "daylight"
+                      ? "bg-court-green text-black shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                      : "text-muted hover:text-off-white"
+                  }`}
+                >
+                  <Sun className="size-3.5" />
+                  <span>Daylight</span>
+                </button>
+              </div>
+            </div>
+          </div>
           {featureGroups.map((group) => (
             <div key={group.title} className="space-y-3">
               <div className="border-b border-off-white/10 pb-2">

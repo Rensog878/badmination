@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import SiteHeader from "@/components/nav/SiteHeader";
+import SiteFooter from "@/components/footer/SiteFooter";
 import MobileBottomNav from "@/components/nav/MobileBottomNav";
 import PwaProvider from "@/components/pwa/PwaProvider";
 import { SITE } from "@/lib/content";
@@ -59,6 +60,7 @@ export default function RootLayout({
         <SiteHeader />
         <PwaProvider>
           {children}
+          <SiteFooter />
           <MobileBottomNav />
         </PwaProvider>
       </body>

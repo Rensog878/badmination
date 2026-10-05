@@ -10,7 +10,9 @@ import TournamentBracket from "@/components/tournaments/TournamentBracket";
 import PlayerMatchFinder from "@/components/tournaments/PlayerMatchFinder";
 import SchoolLeaderboard from "@/components/tournaments/SchoolLeaderboard";
 import TournamentRow from "@/components/tournaments/TournamentRow";
+import TournamentVenueSpecCard from "@/components/tournaments/TournamentVenueSpecCard";
 import CourtLines from "@/components/ui/CourtLines";
+import ThemeWrapper from "@/components/ui/ThemeWrapper";
 import { SITE } from "@/lib/content";
 import { ensureFeed, getSnapshot, liveAvailable } from "@/lib/live/store";
 import {
@@ -72,8 +74,9 @@ export default async function TournamentPage({ params }: PageProps) {
   ];
 
   return (
-    <main id="main" className="theme-light min-h-svh bg-charcoal pb-[calc(7rem+env(safe-area-inset-bottom))] lg:pb-0">
-      <header className="relative overflow-hidden border-b border-off-white/10 pt-28 pb-14 lg:pt-36 lg:pb-20">
+    <ThemeWrapper defaultMode="midnight">
+      <main id="main" className="min-h-svh bg-charcoal pb-[calc(7rem+env(safe-area-inset-bottom))] lg:pb-0">
+        <header className="relative overflow-hidden border-b border-off-white/10 pt-28 pb-14 lg:pt-36 lg:pb-20">
         <CourtLines
           aria-hidden="true"
           className="pointer-events-none absolute top-1/2 -right-10 hidden w-[700px] max-w-none -translate-y-1/2 opacity-20 [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)] sm:block text-off-white/20"
@@ -122,6 +125,9 @@ export default async function TournamentPage({ params }: PageProps) {
                 </div>
               ))}
             </dl>
+            <div className="mt-8">
+              <TournamentVenueSpecCard venue={t.venue} city={t.city} />
+            </div>
           </section>
 
           <section aria-labelledby="events-heading">
@@ -261,6 +267,7 @@ export default async function TournamentPage({ params }: PageProps) {
           </Link>
         </div>
       )}
-    </main>
+      </main>
+    </ThemeWrapper>
   );
 }

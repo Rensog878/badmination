@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import CoachPortrait from "@/components/coach/CoachPortrait";
+import SmashBiomechanicsCard from "@/components/coach/SmashBiomechanicsCard";
 import Reveal from "@/components/ui/Reveal";
 import { COACH, COACH_NAME } from "@/lib/content";
 
@@ -69,6 +70,10 @@ export default function CoachSection() {
                   />
                 </article>
               ))}
+            </Reveal>
+
+            <Reveal className="mt-16">
+              <SmashBiomechanicsCard />
             </Reveal>
 
             <h3 className="mt-20 font-display text-xs font-medium tracking-[0.18em] text-muted uppercase">Career</h3>

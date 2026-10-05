@@ -5,15 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Radio, Sparkles, ClipboardList, Trophy } from "lucide-react";
 import CoachingBookingDrawer from "@/components/programs/CoachingBookingDrawer";
+import { useStudioSettings } from "@/lib/settings";
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const { settings } = useStudioSettings();
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-
-  // Hide on umpire scoring console to give full touch screen to the umpire pad
-  const isUmpireScoring = pathname?.startsWith("/umpire/") && pathname.split("/").length > 3;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,12 +31,19 @@ export default function MobileBottomNav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  // Respect user toggle to disable bottom dock
+  if (settings.features.mobileBottomNav === false) {
+    return null;
+  }
+
+  // Hide on umpire scoring console to give full touch screen to the umpire pad
+  const isUmpireScoring = pathname?.startsWith("/umpire/") && pathname.split("/").length > 3;
   if (isUmpireScoring) {
     return null;
   }
 
   const triggerHaptic = () => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+    if (settings.hapticsEnabled && typeof navigator !== "undefined" && "vibrate" in navigator) {
       try {
         navigator.vibrate?.(15);
       } catch {

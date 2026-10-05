@@ -6,6 +6,7 @@ import ShowcaseSection from "@/components/showcase/ShowcaseSection";
 import SmashSection from "@/components/smash/SmashSection";
 import CinematicStage from "@/components/stage/CinematicStage";
 import TournamentsSection from "@/components/tournaments/TournamentsSection";
+import ThemeWrapper from "@/components/ui/ThemeWrapper";
 import { FEATURES } from "@/lib/features";
 
 /** Tournament status depends on the date: re-render hourly. */
@@ -20,14 +21,14 @@ export default function Home() {
         <HeroSection />
         <SmashSection />
       </CinematicStage>
-      {/* Arena + Daylight: dark cinematic intro above, bright readable content below. */}
-      <div className="theme-light">
+      {/* Dynamic Arena Theme: Stadium Midnight by default or Daylight Pro via Studio Options */}
+      <ThemeWrapper defaultMode="midnight">
         {/* Focus: tournaments + the 3D story. Other sections are switched off in lib/features.ts. */}
         {FEATURES.coachProfile && <CoachSection />}
         {FEATURES.programs && <ProgramsSection />}
         <TournamentsSection now={Date.now()} />
         {FEATURES.showcase && <ShowcaseSection />}
-      </div>
+      </ThemeWrapper>
     </main>
   );
 }

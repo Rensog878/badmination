@@ -12,6 +12,7 @@ import MatchWinnerCardModal from "@/components/live/MatchWinnerCardModal";
 import MatchAnalytics from "@/components/live/MatchAnalytics";
 import MomentumWaveformChart from "@/components/live/MomentumWaveformChart";
 import StadiumCheerBar from "@/components/live/StadiumCheerBar";
+import BwfServiceRadar from "@/components/live/BwfServiceRadar";
 
 const SIDES: Side[] = ["a", "b"];
 
@@ -138,7 +139,13 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             {match.court ? `Court ${match.court} · ` : ""}
             {match.event} · {match.round}
           </p>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4">
+            {!finished && (
+              <BwfServiceRadar
+                server={match.server}
+                serverScore={current[match.server]}
+              />
+            )}
             <p className="font-display text-xs tracking-[0.15em] text-muted uppercase tabular-nums">
               {statusLabel} · {elapsed(match.startedAt, finished ? match.finishedAt : now)}
             </p>

@@ -8,6 +8,7 @@ import { FieldError } from "@/components/registration/FormField";
 import { useLiveFeed } from "@/components/live/useLiveFeed";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch, LiveSnapshot } from "@/lib/live/types";
+import { useStudioSettings } from "@/lib/settings";
 
 const KEYS: Record<string, Side | "undo"> = { a: "a", b: "b", ArrowLeft: "a", ArrowRight: "b", u: "undo", Backspace: "undo" };
 
@@ -79,6 +80,7 @@ function speakBwfCall(text: string) {
  * broadcasts it. Shows the server's confirmed state (feed + action results).
  */
 export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot; matchId: string }) {
+  const { settings } = useStudioSettings();
   const { snapshot } = useLiveFeed(initial.slug, initial);
   const [confirmed, setConfirmed] = useState<LiveMatch | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -327,26 +329,28 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           </button>
 
           {/* Single-Hand Thumb Mode Button */}
-          <button
-            type="button"
-            onClick={() => {
-              const next = thumbMode === "off" ? "right" : thumbMode === "right" ? "left" : "off";
-              setThumbMode(next);
-              triggerHaptic("point", hapticEnabled);
-            }}
-            aria-label="Toggle Single-Hand Ergonomic Thumb Pad"
-            className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
-              thumbMode !== "off"
-                ? "border-court-green bg-court-green/20 text-court-green shadow-[0_0_12px_rgba(16,185,129,0.3)]"
-                : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
-            }`}
-            title="Toggle Single-Hand Mobile Thumb Mode (Right/Left reach)"
-          >
-            <Hand className="size-4" />
-            <span className="hidden sm:inline">
-              {thumbMode === "off" ? "Thumb Pad" : thumbMode === "right" ? "Right Thumb" : "Left Thumb"}
-            </span>
-          </button>
+          {settings.features.singleHandThumbMode && (
+            <button
+              type="button"
+              onClick={() => {
+                const next = thumbMode === "off" ? "right" : thumbMode === "right" ? "left" : "off";
+                setThumbMode(next);
+                triggerHaptic("point", hapticEnabled);
+              }}
+              aria-label="Toggle Single-Hand Ergonomic Thumb Pad"
+              className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl border px-3 py-2 font-display text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
+                thumbMode !== "off"
+                  ? "border-court-green bg-court-green/20 text-court-green shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+                  : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-off-white"
+              }`}
+              title="Toggle Single-Hand Mobile Thumb Mode (Right/Left reach)"
+            >
+              <Hand className="size-4" />
+              <span className="hidden sm:inline">
+                {thumbMode === "off" ? "Thumb Pad" : thumbMode === "right" ? "Right Thumb" : "Left Thumb"}
+              </span>
+            </button>
+          )}
 
           {/* Tactile Haptic Feedback Button */}
           <button
@@ -673,7 +677,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
       )}
 
       {/* Single-Hand Ergonomic Mobile Thumb Arc Pad */}
-      {thumbMode !== "off" && !finished && match.status === "live" && (
+      {settings.features.singleHandThumbMode && thumbMode !== "off" && !finished && match.status === "live" && (
         <div
           className={`fixed bottom-4 z-50 flex flex-col gap-2 rounded-3xl border border-court-green/50 bg-black/95 p-3 backdrop-blur-2xl shadow-[0_16px_50px_rgba(0,0,0,0.9)] animate-fade-in ${
             thumbMode === "right" ? "right-4 items-end" : "left-4 items-start"

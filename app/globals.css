@@ -240,6 +240,29 @@ textarea {
   color: #0b1220;
 }
 
+/*
+ * Stadium Midnight theme for championship dark arena presentation.
+ */
+.theme-midnight {
+  --color-charcoal: #0a0a0a;
+  --color-black: #03070a;
+  --color-off-white: #f3f4f6;
+  --color-muted: #9ca3af;
+  --color-court-green: #10b981;
+  color-scheme: dark;
+  background: var(--color-charcoal);
+  color: var(--color-off-white);
+}
+.theme-midnight .rounded-2xl {
+  box-shadow:
+    0 4px 24px -2px rgba(0, 0, 0, 0.8),
+    0 0 1px 1px rgba(255, 255, 255, 0.06);
+}
+.theme-midnight ::selection {
+  background: color-mix(in srgb, var(--color-court-green) 35%, transparent);
+  color: var(--color-off-white);
+}
+
 /* Custom Sleek Scrollbar (60-120fps smooth scrolling) */
 ::-webkit-scrollbar {
   width: 6px;

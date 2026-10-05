@@ -3,6 +3,8 @@ import { Tv } from "lucide-react";
 import { gameWinner, gamesWon, pressurePoint, type Side } from "@/lib/live/scoring";
 import type { LiveMatch } from "@/lib/live/types";
 import RollingScore from "@/components/live/RollingScore";
+import BwfServiceRadar from "@/components/live/BwfServiceRadar";
+import MiniRallySparkline from "@/components/live/MiniRallySparkline";
 
 const SIDES: Side[] = ["a", "b"];
 
@@ -53,9 +55,16 @@ export default function CourtCard({ court, match, href }: { court: number; match
             </span>
           )}
         </div>
-        <p className="min-w-0 truncate text-xs font-semibold tracking-[0.1em] text-muted uppercase">
-          {match.event} · {match.round}
-        </p>
+        <div className="flex items-center gap-2.5">
+          <BwfServiceRadar
+            server={match.server}
+            serverScore={current[match.server]}
+            compact={true}
+          />
+          <p className="min-w-0 truncate text-xs font-semibold tracking-[0.1em] text-muted uppercase hidden sm:block">
+            {match.event} · {match.round}
+          </p>
+        </div>
       </header>
 
       <div className="mt-5 space-y-3">
@@ -94,7 +103,16 @@ export default function CourtCard({ court, match, href }: { court: number; match
         })}
       </div>
 
-      <footer className="mt-auto flex items-center justify-between pt-5 text-xs tracking-[0.18em] uppercase">
+      {match.history && match.history.length > 0 && (
+        <div className="mt-3.5 pt-3 border-t border-off-white/10 flex items-center justify-between">
+          <MiniRallySparkline history={match.history} count={8} />
+          <span className="font-mono text-[9px] text-muted">
+            {match.history.length} rallies
+          </span>
+        </div>
+      )}
+
+      <footer className="mt-auto flex items-center justify-between pt-4 text-xs tracking-[0.18em] uppercase">
         <span className="text-muted font-medium">
           Game {gameNumber} · Games {gamesWon(match.games, "a")}–{gamesWon(match.games, "b")}
         </span>
