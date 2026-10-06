@@ -605,7 +605,7 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
         </div>
       )}
 
-      <div className="mt-6 grid grid-cols-2 gap-3">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
         {(["a", "b"] as const).map((side) => {
           const isServer = match.server === side && !finished;
           const isPressure = pressure && pressure.side === side && !finished;
@@ -616,36 +616,38 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
               onClick={() => act(side)}
               disabled={finished || pending || match.status !== "live"}
               aria-label={`Point to ${sideName(match, side)}. Current score ${current[side]}.`}
-              className={`flex min-h-64 flex-col items-center justify-between gap-4 rounded-2xl border p-5 text-center transition-all enabled:active:scale-[0.98] disabled:opacity-60 ${
+              className={`flex min-h-64 flex-col items-center justify-between gap-4 rounded-3xl border p-5 sm:p-6 text-center transition-all duration-200 enabled:active:scale-[0.97] disabled:opacity-60 backdrop-blur-xl ${
                 isPressure
-                  ? "border-court-green bg-court-green/10 shadow-[0_0_25px_rgba(16,185,129,0.25)]"
+                  ? "border-amber-400 bg-amber-400/10 shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:border-amber-300"
                   : isServer
-                    ? "border-court-green/60 bg-black/70 hover:border-court-green"
-                    : "border-off-white/15 bg-black/60 hover:border-off-white/40"
+                    ? "border-court-green/70 bg-gradient-to-b from-black/85 via-black to-court-green/[0.08] shadow-[0_0_25px_rgba(16,185,129,0.25)] hover:border-court-green"
+                    : "border-white/10 bg-white/[0.03] hover:border-white/30 hover:bg-white/[0.06]"
               }`}
             >
-              <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-[0.06em] uppercase sm:text-base">
+              <span className="flex items-center gap-2 font-display text-sm font-bold tracking-[0.08em] uppercase sm:text-base">
                 <span
                   aria-hidden="true"
-                  className={`size-2.5 rounded-full ${isServer ? "bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.9)]" : "bg-transparent"}`}
+                  className={`size-2.5 rounded-full ${isServer ? "bg-court-green shadow-[0_0_10px_rgba(16,185,129,0.9)]" : "bg-transparent"}`}
                 />
-                {sideName(match, side)}
+                <span className={isServer ? "text-off-white" : "text-off-white/80"}>{sideName(match, side)}</span>
                 {isServer && (
-                  <span className="rounded-md bg-court-green/20 px-1.5 py-0.5 text-[10px] font-bold text-court-green">
+                  <span className="rounded-md bg-court-green/20 px-2 py-0.5 text-[10px] font-black text-court-green border border-court-green/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]">
                     S
                   </span>
                 )}
               </span>
-              <span className="font-display text-[clamp(5rem,22vw,10rem)] leading-none font-bold tabular-nums">
+              <span className={`font-display text-[clamp(5rem,22vw,10rem)] leading-none font-black tabular-nums transition-colors ${
+                isServer ? "text-off-white" : "text-off-white/90"
+              }`}>
                 {current[side]}
               </span>
-              <span className="flex gap-2 font-display text-sm text-muted tabular-nums">
+              <span className="flex items-center gap-2 font-display text-sm text-muted tabular-nums">
                 {completed.map((g, i) => (
-                  <span key={i} className={gameWinner(g) === side ? "text-off-white font-bold" : ""}>
+                  <span key={i} className={`rounded-md border border-white/10 px-2 py-0.5 text-xs ${gameWinner(g) === side ? "text-off-white font-bold bg-white/10" : "text-muted"}`}>
                     {g[side]}
                   </span>
                 ))}
-                <kbd className="ml-2 border border-off-white/20 px-1.5 text-xs">{side === "a" ? "A" : "B"}</kbd>
+                <kbd className="ml-1 rounded-md border border-white/20 bg-white/5 px-2 py-0.5 text-[10px] font-mono font-bold text-muted uppercase">{side === "a" ? "Key A" : "Key B"}</kbd>
               </span>
             </button>
           );
@@ -657,10 +659,10 @@ export default function ScoringPad({ initial, matchId }: { initial: LiveSnapshot
           type="button"
           onClick={() => act("undo")}
           disabled={pending || match.history.length === 0}
-          className="rounded-xl inline-flex min-h-11 items-center gap-2 border border-off-white/20 px-5 py-3 font-display text-xs font-semibold tracking-[0.18em] uppercase hover:border-off-white disabled:opacity-50"
+          className="rounded-xl inline-flex min-h-11 items-center gap-2 border border-white/15 bg-white/[0.03] px-5 py-3 font-display text-xs font-semibold tracking-[0.18em] uppercase text-off-white hover:border-court-green hover:bg-white/[0.06] hover:text-court-green transition-all shadow-xs disabled:opacity-50"
         >
           <Undo2 aria-hidden="true" className="size-4" />
-          Undo last rally <kbd className="text-muted">U</kbd>
+          Undo last rally <kbd className="text-muted ml-1 rounded border border-white/20 px-1 text-[10px] font-mono">U</kbd>
         </button>
         <p aria-live="polite" className="font-display text-sm font-semibold tracking-[0.18em] text-court-green uppercase">
           {finished && match.winner

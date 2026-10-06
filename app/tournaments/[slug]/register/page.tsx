@@ -58,26 +58,26 @@ export default async function RegisterPage({ params }: PageProps) {
           </div>
 
           <aside aria-label="Tournament summary" className="lg:col-span-4">
-            <div className="border border-off-white/10 bg-black p-6 sm:p-8 lg:sticky lg:top-28">
-              <p className="font-display text-xs tracking-[0.18em] text-court-green uppercase">{t.level} · {t.city}</p>
-              <p className="mt-3 font-display text-2xl font-bold uppercase">{t.name}</p>
-              <dl className="mt-6 space-y-3 border-t border-off-white/10 pt-6 text-sm">
+            <div className="rounded-3xl border border-white/15 bg-gradient-to-b from-charcoal/90 via-black to-court-green/[0.04] backdrop-blur-2xl p-6 sm:p-8 shadow-[0_16px_40px_rgba(0,0,0,0.6)] lg:sticky lg:top-28">
+              <p className="font-display text-xs font-bold tracking-[0.18em] text-court-green uppercase">{t.level} · {t.city}</p>
+              <p className="mt-3 font-display text-2xl font-bold uppercase text-off-white">{t.name}</p>
+              <dl className="mt-6 space-y-3.5 border-t border-white/10 pt-6 text-sm">
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted">Dates</dt>
-                  <dd>{formatRange(t.startDate, t.endDate)}</dd>
+                  <dd className="font-semibold text-off-white">{formatRange(t.startDate, t.endDate)}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted">Venue</dt>
-                  <dd className="text-right">{t.venue}</dd>
+                  <dd className="text-right font-medium text-off-white/90">{t.venue}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted">Entry fee</dt>
-                  <dd>{formatInr(t.entryFee)} / event</dd>
+                  <dd className="font-bold text-court-green">{formatInr(t.entryFee)} / event</dd>
                 </div>
                 {open && (
                   <div className="flex justify-between gap-4">
                     <dt className="text-muted">Entries close</dt>
-                    <dd>in {daysToClose(t, now)} days</dd>
+                    <dd className="font-medium text-amber-300">in {daysToClose(t, now)} days</dd>
                   </div>
                 )}
               </dl>

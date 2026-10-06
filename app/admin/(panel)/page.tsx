@@ -19,15 +19,15 @@ export default async function AdminOverview() {
   return (
     <div>
       <h1 className="font-display text-4xl font-bold tracking-[-0.02em] uppercase">Overview</h1>
-      <dl className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-off-white/10 bg-off-white/10 grid-cols-2 lg:grid-cols-5">
+      <dl className="mt-8 grid grid-cols-2 gap-3.5 lg:grid-cols-5">
         {tiles.map((t) => (
           <Link
             key={t.label}
             href={t.href}
-            className="flex flex-col-reverse bg-charcoal p-5 sm:p-6 transition-colors hover:bg-off-white/[0.04] last:col-span-2 lg:last:col-span-1"
+            className="group flex flex-col-reverse rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-5 sm:p-6 transition-all duration-300 hover:border-court-green/40 hover:bg-white/[0.06] hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] last:col-span-2 lg:last:col-span-1"
           >
-            <dt className="mt-1 text-xs tracking-[0.15em] text-muted uppercase">{t.label}</dt>
-            <dd className="font-display text-2xl sm:text-3xl font-bold tabular-nums text-off-white">{t.value}</dd>
+            <dt className="mt-2 text-[11px] font-mono tracking-[0.16em] text-muted uppercase transition-colors group-hover:text-off-white">{t.label}</dt>
+            <dd className="font-display text-2xl sm:text-3xl font-black tabular-nums text-off-white transition-colors group-hover:text-court-green">{t.value}</dd>
           </Link>
         ))}
       </dl>

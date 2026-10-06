@@ -38,21 +38,21 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <main id="main" className="min-h-svh bg-charcoal">
       {/* Compact admin bar: always shows who is signed in and a way out (phones included). */}
-      <header className="sticky top-0 z-40 border-b border-off-white/10 bg-charcoal/98 backdrop-blur-md pt-[env(safe-area-inset-top)]">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/85 backdrop-blur-xl pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex h-14 max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-8 lg:h-16 lg:px-16">
-          <Link href="/admin" className="font-display text-sm font-bold tracking-[0.12em] uppercase">
-            {COACH_NAME}
-            <span className="text-court-green">.</span> <span className="font-normal text-muted">Admin</span>
+          <Link href="/admin" className="font-display text-sm font-black tracking-[0.12em] uppercase flex items-center gap-2">
+            <span className="bg-gradient-to-r from-off-white via-white to-off-white/80 bg-clip-text text-transparent">{COACH_NAME}</span>
+            <span className="rounded-md border border-court-green/40 bg-court-green/15 px-2 py-0.5 text-[10px] font-bold text-court-green tracking-widest shadow-[0_0_8px_rgba(16,185,129,0.3)]">ADMIN</span>
           </Link>
           <div className="flex items-center gap-3">
-            <span className="hidden max-w-48 truncate text-sm text-muted sm:inline">{user.name}</span>
-            <Link href="/" className="hidden min-h-11 items-center px-2 text-sm text-muted hover:text-off-white sm:inline-flex">
+            <span className="hidden max-w-48 truncate text-xs font-medium text-muted sm:inline">{user.name}</span>
+            <Link href="/" className="hidden min-h-11 items-center px-3 text-xs font-semibold uppercase tracking-wider text-muted hover:text-off-white sm:inline-flex transition-colors">
               View site
             </Link>
             <form action={adminLogout}>
               <button
                 type="submit"
-                className="inline-flex min-h-11 items-center rounded-lg border border-off-white/20 px-4 text-sm font-semibold hover:border-court-green hover:text-court-green"
+                className="inline-flex min-h-10 items-center rounded-xl border border-white/15 bg-white/[0.03] px-3.5 text-xs font-bold uppercase tracking-wider text-off-white hover:border-court-green hover:text-court-green hover:bg-white/[0.06] transition-all"
               >
                 Sign out
               </button>

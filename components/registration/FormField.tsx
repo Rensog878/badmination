@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { AlertCircle } from "lucide-react";
 
 export const inputClass =
-  "w-full rounded-xl border border-off-white/15 bg-black/30 px-4 py-3 text-off-white placeholder:text-muted/70 transition-all focus:border-court-green focus:ring-1 focus:ring-court-green/50 focus:outline-none aria-invalid:border-off-white";
+  "w-full rounded-xl border border-white/15 bg-white/[0.03] px-4 py-3 text-off-white placeholder:text-muted/60 transition-all focus:border-court-green focus:bg-white/[0.06] focus:ring-1 focus:ring-court-green/50 focus:outline-none aria-invalid:border-red-400/80";
 
 interface FormFieldProps {
   id: string;

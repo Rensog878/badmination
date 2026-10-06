@@ -80,30 +80,30 @@ export default function UmpireMatchList({
           <span className="text-xs text-muted">Tap Score to open scoring pad</span>
         </div>
 
-        <ul className="mt-4 divide-y divide-off-white/10 rounded-2xl border border-off-white/10 bg-off-white/[0.02] overflow-hidden">
+        <ul className="mt-4 divide-y divide-white/10 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden shadow-sm">
           {live.map((m) => {
             const currentScore = m.games[m.games.length - 1];
             return (
               <li
                 key={m.id}
-                className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-off-white/[0.03]"
+                className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between transition-all duration-200 hover:bg-white/[0.04]"
               >
-                <div className="min-w-0 flex-1 space-y-1">
+                <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-court-green/20 px-2.5 py-0.5 font-display text-[11px] font-bold tracking-[0.18em] text-court-green uppercase">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-court-green/20 px-2.5 py-0.5 font-display text-[11px] font-bold tracking-[0.18em] text-court-green uppercase border border-court-green/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]">
                       Court {m.court ?? 1}
                     </span>
                     <span className="text-xs text-muted font-medium">
                       {m.event} · {m.round}
                     </span>
                     {m.controlledBy === "umpire" && (
-                      <span className="rounded-md border border-off-white/10 bg-off-white/5 px-1.5 py-0.5 text-[10px] text-muted">
+                      <span className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-muted font-medium">
                         Official Scored
                       </span>
                     )}
                   </div>
 
-                  <p className="font-display text-lg font-bold text-off-white truncate sm:text-xl">
+                  <p className="font-display text-lg font-black text-off-white truncate sm:text-xl uppercase">
                     {sideName(m, "a")} <span className="font-normal text-muted text-sm">vs</span> {sideName(m, "b")}
                   </p>
 
@@ -125,7 +125,7 @@ export default function UmpireMatchList({
                 <div className="flex items-center gap-3">
                   <Link
                     href={`/umpire/${slug}/${m.id}`}
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-court-green px-5 py-2.5 font-display text-xs font-bold tracking-[0.16em] text-black uppercase transition-all hover:bg-off-white hover:scale-[1.02] shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-court-green px-6 py-2.5 font-display text-xs font-black tracking-[0.16em] text-black uppercase transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95"
                   >
                     <span>Score Match</span>
                     <ChevronRight className="size-4" />
@@ -155,7 +155,7 @@ export default function UmpireMatchList({
           <span className="text-xs text-muted">Scheduled for call</span>
         </div>
 
-        <ul className="mt-4 divide-y divide-off-white/10 rounded-2xl border border-off-white/10 bg-off-white/[0.02] overflow-hidden">
+        <ul className="mt-4 divide-y divide-white/10 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden shadow-sm">
           {scheduled.map((m) => (
             <li
               key={m.id}
