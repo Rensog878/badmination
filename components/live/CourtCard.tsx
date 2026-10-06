@@ -29,7 +29,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
   return (
     <article
       aria-label={`Court ${court}: ${sideName(match, "a")} versus ${sideName(match, "b")}, game ${gameNumber}, ${current.a}–${current.b}`}
-      className="group relative flex flex-col rounded-2xl border border-off-white/[0.1] bg-gradient-to-br from-black/80 via-black/70 to-court-green/[0.04] backdrop-blur-xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-court-green/60 hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)] active:scale-[0.985]"
+      className="group relative flex flex-col rounded-2xl border border-white/10 bg-gradient-to-br from-black/85 via-charcoal/80 to-court-green/[0.05] backdrop-blur-xl p-4 sm:p-5 transition-all duration-300 hover:-translate-y-1 hover:border-court-green/60 hover:shadow-[0_16px_36px_rgba(0,0,0,0.6)] active:scale-[0.985]"
     >
       {href && (
         <Link href={href} className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-court-green rounded-2xl">
@@ -71,12 +71,12 @@ export default function CourtCard({ court, match, href }: { court: number; match
         {SIDES.map((side) => {
           const serving = match.server === side;
           return (
-            <div key={side} className="grid grid-cols-[1fr_auto_3.5rem] items-center gap-3">
+            <div key={side} className="grid grid-cols-[1fr_auto_3.25rem] sm:grid-cols-[1fr_auto_3.5rem] items-center gap-2.5 sm:gap-3">
               <p className="flex min-w-0 items-center gap-2">
                 {serving ? (
                   <span
                     aria-label="Serving"
-                    className="flex shrink-0 items-center gap-1 rounded bg-court-green/15 px-1.5 py-0.5 text-[9px] font-black tracking-wider text-court-green border border-court-green/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                    className="flex shrink-0 items-center gap-1 rounded bg-court-green/20 px-1.5 py-0.5 text-[9px] font-black tracking-wider text-court-green border border-court-green/50 shadow-[0_0_8px_rgba(16,185,129,0.35)]"
                   >
                     <span className="size-1.5 rounded-full bg-court-green animate-pulse" />
                     S
@@ -84,7 +84,9 @@ export default function CourtCard({ court, match, href }: { court: number; match
                 ) : (
                   <span className="size-2 shrink-0 rounded-full bg-transparent" />
                 )}
-                <span className="truncate font-display font-bold uppercase">{sideName(match, side)}</span>
+                <span className={`truncate font-display uppercase ${serving ? "text-off-white font-extrabold" : "text-off-white/80 font-bold"}`}>
+                  {sideName(match, side)}
+                </span>
               </p>
               <span className="flex gap-1.5 font-display text-sm font-semibold tabular-nums text-muted">
                 {completed.map((g, i) => (
@@ -96,7 +98,7 @@ export default function CourtCard({ court, match, href }: { court: number; match
               <RollingScore
                 value={current[side]}
                 game={gameNumber}
-                className="justify-end text-right font-display text-4xl leading-none font-black tabular-nums"
+                className="justify-end text-right font-display text-3xl sm:text-4xl leading-none font-black tabular-nums text-off-white group-hover:text-court-green transition-colors"
               />
             </div>
           );

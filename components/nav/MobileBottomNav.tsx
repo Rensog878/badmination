@@ -96,8 +96,10 @@ export default function MobileBottomNav() {
                 key={item.label}
                 href={item.href}
                 onClick={triggerHaptic}
-                className={`group relative flex flex-col items-center justify-center p-1.5 transition-colors focus:outline-none ${
-                  item.isActive ? "text-court-green" : "text-muted hover:text-off-white"
+                className={`group relative flex flex-col items-center justify-center py-1.5 px-2.5 rounded-xl transition-all duration-200 focus:outline-none ${
+                  item.isActive
+                    ? "bg-court-green/15 text-court-green border border-court-green/30 shadow-[0_0_12px_rgba(16,185,129,0.25)]"
+                    : "text-muted hover:text-off-white border border-transparent"
                 }`}
               >
                 <span className="relative flex items-center justify-center">

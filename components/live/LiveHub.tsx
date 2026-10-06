@@ -237,16 +237,22 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
           </div>
 
           {/* Quick Metrics Ribbon */}
-          <dl className="grid grid-cols-2 gap-px rounded-xl border border-off-white/10 bg-off-white/10 overflow-hidden sm:grid-cols-4">
+          <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: "Courts live", value: liveMatches.length, color: "text-court-green" },
-              { label: "Pressure pts", value: pressureMatches.length, color: pressureMatches.length ? "text-court-green" : "text-off-white" },
-              { label: "Up next", value: scheduledMatches.length, color: "text-off-white" },
-              { label: "Completed", value: finishedMatches.length, color: "text-muted" },
+              { label: "Courts live", value: liveMatches.length, color: "text-court-green", active: liveMatches.length > 0, border: "border-court-green/30" },
+              { label: "Pressure pts", value: pressureMatches.length, color: pressureMatches.length ? "text-amber-400" : "text-off-white", active: pressureMatches.length > 0, border: pressureMatches.length ? "border-amber-400/30" : "border-white/10" },
+              { label: "Up next", value: scheduledMatches.length, color: "text-cyan-400", active: false, border: "border-white/10" },
+              { label: "Completed", value: finishedMatches.length, color: "text-muted", active: false, border: "border-white/10" },
             ].map((stat) => (
-              <div key={stat.label} className="bg-charcoal px-4 py-3 sm:px-5 sm:py-4">
-                <dt className="text-xs tracking-[0.15em] text-muted uppercase">{stat.label}</dt>
-                <dd className={`mt-1 font-display text-2xl font-bold tabular-nums sm:text-3xl ${stat.color}`}>
+              <div
+                key={stat.label}
+                className={`relative overflow-hidden rounded-xl border ${stat.border} bg-white/[0.03] backdrop-blur-md p-4 transition-all duration-300 hover:border-court-green/40 hover:bg-white/[0.06] shadow-sm`}
+              >
+                {stat.active && (
+                  <span className="absolute top-2.5 right-2.5 size-2 rounded-full bg-court-green animate-pulse" />
+                )}
+                <dt className="text-[11px] font-mono tracking-[0.16em] text-muted uppercase">{stat.label}</dt>
+                <dd className={`mt-1.5 font-display text-2xl font-black tabular-nums tracking-tight sm:text-3xl ${stat.color}`}>
                   {stat.value}
                 </dd>
               </div>
@@ -301,11 +307,11 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
 
       {/* Spotlight Feature Match: Top Tension on Court */}
       {spotlight && (
-        <section aria-labelledby="spotlight-heading" className="relative overflow-hidden rounded-2xl border border-court-green/40 bg-gradient-to-br from-black via-black to-court-green/10 p-6 sm:p-8 lg:p-10">
-          <div className="absolute top-0 right-0 h-40 w-40 bg-court-green/10 blur-3xl pointer-events-none" />
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-off-white/10 pb-4">
+        <section aria-labelledby="spotlight-heading" className="relative overflow-hidden rounded-2xl border border-court-green/40 bg-gradient-to-br from-charcoal/90 via-black to-court-green/[0.08] backdrop-blur-xl p-6 sm:p-8 lg:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+          <div className="absolute top-0 right-0 h-48 w-48 bg-court-green/15 blur-3xl pointer-events-none" />
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
             <div className="flex items-center gap-3">
-              <span className="flex size-2 rounded-full bg-court-green" />
+              <span className="flex size-2 rounded-full bg-court-green animate-pulse" />
               <h2 id="spotlight-heading" className="font-display text-xs font-bold tracking-[0.2em] text-court-green uppercase sm:text-sm">
                 Spotlight Arena {spotlight.match.court ? `· Court ${spotlight.match.court}` : ""}
               </h2>
@@ -314,7 +320,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
               </span>
             </div>
             {pressurePoint(spotlight.match.games) && (
-              <span className="badge-pop rounded-full bg-court-green px-3 py-1 font-display text-xs font-bold tracking-[0.18em] text-black uppercase">
+              <span className="badge-pop rounded-full bg-court-green px-3 py-1 font-display text-xs font-bold tracking-[0.18em] text-black uppercase shadow-[0_0_15px_rgba(16,185,129,0.5)]">
                 {pressurePoint(spotlight.match.games)?.kind === "match" ? "Match Point" : "Game Point"} · {sideName(spotlight.match, pressurePoint(spotlight.match.games)!.side)}
               </span>
             )}
@@ -339,12 +345,12 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
             {/* Side A */}
             <div className={`space-y-1.5 sm:space-y-2 border-l-2 pl-3.5 sm:pl-4 transition-colors ${spotlight.match.server === "a" ? "border-court-green" : "border-transparent"}`}>
               <div className="flex items-center gap-2">
-                <span className={`size-2 rounded-full ${spotlight.match.server === "a" ? "bg-court-green" : "bg-transparent"}`} />
+                <span className={`size-2 rounded-full ${spotlight.match.server === "a" ? "bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-transparent"}`} />
                 <p className="font-display text-xs tracking-[0.18em] text-muted uppercase">
                   {spotlight.match.server === "a" ? "Serving" : "Receiving"}
                 </p>
               </div>
-              <h3 className="font-display text-xl font-bold uppercase sm:text-3xl lg:text-4xl">
+              <h3 className="font-display text-xl font-bold uppercase sm:text-3xl lg:text-4xl text-off-white">
                 {sideName(spotlight.match, "a")}
               </h3>
               <p className="font-display text-xs tracking-[0.15em] text-muted uppercase">
@@ -353,14 +359,14 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
             </div>
 
             {/* Score Centerpiece */}
-            <div className="flex flex-col items-center justify-center py-2 sm:py-4">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/50 backdrop-blur-md px-6 py-4 shadow-inner sm:py-6">
               <div className="flex items-center gap-4 sm:gap-6 font-display font-bold tabular-nums">
                 <RollingScore
                   value={spotlight.match.games[spotlight.match.games.length - 1]?.a ?? 0}
                   game={spotlight.match.games.length}
                   className="font-display text-5xl font-black text-off-white sm:text-7xl lg:text-8xl"
                 />
-                <span className="text-3xl text-muted/50 sm:text-5xl font-light">–</span>
+                <span className="text-3xl text-court-green/60 sm:text-5xl font-light">–</span>
                 <RollingScore
                   value={spotlight.match.games[spotlight.match.games.length - 1]?.b ?? 0}
                   game={spotlight.match.games.length}
@@ -373,7 +379,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                 {spotlight.match.games.filter((g) => gameWinner(g)).map((g, idx) => (
                   <span
                     key={idx}
-                    className="rounded-md border border-off-white/15 bg-black/60 px-2.5 py-1 font-display text-xs font-semibold tabular-nums text-muted"
+                    className="rounded-md border border-white/15 bg-white/[0.05] px-2.5 py-1 font-display text-xs font-semibold tabular-nums text-off-white/80"
                   >
                     Set {idx + 1}: {g.a}–{g.b}
                   </span>
@@ -385,8 +391,8 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                 {getMatchRallies(spotlight.match).slice(-16).map((r, i) => (
                   <span
                     key={i}
-                    className={`h-4 w-1.5 rounded-xs ${
-                      r.side === "a" ? "-translate-y-1 bg-court-green" : "translate-y-1 bg-off-white/60"
+                    className={`h-4 w-1.5 rounded-xs transition-transform ${
+                      r.side === "a" ? "-translate-y-1 bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" : "translate-y-1 bg-white/70"
                     }`}
                   />
                 ))}
@@ -396,12 +402,12 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
             {/* Side B */}
             <div className={`space-y-1.5 sm:space-y-2 border-l-2 pl-3.5 transition-colors lg:border-l-0 lg:border-r-2 lg:pl-0 lg:pr-4 lg:text-right ${spotlight.match.server === "b" ? "border-court-green" : "border-transparent"}`}>
               <div className="flex items-center lg:justify-end gap-2">
-                <span className={`size-2 rounded-full lg:order-2 ${spotlight.match.server === "b" ? "bg-court-green" : "bg-transparent"}`} />
+                <span className={`size-2 rounded-full lg:order-2 ${spotlight.match.server === "b" ? "bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-transparent"}`} />
                 <p className="font-display text-xs tracking-[0.18em] text-muted uppercase lg:order-1">
                   {spotlight.match.server === "b" ? "Serving" : "Receiving"}
                 </p>
               </div>
-              <h3 className="font-display text-xl font-bold uppercase sm:text-3xl lg:text-4xl">
+              <h3 className="font-display text-xl font-bold uppercase sm:text-3xl lg:text-4xl text-off-white">
                 {sideName(spotlight.match, "b")}
               </h3>
               <p className="font-display text-xs tracking-[0.15em] text-muted uppercase">
@@ -410,13 +416,14 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
             </div>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-off-white/10 pt-5">
-            <span className="text-xs text-muted">
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5">
+            <span className="text-xs text-muted flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-court-green animate-ping" />
               Live broadcast feed updating rally-by-rally
             </span>
             <Link
               href={`/tournaments/${spotlight.snapshot.slug}/live/${spotlight.match.id}`}
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-court-green px-5 py-2.5 font-display text-xs font-bold tracking-[0.18em] text-black uppercase transition-all hover:bg-off-white"
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-court-green px-6 py-2.5 font-display text-xs font-black tracking-[0.18em] text-black uppercase transition-all duration-300 hover:bg-emerald-400 hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]"
             >
               <Expand aria-hidden="true" className="size-4" />
               Full Scoreboard Broadcast
@@ -542,7 +549,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                   <article
                     key={`${snapshot.slug}-${match.id}`}
                     aria-label={`Court ${match.court ?? "queue"}: ${sideName(match, "a")} versus ${sideName(match, "b")}`}
-                    className="group relative flex flex-col rounded-2xl border border-off-white/10 bg-black/60 p-5 transition-all hover:border-court-green/50 hover:bg-black/80"
+                    className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-5 transition-all duration-300 hover:border-court-green/50 hover:bg-white/[0.06] hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
                   >
                     <Link
                       href={`/tournaments/${snapshot.slug}/live/${match.id}`}
@@ -552,7 +559,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                     </Link>
 
                     {/* Card Header */}
-                    <div className="flex items-center justify-between gap-3 border-b border-off-white/10 pb-3">
+                    <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
                       <div className="flex items-center gap-2">
                         {isCourtLive && (
                           <span className="size-2 rounded-full bg-court-green animate-pulse motion-reduce:animate-none" />
@@ -576,7 +583,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                     </div>
 
                     {selectedTournament === "all" && (
-                      <p className="mt-2 text-xs font-medium text-court-green/90">
+                      <p className="mt-2 text-xs font-semibold text-court-green/90">
                         {tournamentName}
                       </p>
                     )}
@@ -592,12 +599,12 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                             <div className="flex min-w-0 items-center gap-2">
                               <span
                                 className={`size-2 shrink-0 rounded-full transition-colors ${
-                                  isServing ? "bg-court-green" : "bg-transparent"
+                                  isServing ? "bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" : "bg-transparent"
                                 }`}
                               />
                               <span
                                 className={`truncate font-display font-semibold uppercase ${
-                                  isWon ? "text-court-green" : "text-off-white"
+                                  isWon ? "text-court-green font-bold" : "text-off-white"
                                 }`}
                               >
                                 {sideName(match, side)}
@@ -636,7 +643,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                     </div>
 
                     {/* Card Footer */}
-                    <div className="mt-auto flex items-center justify-between border-t border-off-white/10 pt-4 text-xs tracking-[0.15em] uppercase">
+                    <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4 text-xs tracking-[0.15em] uppercase">
                       <span className="text-muted">
                         {isCourtLive
                           ? `Game ${gameNum} · ${gamesWon(match.games, "a")}–${gamesWon(match.games, "b")}`
@@ -645,7 +652,7 @@ export default function LiveHub({ items }: { items: LiveTournamentItem[] }) {
                           : match.round}
                       </span>
                       {pressure && isCourtLive && (
-                        <span className="badge-pop rounded-lg bg-court-green px-2 py-0.5 font-display text-xs font-semibold text-black">
+                        <span className="badge-pop rounded-lg bg-court-green px-2 py-0.5 font-display text-xs font-semibold text-black shadow-[0_0_10px_rgba(16,185,129,0.4)]">
                           {pressure.kind === "match" ? "Match Point" : "Game Point"}
                         </span>
                       )}

@@ -100,7 +100,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search name, city or venue"
-              className="min-h-11 w-full rounded-xl border border-off-white/15 bg-black/10 py-2.5 pr-3 pl-10 text-sm text-off-white placeholder:text-muted focus:border-court-green focus:ring-1 focus:ring-court-green/50 focus:outline-none transition-all"
+              className="min-h-11 w-full rounded-xl border border-white/15 bg-black/40 py-2.5 pr-3 pl-10 text-sm text-off-white placeholder:text-muted focus:border-court-green focus:bg-black/60 focus:ring-1 focus:ring-court-green/50 focus:outline-none transition-all backdrop-blur-md"
             />
           </label>
           <label className="block">
@@ -108,7 +108,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
             <select
               value={level}
               onChange={(e) => setLevel(e.target.value as TournamentLevel | "all")}
-              className="min-h-11 w-full rounded-xl border border-off-white/15 bg-charcoal px-3.5 py-2.5 text-sm text-off-white focus:border-court-green focus:ring-1 focus:ring-court-green/50 focus:outline-none transition-all sm:w-44"
+              className="min-h-11 w-full rounded-xl border border-white/15 bg-black/40 px-3.5 py-2.5 text-sm text-off-white focus:border-court-green focus:bg-black/60 focus:ring-1 focus:ring-court-green/50 focus:outline-none transition-all sm:w-44 backdrop-blur-md"
             >
               {LEVELS.map((l) => (
                 <option key={l} value={l}>
@@ -152,7 +152,7 @@ export default function TournamentExplorer({ now, tournaments }: TournamentExplo
       {results.length > 0 ? (
         <div className="mt-4">
           {/* Desktop Table Column Header for perfect alignment */}
-          <div className="hidden border-b border-off-white/10 px-4 pb-3 lg:grid lg:grid-cols-[5rem_minmax(0,1.6fr)_minmax(0,1fr)_10rem_11rem_2rem] lg:gap-x-8 font-display text-xs font-semibold tracking-[0.18em] text-muted uppercase">
+          <div className="hidden border-b border-white/10 px-6 pb-3 mb-2 lg:grid lg:grid-cols-[5.5rem_minmax(0,1.7fr)_minmax(0,1.1fr)_10rem_11rem_2.5rem] lg:gap-x-8 font-display text-xs font-semibold tracking-[0.18em] text-muted uppercase">
             <span>Date</span>
             <span>Tournament · Venue</span>
             <span>Events</span>

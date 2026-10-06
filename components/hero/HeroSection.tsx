@@ -70,6 +70,49 @@ export default function HeroSection() {
             </a>
             )}
           </div>
+
+          {/* Championship Arena Quick Telemetry */}
+          <div className="mt-10 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3 border-t border-white/10 pt-7">
+            <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md transition-all hover:border-court-green/40">
+              <span className="font-display text-[10px] font-bold tracking-[0.16em] uppercase text-muted block">
+                Tournaments
+              </span>
+              <span className="mt-0.5 font-display text-lg sm:text-xl font-black text-off-white block">
+                3 Active
+              </span>
+              <span className="text-[10px] text-court-green font-semibold">State & District</span>
+            </div>
+
+            <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md transition-all hover:border-court-green/40">
+              <span className="font-display text-[10px] font-bold tracking-[0.16em] uppercase text-muted block">
+                Scoring Rule
+              </span>
+              <span className="mt-0.5 font-display text-lg sm:text-xl font-black text-court-green block">
+                BWF 21-Pt
+              </span>
+              <span className="text-[10px] text-muted font-medium">Official Standard</span>
+            </div>
+
+            <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md transition-all hover:border-court-green/40">
+              <span className="font-display text-[10px] font-bold tracking-[0.16em] uppercase text-muted block">
+                Live Broadcast
+              </span>
+              <span className="mt-0.5 font-display text-lg sm:text-xl font-black text-off-white block">
+                Real-Time
+              </span>
+              <span className="text-[10px] text-court-green font-semibold">Instant Ticker</span>
+            </div>
+
+            <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md transition-all hover:border-amber-400/40">
+              <span className="font-display text-[10px] font-bold tracking-[0.16em] uppercase text-muted block">
+                Prize Purse
+              </span>
+              <span className="mt-0.5 font-display text-lg sm:text-xl font-black text-amber-400 block">
+                ₹1,00,000+
+              </span>
+              <span className="text-[10px] text-muted font-medium">Total Rewards</span>
+            </div>
+          </div>
         </div>
       </div>
 
