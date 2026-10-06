@@ -117,11 +117,14 @@ export default async function TournamentPage({ params }: PageProps) {
               About
             </h2>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed">{describeTournament(t)}</p>
-            <dl className="mt-8 grid grid-cols-2 border-t border-l border-off-white/10 sm:grid-cols-3">
+            <dl className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
               {facts.map((f) => (
-                <div key={f.label} className="flex flex-col-reverse border-r border-b border-off-white/10 p-5 col-span-1 odd:last:col-span-2 sm:odd:last:col-span-1">
-                  <dt className="mt-1 text-xs tracking-[0.2em] text-muted uppercase">{f.label}</dt>
-                  <dd className="font-display font-semibold">{f.value}</dd>
+                <div
+                  key={f.label}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-5 transition-all duration-300 hover:border-court-green/40 hover:bg-white/[0.06] shadow-sm col-span-1 odd:last:col-span-2 sm:odd:last:col-span-1"
+                >
+                  <dt className="text-[11px] font-mono tracking-[0.18em] text-muted uppercase">{f.label}</dt>
+                  <dd className="mt-2 font-display text-lg sm:text-xl font-bold text-off-white">{f.value}</dd>
                 </div>
               ))}
             </dl>
@@ -135,36 +138,36 @@ export default async function TournamentPage({ params }: PageProps) {
               Events
             </h2>
             {/* Phones: clean responsive card list without horizontal scroll */}
-            <div className="mt-4 space-y-2.5 md:hidden">
+            <div className="mt-4 space-y-3 md:hidden">
               {t.events.map((e) => (
-                <div key={eventLabel(e)} className="flex items-center justify-between rounded-xl border border-off-white/10 bg-off-white/[0.03] p-4">
+                <div key={eventLabel(e)} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 transition-colors hover:border-court-green/40">
                   <div>
-                    <p className="font-display font-bold uppercase">{e.type}</p>
-                    <p className="text-xs text-muted">{e.ageGroup} · Knockout</p>
+                    <p className="font-display font-bold uppercase text-off-white">{e.type}</p>
+                    <p className="mt-0.5 text-xs text-muted font-medium">{e.ageGroup} · Knockout</p>
                   </div>
-                  <p className="font-display font-bold text-court-green">{formatInr(t.entryFee)}</p>
+                  <p className="font-display font-black text-court-green text-base">{formatInr(t.entryFee)}</p>
                 </div>
               ))}
             </div>
 
             {/* Desktop: standard tabular view */}
-            <div className="mt-4 hidden overflow-x-auto md:block">
+            <div className="mt-4 hidden overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md md:block">
               <table className="w-full min-w-[28rem] text-left text-sm">
-                <thead className="font-display text-xs tracking-[0.2em] text-muted uppercase">
-                  <tr className="border-b border-off-white/10">
-                    <th scope="col" className="py-3 pr-4 font-medium">Event</th>
-                    <th scope="col" className="py-3 pr-4 font-medium">Age group</th>
-                    <th scope="col" className="py-3 pr-4 font-medium">Format</th>
-                    <th scope="col" className="py-3 text-right font-medium">Fee</th>
+                <thead className="border-b border-white/10 bg-white/[0.03] font-display text-xs tracking-[0.2em] text-muted uppercase">
+                  <tr>
+                    <th scope="col" className="px-6 py-4 font-semibold">Event</th>
+                    <th scope="col" className="px-6 py-4 font-semibold">Age group</th>
+                    <th scope="col" className="px-6 py-4 font-semibold">Format</th>
+                    <th scope="col" className="px-6 py-4 text-right font-semibold">Fee</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-white/5">
                   {t.events.map((e) => (
-                    <tr key={eventLabel(e)} className="border-b border-off-white/10">
-                      <th scope="row" className="py-4 pr-4 font-display font-semibold uppercase">{e.type}</th>
-                      <td className="py-4 pr-4">{e.ageGroup}</td>
-                      <td className="py-4 pr-4 text-muted">Knockout</td>
-                      <td className="py-4 text-right">{formatInr(t.entryFee)}</td>
+                    <tr key={eventLabel(e)} className="transition-colors hover:bg-white/[0.04]">
+                      <th scope="row" className="px-6 py-4 font-display font-bold uppercase text-off-white">{e.type}</th>
+                      <td className="px-6 py-4 text-off-white/80">{e.ageGroup}</td>
+                      <td className="px-6 py-4 text-muted">Knockout</td>
+                      <td className="px-6 py-4 text-right font-display font-bold text-court-green">{formatInr(t.entryFee)}</td>
                     </tr>
                   ))}
                 </tbody>

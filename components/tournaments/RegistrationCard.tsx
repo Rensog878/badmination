@@ -25,25 +25,25 @@ export default function RegistrationCard({ tournament: t, status, now }: Registr
   const days = daysToClose(t, now);
 
   return (
-    <aside aria-label="Registration" className="rounded-3xl border border-off-white/15 bg-gradient-to-b from-black/80 via-black/60 to-court-green/[0.04] backdrop-blur-xl p-6 sm:p-8 shadow-2xl">
+    <aside aria-label="Registration" className="rounded-3xl border border-white/15 bg-gradient-to-b from-charcoal/90 via-black to-court-green/[0.06] backdrop-blur-2xl p-6 sm:p-8 shadow-[0_16px_40px_rgba(0,0,0,0.6)]">
       <StatusBadge tournament={t} status={status} now={now} />
-      <p className="mt-6 font-display text-4xl font-black tracking-tight">
+      <p className="mt-6 font-display text-4xl font-black tracking-tight text-off-white">
         {formatInr(t.entryFee)}
         <span className="ml-2 text-sm font-normal text-muted">per event</span>
       </p>
 
-      <dl className="mt-6 space-y-3.5 border-t border-off-white/10 pt-6 text-sm">
+      <dl className="mt-6 space-y-3.5 border-t border-white/10 pt-6 text-sm">
         <div className="flex justify-between gap-4">
           <dt className="text-muted">Entries open</dt>
-          <dd className="font-semibold">{fmt(t.registrationOpens)}</dd>
+          <dd className="font-semibold text-off-white">{fmt(t.registrationOpens)}</dd>
         </div>
         <div className="flex justify-between gap-4">
           <dt className="text-muted">Entries close</dt>
-          <dd className="font-semibold">{fmt(t.registrationCloses)}</dd>
+          <dd className="font-semibold text-off-white">{fmt(t.registrationCloses)}</dd>
         </div>
         <div className="flex justify-between gap-4">
           <dt className="text-muted">Entries</dt>
-          <dd className="font-semibold">
+          <dd className="font-semibold text-off-white">
             {t.registered} / {t.capacity}
           </dd>
         </div>
@@ -54,9 +54,9 @@ export default function RegistrationCard({ tournament: t, status, now }: Registr
         aria-valuemin={0}
         aria-valuemax={t.capacity}
         aria-valuenow={t.registered}
-        className="mt-5 h-1.5 rounded-full bg-off-white/10 overflow-hidden"
+        className="mt-5 h-2 rounded-full bg-white/10 overflow-hidden"
       >
-        <div className="h-full rounded-full bg-court-green transition-all duration-500" style={{ width: `${Math.min(1, t.registered / t.capacity) * 100}%` }} />
+        <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-court-green shadow-[0_0_8px_rgba(16,185,129,0.7)] transition-all duration-500" style={{ width: `${Math.min(1, t.registered / t.capacity) * 100}%` }} />
       </div>
 
       <div className="mt-8">

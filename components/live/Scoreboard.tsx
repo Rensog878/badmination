@@ -83,7 +83,7 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
   const statusLabel = finished ? "Final" : match.status === "scheduled" ? "Not started" : `Game ${match.games.length || 1}`;
 
   return (
-    <div ref={frame} className="bg-charcoal">
+    <div ref={frame} className="relative rounded-3xl border border-white/10 bg-gradient-to-b from-charcoal/90 via-black to-court-green/[0.04] backdrop-blur-2xl p-6 sm:p-8 lg:p-10 shadow-[0_16px_40px_rgba(0,0,0,0.6)] overflow-hidden">
       <div className={`flex flex-col ${fullscreen ? "min-h-svh justify-center p-[4vw]" : ""}`}>
         {snapshot.demo && !fullscreen && (
           <p role="note" className="mb-6 text-sm text-muted">
@@ -115,8 +115,8 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
                   }}
                   className={`group flex items-center gap-2 rounded-xl px-3.5 py-2 font-display text-xs font-bold uppercase transition-all shrink-0 ${
                     isActive
-                      ? "bg-court-green text-black shadow-[0_0_12px_rgba(16,185,129,0.4)]"
-                      : "border border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:bg-off-white/10 hover:text-off-white"
+                      ? "bg-court-green text-black shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+                      : "border border-white/10 bg-white/[0.03] text-muted hover:border-court-green/40 hover:bg-white/[0.06] hover:text-off-white"
                   }`}
                 >
                   <span
@@ -134,8 +134,8 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
           </nav>
         )}
 
-        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-off-white/10 pb-5">
-          <p className="font-display text-xs tracking-[0.18em] uppercase">
+        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5">
+          <p className="font-display text-xs tracking-[0.18em] uppercase text-off-white/80">
             {match.court ? `Court ${match.court} · ` : ""}
             {match.event} · {match.round}
           </p>
@@ -150,15 +150,15 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
               {statusLabel} · {elapsed(match.startedAt, finished ? match.finishedAt : now)}
             </p>
             <p className="flex items-center gap-2 font-display text-xs font-semibold tracking-[0.2em] uppercase">
-              <span aria-hidden="true" className={`size-2 rounded-full ${connection === "live" ? "bg-court-green" : "bg-muted"}`} />
-              {connection === "live" ? "Live" : "Reconnecting"}
+              <span aria-hidden="true" className={`size-2 rounded-full ${connection === "live" ? "bg-court-green shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-muted"}`} />
+              <span className={connection === "live" ? "text-court-green" : "text-muted"}>{connection === "live" ? "Live" : "Reconnecting"}</span>
             </p>
             {canFullscreen && (
               <button
                 type="button"
                 onClick={toggleFullscreen}
                 aria-label={fullscreen ? "Exit full screen" : "Full screen"}
-                className="inline-flex size-11 items-center justify-center rounded-lg border border-off-white/15 hover:border-court-green hover:text-court-green"
+                className="inline-flex size-11 items-center justify-center rounded-lg border border-white/15 hover:border-court-green hover:text-court-green transition-colors"
               >
                 {fullscreen ? <Minimize aria-hidden="true" className="size-4" /> : <Expand aria-hidden="true" className="size-4" />}
               </button>
@@ -182,21 +182,21 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
         )}
 
         {/* Visual scoreboard; the sr-only summary below carries the same information. */}
-        <div aria-hidden="true" className="divide-y divide-off-white/10">
+        <div aria-hidden="true" className="divide-y divide-white/10">
           {SIDES.map((side) => {
             const won = finished && match.winner === side;
             const serving = !finished && match.server === side;
             return (
               <div key={side} className="grid grid-cols-[1fr_auto] items-center gap-4 py-6 sm:grid-cols-[1fr_auto_auto] sm:gap-8 sm:py-8">
                 <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                  <span className={`size-3 shrink-0 rounded-full transition-colors duration-300 sm:size-4 ${serving ? "bg-court-green" : "bg-transparent"}`} />
-                  <p className={`truncate font-display text-[clamp(1.5rem,4.5vw,4rem)] leading-none font-bold uppercase ${won ? "text-court-green" : ""}`}>
+                  <span className={`size-3 shrink-0 rounded-full transition-colors duration-300 sm:size-4 ${serving ? "bg-court-green shadow-[0_0_10px_rgba(16,185,129,0.9)]" : "bg-transparent"}`} />
+                  <p className={`truncate font-display text-[clamp(1.5rem,4.5vw,4rem)] leading-none font-bold uppercase ${won ? "text-court-green" : "text-off-white"}`}>
                     {sideName(match, side)}
                   </p>
                 </div>
                 <div className="hidden gap-3 font-display text-[clamp(1.25rem,2.5vw,2.25rem)] tabular-nums sm:flex">
                   {columns.map((g, i) => (
-                    <span key={i} className={`w-[2.2ch] text-right ${gameWinner(g) === side ? "text-off-white" : "text-muted"}`}>
+                    <span key={i} className={`w-[2.2ch] text-right ${gameWinner(g) === side ? "text-off-white font-bold" : "text-muted"}`}>
                       {g[side]}
                     </span>
                   ))}
@@ -218,20 +218,20 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
           })}
         </div>
 
-        <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-off-white/10 pt-5">
+        <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5">
           <div className="flex flex-wrap items-center gap-3">
             <div aria-hidden="true" className="flex flex-wrap items-center gap-1" title="Rallies this game">
               {rallies.map((r, i) => (
-                <span key={i} className={`rally-in h-4 w-1.5 ${r.side === "a" ? "-translate-y-1 bg-court-green" : "translate-y-1 bg-off-white/50"}`} />
+                <span key={i} className={`rally-in h-4 w-1.5 rounded-xs transition-transform ${r.side === "a" ? "-translate-y-1 bg-court-green shadow-[0_0_6px_rgba(16,185,129,0.8)]" : "translate-y-1 bg-white/60"}`} />
               ))}
             </div>
             <button
               type="button"
               onClick={() => setShowWaveform(!showWaveform)}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] transition-colors ${
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all ${
                 showWaveform
-                  ? "border-court-green bg-court-green/15 text-court-green"
-                  : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-court-green"
+                  ? "border-court-green/60 bg-court-green/15 text-court-green shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                  : "border-white/10 bg-white/[0.03] text-muted hover:border-court-green/40 hover:text-court-green hover:bg-white/[0.06]"
               }`}
             >
               <TrendingUp className="size-3 text-court-green" />
@@ -240,10 +240,10 @@ export default function Scoreboard({ initial, matchId }: { initial: LiveSnapshot
             <button
               type="button"
               onClick={() => setShowAnalytics(!showAnalytics)}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] transition-colors ${
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all ${
                 showAnalytics
-                  ? "border-court-green bg-court-green/15 text-court-green"
-                  : "border-off-white/10 bg-off-white/5 text-muted hover:border-court-green/40 hover:text-court-green"
+                  ? "border-court-green/60 bg-court-green/15 text-court-green shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                  : "border-white/10 bg-white/[0.03] text-muted hover:border-court-green/40 hover:text-court-green hover:bg-white/[0.06]"
               }`}
             >
               <Activity className="size-3 text-court-green" />
